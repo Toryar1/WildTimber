@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.wildtimber</groupId>
+    <artifactId>WildTimber</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>WildTimber</name>
+    <description>Plugin d'abattage d'arbres massif mais contrôle pour serveurs Paper/Purpur.</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <!-- Valeurs par défaut (overridées par les profils) -->
+        <paper.api.version>1.21.11-R0.1-SNAPSHOT</paper.api.version>
+        <jar.finalName>WildTimber-paper-${project.version}</jar.finalName>
+    </properties>
+
+    <repositories>
+        <!-- PaperMC Repository -->
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Paper API (version contrôlée par le profil actif) -->
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${paper.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <!--
+            Profil Paper 1.21.11
+            Serveur cible : paper-1.21.11-XXX.jar
+            Commande     : mvn clean package -P paper-1.21.11
+        -->
+        <profile>
+            <id>paper-1.21.11</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <paper.api.version>1.21.11-R0.1-SNAPSHOT</paper.api.version>
+                <jar.finalName>WildTimber-paper-${project.version}</jar.finalName>
+            </properties>
+        </profile>
+
+        <!--
+            Profil Purpur / Paper 26.1.2
+            Serveur cible : purpur-26.1.2-XXXX.jar
+            Commande     : mvn package -P purpur-26.1.2
+        -->
+        <profile>
+            <id>purpur-26.1.2</id>
+            <properties>
+                <paper.api.version>26.1.2.build.72-stable</paper.api.version>
+                <jar.finalName>WildTimber-purpur-${project.version}</jar.finalName>
+            </properties>
+        </profile>
+
+        <!--
+            Profil Paper 26.2
+            Serveur cible : paper-26.2-60.jar
+            Commande     : mvn package -P paper-26.2
+        -->
+        <profile>
+            <id>paper-26.2</id>
+            <properties>
+                <paper.api.version>26.2.build.60-beta</paper.api.version>
+                <jar.finalName>WildTimber-paper-${project.version}</jar.finalName>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+        <!-- Nom du JAR produit, différent selon le profil actif -->
+        <finalName>${jar.finalName}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

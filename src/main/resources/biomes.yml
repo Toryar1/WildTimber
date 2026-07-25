@@ -1,0 +1,1969 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# biomes.yml — Configuration des biomes pour WildTimber
+# ─────────────────────────────────────────────────────────────────────────────
+
+# COMPRÉHENSION DES MODULES DE DÉTECTION :
+# WildTimber utilise 3 modules de détection complémentaires pour gérer les arbres :
+
+# 1. MODULE PRINCIPAL (BFS 26-way + Goulots) :
+# Analyse le tronc et la canopée en 26-way (diagonales incluses, idéal pour les
+# arbres customisés avec branches diagonales). S'il détecte plusieurs troncs,
+# il tente de séparer les arbres fusionnés en coupant de minces jonctions
+# (goulots) selon les critères de taille et coût configurés (trees.*).
+
+# 2. MODULE 6BIS (BFS 6-way) :
+# Si la détection principale (26-way) englobe un cluster d'arbres trop géant
+# dépassant les limites autorisées (tree_too_large), le plugin relance
+# immédiatement le scan en connectivité 6-way stricte (faces adjacentes uniquement,
+# sans diagonales). Cela permet de séparer automatiquement les arbres qui ne
+# se touchent que par les coins sans bloquer la coupe.
+
+# 3. MODULE FALLBACK (Secours Cylindrique) :
+# Si la séparation par goulots échoue car les arbres sont trop imbriqués,
+# le plugin se rabat sur cet algorithme pour découper une portion cylindrique
+# autour du tronc frappé, basée sur la densité locale de bûches et feuilles.
+# (Note: ce module correspond à l'algorithme de secours cylindrique).
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Chaque section définit les blocs reconnus comme "tronc", "feuille" ou
+# "attachment" dans un biome donné, ainsi que les drops additionnels.
+
+# Clé spéciale DEFAULT : utilisée pour tout biome non listé explicitement.
+# Il est recommandé d'y mettre tous les types d'arbres vanilla afin de couvrir
+# les biomes personnalisés et les datapack.
+
+# ─── Structure d'une entrée de biome ─────────────────────────────────────────
+# NOM_DU_BIOME:
+#   enabled: true                # Activer ou non la détection/coupe de WildTimber pour ce biome (true/false)
+#   min-logs: 1                  # Nombre minimum de bûches pour reconnaître un arbre
+#                                # Exemple : min-logs: 3 → ignore les buissons
+#   min-leaf-like: 0             # Nombre minimum de feuilles requises
+#                                # Exemple : min-leaf-like: 5 → ignore les souches nues
+#   max-logs: 1024               # Nombre maximum de bûches (optionnel, hérite du config.yml si absent)
+#   max-blocks: 4096             # Nombre maximum total de blocs (optionnel, hérite du config.yml si absent)
+#   max-radius-xz: 16            # Rayon horizontal maximum du scan (optionnel, hérite du config.yml si absent)
+#   max-height-y: 64             # Hauteur verticale maximum du scan (optionnel, hérite du config.yml si absent)
+#   protection-belt-radius: 4    # Rayon (en blocs) de protection autour des troncs voisins
+#                                # Exemple : 2 → ceinture fine, 6 → large protection
+#   leaf-decay-range-xz: 6       # Distance max horizontale pour le scan/decay des feuilles (optionnel, hérite du config.yml)
+#   leaf-decay-range-y: 8        # Distance max verticale pour le scan/decay des feuilles (optionnel, hérite du config.yml)
+#   isolated-logs-rule: true     # Activer/désactiver la règle des bûches isolées dans la canopée (optionnel)
+#   orphan-leaves-cleanup: true  # Activer/désactiver le nettoyage des feuilles orphelines (optionnel)
+#   orphan-leaves-radius: 5      # Rayon de nettoyage des feuilles orphelines (optionnel)
+#   isolated-logs-radius: 6      # Rayon pour chercher des bûches orphelines post-abattage (optionnel)
+#   isolated-log-max: 4          # Taille max d'un groupe de bûches pour être considéré orphelin (optionnel)
+#   allow-non-rooted-start: true # Autoriser ou non le scan sur une bûche non enracinée (optionnel)
+#   max-root-search-depth: 16    # Profondeur max de recherche vers le bas pour le tronc réel (optionnel)
+#   fill-mode: HOLE_DETECTOR     # Mode de rebouchage spécifique à ce biome (HOLE_DETECTOR, LEGACY, NONE)
+#   fill-radius-extra: 0         # Blocs supplémentaires horizontalement autour de la bounding box XZ à inclure
+#   elephant-factor: 1.5         # Facteur pied d'éléphant pour ce biome
+#   6way-max-logs: 2048          # Budget max pour le BFS 6-way restreint (Module 6bis) (optionnel)
+#   canopy-cleanup-enabled: true # Activer la phase de nettoyage canopée post-coupe (optionnel)
+#   canopy-cleanup-padding: 6    # Padding (blocs) de la bounding box pour le canopy cleanup (optionnel)
+#   root-replacement-enabled: true # Activer le remplacement des racines sous terre pour ce biome (optionnel)
+#   root-replacement-material: DIRT # Matériau de remplacement des racines pour ce biome (Ex: DIRT, NETHERRACK...)
+#   log-blocks:                  # Liste des blocs considérés comme "tronc"
+#     - OAK_LOG                  # Exemple : OAK_LOG, MANGROVE_LOG, CRIMSON_STEM...
+#   leaf-blocks:                 # Liste des blocs considérés comme "feuille"
+#     - OAK_LEAVES               # Exemple : OAK_LEAVES, NETHER_WART_BLOCK...
+#   attachments:                 # Blocs attachés (supprimés avec l'arbre, sans drop si non coupés aux cisailles)
+#     - VINE                     # Exemple : VINE, COCOA, MANGROVE_PROPAGULE...
+#   extra-drops:
+#     enabled: false             # true pour activer les drops additionnels
+#     entries:
+#       - item: COCOA_BEANS      # Matériau à dropper (nom Bukkit Material)
+#         chance: 0.05           # Probabilité par feuille (0.0 = jamais, 1.0 = toujours)
+#         min: 1                 # Quantité minimum par drop
+#         max: 2                 # Quantité maximum par drop
+#
+#   # Configuration locale du module de secours cylindrique (Module Fallback / Secours)
+#   fallback:
+#     enabled: true              # Activer ou non le fallback pour ce biome
+#     max-blocks: 2048           # Nb max de blocs du cluster pour autoriser le fallback
+#     trunk-core-radius: 2       # Rayon horizontal pour chercher le tronc principal
+#     trunk-min-height: 3        # Nb min de bûches pour considérer une colonne comme tronc
+#     max-radius: 10             # Rayon horizontal maximal du cylindre de secours
+#     min-density: 0.1           # Densité minimale requise pour continuer le cylindre
+#     ring-step: 2               # Largeur des anneaux concentriques
+
+# ─── Clés multi-biomes ────────────────────────────────────────────────────────
+# Vous pouvez grouper plusieurs biomes sous une seule config en séparant
+# les noms par des virgules. Tous les biomes listés partageront la même config :
+
+# 'WINTER_MOUNTAIN_FOREST,TERRALOST_AMETHYST_RAINFOREST':
+#   min-logs: 2
+#   leaf-decay-range-xz: 8
+#   leaf-decay-range-y: 12
+#   log-blocks:
+#     - SPRUCE_LOG
+#     - OAK_LOG
+#   leaf-blocks:
+#     - SPRUCE_LEAVES
+#     - OAK_LEAVES
+
+# ─── Suffixes numériques ──────────────────────────────────────────────────────
+# Si un biome a un numéro en suffixe (ex: TERRALOST_AMETHYST_RAINFOREST1),
+# et qu'aucune config exacte n'existe pour ce nom, le plugin utilisera
+# automatiquement la config de TERRALOST_AMETHYST_RAINFOREST (sans numéro).
+# Pour différencier un biome numéroté, créez une entrée spécifique :
+
+# TERRALOST_AMETHYST_RAINFOREST3:
+#   min-logs: 5
+#   # Cette config sera utilisée uniquement pour le biome 3
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# biomes.yml — Configuration WildTimber pour Iris Overworld
+# Généré depuis IrisDimensions/overworld (branche master)
+# Organisé par famille climatique, mutualisé par profil d'arbres communs
+# Tout biome garde volontairement les réglages pertinents visibles pour faciliter
+# les futures retouches manuelles, même quand une valeur pourrait être héritée.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# FAMILLES :
+#  ❄️  FROID      → frozen/ + tundra/ (épicéa, redwood Iris = DARK_OAK_WOOD)
+#  🌿  TEMPÉRÉ    → temperate/ + vanilla tempérés (chêne, bouleau, sakura/cerisier)
+#  🌊  MARÉCAGE   → swamp/ + vanilla humides (dark oak, champignon, mangrove, jungle)
+#  🌴  TROPICAL   → tropical/ + vanilla jungle (jungle)
+#  🌵  ARIDE      → hot/ + mesa/ + savanna/ + vanilla secs (acacia, sans arbres)
+#  🏔️   MONTAGNE   → mountain/ + vanilla alpins (épicéa, chêne+épicéa)
+#  🍄  CHAMPIGNON → mushroom/ (champignon géant uniquement)
+#  🔮  SPÉCIAUX   → terralost/ + estranged/ (divers)
+#  ☠️  NETHER     → forêts nether
+#
+# NOTE BLOCS CUSTOM IRIS :
+#  "Redwood Iris" (mixed/tredwood*) → DARK_OAK_WOOD + DARK_OAK_LOG
+#  "Magic/Dotree"  (mixed/dotree*)  → DARK_OAK_LOG
+#  "Sakura Iris"   (sakura/*)       → CHERRY_LOG (vanilla 1.20+)
+#  "Willow"        (darkoak/willow*)→ DARK_OAK_LOG
+#  "Sproak"        (mountain)       → OAK_LOG + SPRUCE_LOG
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ───────────────────────────────────────────────────────────────────────────────
+# DEFAULT — Fallback universel
+# Garde une base sûre pour tout biome non listé explicitement.
+# Réglage plutôt conservateur pour éviter les faux positifs sur buissons.
+# ───────────────────────────────────────────────────────────────────────────────
+DEFAULT:
+  enabled: true
+  min-logs: 2
+  min-leaf-like: 3
+  max-logs: 1024
+  max-blocks: 4096
+  max-radius-xz: 16
+  max-height-y: 64
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 8
+  allow-diagonal-logs: true
+  allow-diagonal-leaves: true
+  leaf-decay-scaling-logs: 100
+  leaf-decay-scaling-xz-bonus: 1
+  leaf-decay-scaling-y-bonus: 2
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 768
+  canopy-cleanup-enabled: true
+  canopy-cleanup-padding: 12
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - OAK_LOG
+    - OAK_WOOD
+    - STRIPPED_OAK_LOG
+    - STRIPPED_OAK_WOOD
+    - SPRUCE_LOG
+    - SPRUCE_WOOD
+    - STRIPPED_SPRUCE_LOG
+    - STRIPPED_SPRUCE_WOOD
+    - BIRCH_LOG
+    - BIRCH_WOOD
+    - STRIPPED_BIRCH_LOG
+    - STRIPPED_BIRCH_WOOD
+    - JUNGLE_LOG
+    - JUNGLE_WOOD
+    - STRIPPED_JUNGLE_LOG
+    - STRIPPED_JUNGLE_WOOD
+    - ACACIA_LOG
+    - ACACIA_WOOD
+    - STRIPPED_ACACIA_LOG
+    - STRIPPED_ACACIA_WOOD
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+    - STRIPPED_DARK_OAK_LOG
+    - STRIPPED_DARK_OAK_WOOD
+    - MANGROVE_LOG
+    - MANGROVE_WOOD
+    - STRIPPED_MANGROVE_LOG
+    - STRIPPED_MANGROVE_WOOD
+    - MANGROVE_ROOTS
+    - MUDDY_MANGROVE_ROOTS
+    - CHERRY_LOG
+    - CHERRY_WOOD
+    - STRIPPED_CHERRY_LOG
+    - STRIPPED_CHERRY_WOOD
+    - PALE_OAK_LOG
+    - PALE_OAK_WOOD
+    - STRIPPED_PALE_OAK_LOG
+    - STRIPPED_PALE_OAK_WOOD
+    - BAMBOO_BLOCK
+    - STRIPPED_BAMBOO_BLOCK
+    - GRAY_TERRACOTTA
+    - MUSHROOM_STEM
+    - CRIMSON_STEM
+    - CRIMSON_HYPHAE
+    - WARPED_STEM
+    - WARPED_HYPHAE
+  leaf-blocks:
+    - OAK_LEAVES
+    - SPRUCE_LEAVES
+    - BIRCH_LEAVES
+    - JUNGLE_LEAVES
+    - ACACIA_LEAVES
+    - DARK_OAK_LEAVES
+    - MANGROVE_LEAVES
+    - CHERRY_LEAVES
+    - PALE_OAK_LEAVES
+    - RED_MUSHROOM_BLOCK
+    - BROWN_MUSHROOM_BLOCK
+    - AZALEA_LEAVES
+    - FLOWERING_AZALEA_LEAVES
+    - NETHER_WART_BLOCK
+    - WARPED_WART_BLOCK
+  attachments:
+    - VINE
+    - COCOA
+    - BEE_NEST
+    - MOSS_CARPET
+    - GLOW_LICHEN
+    - MANGROVE_PROPAGULE
+    - AZALEA
+    - FLOWERING_AZALEA
+    - SHROOMLIGHT
+    - COBWEB
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ❄️  GROUPE FROID — frozen/ + forêts froides
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Épicéas froids, forêts enneigées et massifs modérés.
+"FROZEN_PINES,FROZEN_PLAINS,FROZEN_PINE_PLAINS,FROZEN_PINE_HILLS,FROZEN_SPRUCE_PLAINS,FROZEN_SPRUCE_HILLS,FROZEN_HILLS,COLD_SPINES,LARGE_MOUNTAIN,LARGE_MOUNTAIN_TOP,TUNDRA_FOREST,TUNDRA_FOREST_CLIFFS,TUNDRA_MOUNTAINS,TUNDRA_MAGIC_FOREST_CLIFFS,TUNDRA_SEQUOIA_REDWOODS,SNOWY_TAIGA,OLD_GROWTH_SPRUCE_TAIGA,TAIGA":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1024
+  max-blocks: 4096
+  max-radius-xz: 16
+  max-height-y: 64
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 12
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 768
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - SPRUCE_LOG
+    - SPRUCE_WOOD
+    - STRIPPED_SPRUCE_LOG
+    - STRIPPED_SPRUCE_WOOD
+  leaf-blocks:
+    - SPRUCE_LEAVES
+  attachments:
+    - VINE
+    - MOSS_CARPET
+    - SWEET_BERRY_BUSH
+    - GLOW_LICHEN
+    - ICE
+    - PACKED_ICE
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# Mix froid avec épicéa, chêne et champignons.
+FROZEN_VANDER:
+  enabled: true
+  min-logs: 2
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 18
+  max-height-y: 72
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 7
+  leaf-decay-range-y: 12
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - SPRUCE_LOG
+    - SPRUCE_WOOD
+    - OAK_LOG
+    - OAK_WOOD
+    - MUSHROOM_STEM
+  leaf-blocks:
+    - SPRUCE_LEAVES
+    - OAK_LEAVES
+    - RED_MUSHROOM_BLOCK
+    - BROWN_MUSHROOM_BLOCK
+  attachments:
+    - VINE
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# Redwood froids Iris, volumineux, avec besoin de coupe canopée.
+WINTER_FOREST:
+  enabled: true
+  min-logs: 2
+  min-leaf-like: 0
+  max-logs: 3072
+  max-blocks: 8192
+  max-radius-xz: 24
+  max-height-y: 96
+  protection-belt-radius: 5
+  leaf-decay-range-xz: 8
+  leaf-decay-range-y: 15
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 6
+  isolated-logs-radius: 7
+  isolated-log-max: 6
+  allow-non-rooted-start: true
+  max-root-search-depth: 20
+  6way-max-logs: 2304
+  canopy-cleanup-enabled: true
+  canopy-cleanup-padding: 8
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+    - STRIPPED_DARK_OAK_LOG
+    - STRIPPED_DARK_OAK_WOOD
+    - SPRUCE_LOG
+    - SPRUCE_WOOD
+  leaf-blocks:
+    - DARK_OAK_LEAVES
+    - SPRUCE_LEAVES
+  attachments:
+    - VINE
+    - MOSS_CARPET
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: true
+    max-blocks: 4096
+    trunk-core-radius: 3
+    trunk-min-height: 4
+    max-radius: 12
+    min-density: 0.1
+    ring-step: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🌲 GROUPE TUNDRA — redwoods Iris géants et variantes froides
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Très grands redwoods Iris, scan large, 6bis généreux, fallback autorisé.
+"TUNDRA_REDWOOD_FOREST,TUNDRA_REDWOOD_CLIFFS,TUNDRA_AUTUMN,TUNDRA_ETHER,TUNDRA_AUTUMN_YELLOW":
+  enabled: true
+  min-logs: 2
+  min-leaf-like: 0
+  max-logs: 4096
+  max-blocks: 12288
+  max-radius-xz: 28
+  max-height-y: 128
+  protection-belt-radius: 6
+  leaf-decay-range-xz: 10
+  leaf-decay-range-y: 20
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 7
+  isolated-logs-radius: 8
+  isolated-log-max: 6
+  allow-non-rooted-start: true
+  max-root-search-depth: 24
+  6way-max-logs: 3072
+  canopy-cleanup-enabled: true
+  canopy-cleanup-padding: 10
+  root-replacement-enabled: true
+  root-replacement-material: PODZOL
+  log-blocks:
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+    - STRIPPED_DARK_OAK_LOG
+    - STRIPPED_DARK_OAK_WOOD
+    - SPRUCE_LOG
+    - SPRUCE_WOOD
+  leaf-blocks:
+    - DARK_OAK_LEAVES
+    - SPRUCE_LEAVES
+  attachments:
+    - VINE
+    - MOSS_CARPET
+    - BEE_NEST
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: true
+    max-blocks: 6144
+    trunk-core-radius: 3
+    trunk-min-height: 4
+    max-radius: 14
+    min-density: 0.08
+    ring-step: 2
+
+# Redwoods plus modestes mélangés à l'épicéa.
+TUNDRA_TAIGA:
+  enabled: true
+  min-logs: 2
+  min-leaf-like: 0
+  max-logs: 2048
+  max-blocks: 6144
+  max-radius-xz: 20
+  max-height-y: 96
+  protection-belt-radius: 5
+  leaf-decay-range-xz: 7
+  leaf-decay-range-y: 14
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 6
+  isolated-logs-radius: 7
+  isolated-log-max: 5
+  allow-non-rooted-start: true
+  max-root-search-depth: 18
+  6way-max-logs: 1536
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 8
+  root-replacement-enabled: true
+  root-replacement-material: PODZOL
+  log-blocks:
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+    - STRIPPED_DARK_OAK_LOG
+    - SPRUCE_LOG
+    - SPRUCE_WOOD
+  leaf-blocks:
+    - DARK_OAK_LEAVES
+    - SPRUCE_LEAVES
+  attachments:
+    - VINE
+    - MOSS_CARPET
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 3072
+    trunk-core-radius: 3
+    trunk-min-height: 4
+    max-radius: 12
+    min-density: 0.1
+    ring-step: 2
+
+# Forêts magiques compactes, dotree sombre, volumes intermédiaires.
+"TUNDRA_MAGIC_FOREST,TUNDRA_MAGIC_VIOLET_FOREST,TUNDRA_BONSAI_FOREST":
+  enabled: true
+  min-logs: 2
+  min-leaf-like: 0
+  max-logs: 2048
+  max-blocks: 6144
+  max-radius-xz: 18
+  max-height-y: 80
+  protection-belt-radius: 5
+  leaf-decay-range-xz: 8
+  leaf-decay-range-y: 14
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 6
+  isolated-logs-radius: 7
+  isolated-log-max: 5
+  allow-non-rooted-start: true
+  max-root-search-depth: 18
+  6way-max-logs: 1536
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 8
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+    - STRIPPED_DARK_OAK_LOG
+  leaf-blocks:
+    - DARK_OAK_LEAVES
+  attachments:
+    - VINE
+    - MOSS_CARPET
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 3072
+    trunk-core-radius: 3
+    trunk-min-height: 4
+    max-radius: 12
+    min-density: 0.1
+    ring-step: 2
+
+# Denmyre atypique avec mélange acacia + épicéa.
+TUNDRA_SPRUCE_DENMYRE:
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 16
+  max-height-y: 64
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - ACACIA_LOG
+    - ACACIA_WOOD
+    - SPRUCE_LOG
+  leaf-blocks:
+    - ACACIA_LEAVES
+    - SPRUCE_LEAVES
+  attachments:
+    - VINE
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🌿 GROUPE TEMPÉRÉ — temperate/ + vanilla tempérés
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Plaines, forêts claires et chênaies tempérées.
+"PLAINS,CALM_PLAINS,FANCY_PLAINS,ROUGH_PLAINS,SHATTERED_PLAINS,LUSH_PLAINS,LUSH_PLAINS_RED,LUSH_PLAINS_YELLOW,STRANGED_PLAINS,MEADOWS,CROAK,OVERFLOWED,TEMPERATE_ISLAND,LONG_TREE_FOREST,OAK_FOREST,TEMPERATE_HIGHLANDS,TEMPERATE_WILDS,SUNFLOWER_PLAINS,FOREST":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 18
+  max-height-y: 64
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - OAK_LOG
+    - OAK_WOOD
+    - STRIPPED_OAK_LOG
+    - STRIPPED_OAK_WOOD
+    - SPRUCE_LOG
+    - SPRUCE_WOOD
+    - BIRCH_LOG
+    - BIRCH_WOOD
+  leaf-blocks:
+    - OAK_LEAVES
+    - SPRUCE_LEAVES
+    - BIRCH_LEAVES
+  attachments:
+    - VINE
+    - BEE_NEST
+    - MOSS_CARPET
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# Boulaies Iris et vanilla, parfois mêlées à un peu de chêne.
+"BIRCH_FOREST,BIRCH_TALL_FOREST,BIRCH_THIN_FOREST,OLD_GROWTH_BIRCH_FOREST":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 18
+  max-height-y: 64
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - BIRCH_LOG
+    - BIRCH_WOOD
+    - STRIPPED_BIRCH_LOG
+    - STRIPPED_BIRCH_WOOD
+    - OAK_LOG
+  leaf-blocks:
+    - BIRCH_LEAVES
+    - OAK_LEAVES
+  attachments:
+    - VINE
+    - BEE_NEST
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# Mixtes chêne + bouleau.
+"COMBO_FOREST,TEMPERATE_FLOWER_FOREST,TEMPERATE_PLATEAU":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 18
+  max-height-y: 64
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - OAK_LOG
+    - OAK_WOOD
+    - STRIPPED_OAK_LOG
+    - BIRCH_LOG
+    - BIRCH_WOOD
+    - STRIPPED_BIRCH_LOG
+  leaf-blocks:
+    - OAK_LEAVES
+    - BIRCH_LEAVES
+  attachments:
+    - VINE
+    - BEE_NEST
+    - MOSS_CARPET
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# Sakura custom et cerisiers vanilla.
+"SAKURA_FOREST,CHERRY_FOREST,OSAKA_VIOLET_FOREST,TEMPERATE_OSAKA_RED_FOREST,CHERRY_GROVE":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 18
+  max-height-y: 72
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - OAK_LOG
+    - OAK_WOOD
+    - STRIPPED_OAK_LOG
+    - CHERRY_LOG
+    - CHERRY_WOOD
+    - STRIPPED_CHERRY_LOG
+    - STRIPPED_CHERRY_WOOD
+  leaf-blocks:
+    - OAK_LEAVES
+    - CHERRY_LEAVES
+  attachments:
+    - VINE
+    - BEE_NEST
+    - MOSS_CARPET
+  extra-drops:
+    enabled: true
+    entries:
+      - item: PINK_PETALS
+        chance: 0.12
+        min: 1
+        max: 3
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# Denmyres tempérés hybrides.
+TEMPERATE_BIRCH_DENMYRE:
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 16
+  max-height-y: 64
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - BIRCH_LOG
+    - BIRCH_WOOD
+    - ACACIA_LOG
+    - ACACIA_WOOD
+  leaf-blocks:
+    - BIRCH_LEAVES
+    - ACACIA_LEAVES
+  attachments:
+    - VINE
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+OAK_DENMYRE:
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 16
+  max-height-y: 64
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - OAK_LOG
+    - OAK_WOOD
+    - ACACIA_LOG
+    - ACACIA_WOOD
+  leaf-blocks:
+    - OAK_LEAVES
+    - ACACIA_LEAVES
+  attachments:
+    - VINE
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🌊 GROUPE MARÉCAGE — swamp/ + vanilla humides
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Saules / dark oak humides.
+"SWAMP_WILLOW_FOREST,SWAMP_HAUNTED_HANDS_FOREST":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 18
+  max-height-y: 72
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 12
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+    - STRIPPED_DARK_OAK_LOG
+    - STRIPPED_DARK_OAK_WOOD
+  leaf-blocks:
+    - DARK_OAK_LEAVES
+  attachments:
+    - VINE
+    - MOSS_CARPET
+    - LILY_PAD
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# Très grands arbres Cambian Drift, canopée dense, fallback utile.
+SWAMP_CAMBIAN_DRIFT:
+  enabled: true
+  min-logs: 2
+  min-leaf-like: 0
+  max-logs: 3072
+  max-blocks: 8192
+  max-radius-xz: 24
+  max-height-y: 96
+  protection-belt-radius: 5
+  leaf-decay-range-xz: 8
+  leaf-decay-range-y: 15
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 6
+  isolated-logs-radius: 7
+  isolated-log-max: 6
+  allow-non-rooted-start: true
+  max-root-search-depth: 20
+  6way-max-logs: 2304
+  canopy-cleanup-enabled: true
+  canopy-cleanup-padding: 8
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+    - STRIPPED_DARK_OAK_LOG
+    - STRIPPED_DARK_OAK_WOOD
+    - MUSHROOM_STEM
+    - SPRUCE_LOG
+    - SPRUCE_WOOD
+  leaf-blocks:
+    - DARK_OAK_LEAVES
+    - RED_MUSHROOM_BLOCK
+    - BROWN_MUSHROOM_BLOCK
+    - SPRUCE_LEAVES
+  attachments:
+    - VINE
+    - MOSS_CARPET
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: true
+    max-blocks: 4096
+    trunk-core-radius: 3
+    trunk-min-height: 4
+    max-radius: 12
+    min-density: 0.1
+    ring-step: 2
+
+# Chênaies sombres / roofed forest + champignons.
+"SWAMP_ROOFED_FOREST,SWAMP_ROOFED_WAYWARD,THE_CREAKS,DARK_FOREST":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 2048
+  max-blocks: 6144
+  max-radius-xz: 20
+  max-height-y: 80
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 7
+  leaf-decay-range-y: 12
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 6
+  isolated-logs-radius: 7
+  isolated-log-max: 5
+  allow-non-rooted-start: true
+  max-root-search-depth: 18
+  6way-max-logs: 1536
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 7
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - OAK_LOG
+    - OAK_WOOD
+    - STRIPPED_OAK_LOG
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+    - STRIPPED_DARK_OAK_LOG
+    - MUSHROOM_STEM
+  leaf-blocks:
+    - OAK_LEAVES
+    - DARK_OAK_LEAVES
+    - RED_MUSHROOM_BLOCK
+    - BROWN_MUSHROOM_BLOCK
+  attachments:
+    - VINE
+    - MOSS_CARPET
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 3072
+    trunk-core-radius: 3
+    trunk-min-height: 4
+    max-radius: 12
+    min-density: 0.1
+    ring-step: 2
+
+# Marais mixtes avec acacia, dark oak et chêne.
+SWAMP_FOREST:
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 18
+  max-height-y: 72
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 12
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - ACACIA_LOG
+    - ACACIA_WOOD
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+    - OAK_LOG
+  leaf-blocks:
+    - ACACIA_LEAVES
+    - DARK_OAK_LEAVES
+    - OAK_LEAVES
+  attachments:
+    - VINE
+    - MOSS_CARPET
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# Denmyre humide acacia.
+SWAMP_DENMYRE:
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 16
+  max-height-y: 64
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - ACACIA_LOG
+    - ACACIA_WOOD
+    - STRIPPED_ACACIA_LOG
+  leaf-blocks:
+    - ACACIA_LEAVES
+  attachments:
+    - VINE
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# Jungles humides et marécages boisés.
+"SWAMP_MARSH,SWAMP_MARSH_ROTTEN,SWAMP":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 2048
+  max-blocks: 6144
+  max-radius-xz: 20
+  max-height-y: 80
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 7
+  leaf-decay-range-y: 14
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 6
+  isolated-logs-radius: 7
+  isolated-log-max: 5
+  allow-non-rooted-start: true
+  max-root-search-depth: 18
+  6way-max-logs: 1536
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 7
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - JUNGLE_LOG
+    - JUNGLE_WOOD
+    - STRIPPED_JUNGLE_LOG
+    - OAK_LOG
+    - OAK_WOOD
+    - STRIPPED_OAK_LOG
+  leaf-blocks:
+    - JUNGLE_LEAVES
+    - OAK_LEAVES
+    - MANGROVE_LEAVES
+  attachments:
+    - VINE
+    - COCOA
+    - MOSS_CARPET
+    - LILY_PAD
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 3072
+    trunk-core-radius: 3
+    trunk-min-height: 4
+    max-radius: 12
+    min-density: 0.1
+    ring-step: 2
+
+# Mangroves et variantes vaseuses.
+"SWAMP_MANGROVE_FOREST,SWAMP_PUDDLE,MANGROVE_SWAMP":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 2048
+  max-blocks: 6144
+  max-radius-xz: 20
+  max-height-y: 80
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 7
+  leaf-decay-range-y: 14
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 6
+  isolated-logs-radius: 7
+  isolated-log-max: 5
+  allow-non-rooted-start: true
+  max-root-search-depth: 18
+  6way-max-logs: 1536
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 7
+  root-replacement-enabled: true
+  root-replacement-material: MUD
+  log-blocks:
+    - MANGROVE_LOG
+    - MANGROVE_WOOD
+    - STRIPPED_MANGROVE_LOG
+    - STRIPPED_MANGROVE_WOOD
+    - MANGROVE_ROOTS
+    - MUDDY_MANGROVE_ROOTS
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+  leaf-blocks:
+    - MANGROVE_LEAVES
+    - DARK_OAK_LEAVES
+    - OAK_LEAVES
+  attachments:
+    - VINE
+    - MOSS_CARPET
+    - MANGROVE_PROPAGULE
+    - LILY_PAD
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 3072
+    trunk-core-radius: 3
+    trunk-min-height: 4
+    max-radius: 12
+    min-density: 0.1
+    ring-step: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🌴 GROUPE TROPICAL — tropical/ + jungles vanilla
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Grandes jungles et variantes chaudes.
+"TROPICAL_RAINFOREST,RAINFOREST_HILLS,TROPICAL_RAINFOREST_ISLAND,TROPICAL_RAINFOREST_WICKED,TROPICAL_RAINFOREST_WICKED_CHILD,TROPICAL_PLAINS,TROPICAL_PLAINS_HILLS,TROPICAL_BEACH,TROPICAL_BEACH_CHARRED,TROPICAL_ISLAND_BEACH,EXTREME_MOUNTAINS,TROPICAL_MOUNTAIN,TROPICAL_MOUNTAIN_EXTREME,TROPICAL_MOUNTAIN_MIDDLE,TROPICAL_MOUNTAIN_PLAINS,TROPICAL_WILDS,TROPICAL_BAMBOO_FOREST,JUNGLE,SPARSE_JUNGLE,BAMBOO_JUNGLE":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 2048
+  max-blocks: 6144
+  max-radius-xz: 20
+  max-height-y: 80
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 7
+  leaf-decay-range-y: 14
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 6
+  isolated-logs-radius: 7
+  isolated-log-max: 5
+  allow-non-rooted-start: true
+  max-root-search-depth: 18
+  6way-max-logs: 1536
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 7
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - JUNGLE_LOG
+    - JUNGLE_WOOD
+    - STRIPPED_JUNGLE_LOG
+    - STRIPPED_JUNGLE_WOOD
+    - OAK_LOG
+    - OAK_WOOD
+  leaf-blocks:
+    - JUNGLE_LEAVES
+    - OAK_LEAVES
+  attachments:
+    - VINE
+    - COCOA
+    - MOSS_CARPET
+  extra-drops:
+    enabled: true
+    entries:
+      - item: COCOA_BEANS
+        chance: 0.05
+        min: 1
+        max: 2
+  fallback:
+    enabled: false
+    max-blocks: 3072
+    trunk-core-radius: 3
+    trunk-min-height: 4
+    max-radius: 12
+    min-density: 0.1
+    ring-step: 2
+
+# Variante denmyre avec feuillage jungle + acacia.
+TROPICAL_JUNGLE_DENMYRE:
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 16
+  max-height-y: 64
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - ACACIA_LOG
+    - ACACIA_WOOD
+    - JUNGLE_LOG
+    - JUNGLE_WOOD
+  leaf-blocks:
+    - ACACIA_LEAVES
+    - JUNGLE_LEAVES
+  attachments:
+    - VINE
+    - COCOA
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🌵 GROUPE ARIDE / CHAUD / MESA — hot/ + mesa/ + savanna/ + vanilla secs
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Zones sans arbres : WildTimber désactivé volontairement.
+"HOT_DESERT_DUNES,HOT_DESERT_DUNES_RED,HOT_MOUNTAIN_CLIFFS,HOT_MOUNTAIN_MIDDLE,HOT_MOUNTAIN_PLAINS,HOT_MOUNTAINS,MESA,MESA_BLUE,MESA_CLIFFS,MESA_DARK,MESA_GREEN,MESA_RED,MESA_YELLOW,MESA_PLATEAU,MESA_PLATEAU_HIGH,COLD_PLAINS,HILLY_PLAINS,ICE_SPIKES,MOUNTAIN,FROSTED_PEAKS,CALCITE_PEAKS,LOWER_MOUNTAIN,MOUNTAIN_HILLS,MOUNTAIN_CLIFFS,MOUNTAIN_MIDDLE,TROPICAL_BEACH_BAMBOO,TROPICAL_VOLCANIC_PLAINS,TROPICAL_VOLCANOES,TROPICAL_VOLCANOES_LAVA,TROPICAL_SUBMERGED_VOLCANIC,TROPICAL_MOUNTAIN_WATER,GLACIAL,ANCIENT_SANDS":
+  enabled: false
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1024
+  max-blocks: 2048
+  max-radius-xz: 12
+  max-height-y: 48
+  protection-belt-radius: 3
+  leaf-decay-range-xz: 4
+  leaf-decay-range-y: 6
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: false
+  orphan-leaves-radius: 4
+  isolated-logs-radius: 5
+  isolated-log-max: 4
+  allow-non-rooted-start: false
+  max-root-search-depth: 12
+  6way-max-logs: 768
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 4
+  root-replacement-enabled: false
+  root-replacement-material: DIRT
+  log-blocks: []
+  leaf-blocks: []
+  attachments: []
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 1024
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 8
+    min-density: 0.1
+    ring-step: 2
+
+# Oasis rares avec petit mix jungle/chêne.
+HOT_OASIS:
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1024
+  max-blocks: 3072
+  max-radius-xz: 14
+  max-height-y: 48
+  protection-belt-radius: 3
+  leaf-decay-range-xz: 5
+  leaf-decay-range-y: 8
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 4
+  isolated-logs-radius: 5
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 12
+  6way-max-logs: 768
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 5
+  root-replacement-enabled: true
+  root-replacement-material: SAND
+  log-blocks:
+    - OAK_LOG
+    - OAK_WOOD
+    - JUNGLE_LOG
+  leaf-blocks:
+    - OAK_LEAVES
+    - JUNGLE_LEAVES
+  attachments:
+    - VINE
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 1536
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 8
+    min-density: 0.1
+    ring-step: 2
+
+# Savanes, plateaux secs et acacias dominants.
+"SAVANNA,SAVANNA_CLIFFS,SAVANNA_PLATEAU,SAVANNA_ACACIA_DENMYRE,MESA_PLATEAU_DIRT,MESA_PLATEAU_DIRT_HIGH,MESA_VALLEY,WINDSWEPT_SAVANNA":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 16
+  max-height-y: 64
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - ACACIA_LOG
+    - ACACIA_WOOD
+    - STRIPPED_ACACIA_LOG
+    - STRIPPED_ACACIA_WOOD
+  leaf-blocks:
+    - ACACIA_LEAVES
+  attachments:
+    - VINE
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# Variante savane mixte chêne + acacia.
+SAVANNA_FOREST:
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 16
+  max-height-y: 64
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - OAK_LOG
+    - OAK_WOOD
+    - ACACIA_LOG
+    - ACACIA_WOOD
+  leaf-blocks:
+    - OAK_LEAVES
+    - ACACIA_LEAVES
+  attachments:
+    - VINE
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🏔️  GROUPE MONTAGNE — mountain/ + vanilla alpins
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Conifères de montagne et variantes alpines.
+"MOUNTAIN_FOREST,MOUNTAIN_FOREST_HILLS,OLD_GROWTH_PINE_TAIGA,GROVE,JAGGED_PEAKS,SNOWY_SLOPES,STONY_PEAKS,WINDSWEPT_GRAVELLY_HILLS":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 18
+  max-height-y: 72
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 12
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: PODZOL
+  log-blocks:
+    - SPRUCE_LOG
+    - SPRUCE_WOOD
+    - STRIPPED_SPRUCE_LOG
+    - OAK_LOG
+    - OAK_WOOD
+    - ACACIA_LOG
+  leaf-blocks:
+    - SPRUCE_LEAVES
+    - OAK_LEAVES
+    - ACACIA_LEAVES
+  attachments:
+    - VINE
+    - MOSS_CARPET
+    - GLOW_LICHEN
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# Sproak et mélanges montagnards chêne + épicéa.
+"MOUNTAIN_PLAINS,MOUNTAIN_PLAINS_HILLS,PLAINS":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 18
+  max-height-y: 72
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 12
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - OAK_LOG
+    - OAK_WOOD
+    - SPRUCE_LOG
+    - SPRUCE_WOOD
+    - BIRCH_LOG
+    - BIRCH_WOOD
+  leaf-blocks:
+    - OAK_LEAVES
+    - SPRUCE_LEAVES
+    - BIRCH_LEAVES
+  attachments:
+    - VINE
+    - BEE_NEST
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min_density: 0.1
+    ring-step: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🍄 GROUPE CHAMPIGNON — mushroom/
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Grands champignons, très peu de troncs mais large masse feuillue fongique.
+"MUSHROOM_FOREST,MUSHROOM_FOREST_HILLS,MUSHROOM_PLAINS,CRIMSON_MUSHROOM_SWAMP,MUSHROOM_WARPED_FOREST":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1024
+  max-blocks: 3072
+  max-radius-xz: 16
+  max-height-y: 48
+  protection-belt-radius: 3
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 12
+  6way-max-logs: 768
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: MYCELIUM
+  log-blocks:
+    - MUSHROOM_STEM
+  leaf-blocks:
+    - RED_MUSHROOM_BLOCK
+    - BROWN_MUSHROOM_BLOCK
+  attachments: []
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 1536
+    trunk-core-radius: 2
+    trunk-min-height: 2
+    max-radius: 8
+    min-density: 0.1
+    ring-step: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🔮 GROUPE SPÉCIAUX — terralost/ + estranged/
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Mix sombre/alpin à forte densité.
+"ALPINE_GROVE,ALPINE_HIGHLANDS":
+  enabled: true
+  min-logs: 2
+  min-leaf-like: 0
+  max-logs: 2048
+  max-blocks: 6144
+  max-radius-xz: 20
+  max-height-y: 80
+  protection-belt-radius: 5
+  leaf-decay-range-xz: 8
+  leaf-decay-range-y: 14
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 6
+  isolated-logs-radius: 7
+  isolated-log-max: 5
+  allow-non-rooted-start: true
+  max-root-search-depth: 18
+  6way-max-logs: 1536
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 7
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+    - SPRUCE_LOG
+    - SPRUCE_WOOD
+  leaf-blocks:
+    - DARK_OAK_LEAVES
+    - SPRUCE_LEAVES
+  attachments:
+    - VINE
+    - MOSS_CARPET
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 3072
+    trunk-core-radius: 3
+    trunk-min-height: 4
+    max-radius: 12
+    min-density: 0.1
+    ring-step: 2
+
+# Forêts améthyste mixtes, structure moyenne.
+"AMETHYST_RAINFOREST,TERRALOST_AMETHYST_RAINFOREST":
+  enabled: true
+  min-logs: 2
+  min-leaf-like: 0
+  max-logs: 2048
+  max-blocks: 6144
+  max-radius-xz: 20
+  max-height-y: 80
+  protection-belt-radius: 5
+  leaf-decay-range-xz: 8
+  leaf-decay-range-y: 14
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 6
+  isolated-logs-radius: 7
+  isolated-log-max: 5
+  allow-non-rooted-start: true
+  max-root-search-depth: 18
+  6way-max-logs: 1536
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 7
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+    - OAK_LOG
+    - OAK_WOOD
+  leaf-blocks:
+    - DARK_OAK_LEAVES
+    - OAK_LEAVES
+  attachments:
+    - VINE
+    - MOSS_CARPET
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 3072
+    trunk-core-radius: 3
+    trunk-min-height: 4
+    max-radius: 12
+    min-density: 0.1
+    ring-step: 2
+
+# Estranged : config volontairement permissive tant que les .iob ne sont pas décodés.
+"BAOBAB_GROVE,BIRCHGLASS_HEATH,BLOOMSPIRE_ORCHARD,BONSAI_HOLLOW,CANDLEWOOD_GROVE,EMBERBARK_WOODS,MISTVEIL_SWAMP,SKYREACH_PINES,SNARLWOOD_THICKET,SPINDLEWOOD,STILTROOT_SHALLOWS,TAXODIUM_STAND,WEEPING_MIRE,WILTED_LOLLIPOPS":
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 2048
+  max-blocks: 6144
+  max-radius-xz: 20
+  max-height-y: 80
+  protection-belt-radius: 4
+  leaf-decay-range-xz: 8
+  leaf-decay-range-y: 14
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 6
+  isolated-logs-radius: 7
+  isolated-log-max: 5
+  allow-non-rooted-start: true
+  max-root-search-depth: 18
+  6way-max-logs: 1536
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 7
+  root-replacement-enabled: true
+  root-replacement-material: DIRT
+  log-blocks:
+    - OAK_LOG
+    - OAK_WOOD
+    - DARK_OAK_LOG
+    - DARK_OAK_WOOD
+    - SPRUCE_LOG
+    - SPRUCE_WOOD
+    - BIRCH_LOG
+    - BIRCH_WOOD
+    - ACACIA_LOG
+    - ACACIA_WOOD
+    - JUNGLE_LOG
+    - JUNGLE_WOOD
+    - MUSHROOM_STEM
+  leaf-blocks:
+    - OAK_LEAVES
+    - DARK_OAK_LEAVES
+    - SPRUCE_LEAVES
+    - BIRCH_LEAVES
+    - ACACIA_LEAVES
+    - JUNGLE_LEAVES
+    - RED_MUSHROOM_BLOCK
+    - BROWN_MUSHROOM_BLOCK
+  attachments:
+    - VINE
+    - MOSS_CARPET
+    - BEE_NEST
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 3072
+    trunk-core-radius: 3
+    trunk-min-height: 4
+    max-radius: 12
+    min-density: 0.1
+    ring-step: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ☠️  NETHER
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Crimson Forest : structures nether verticales et feuillage wart.
+CRIMSON_FOREST:
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 16
+  max-height-y: 64
+  protection-belt-radius: 3
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: NETHERRACK
+  log-blocks:
+    - CRIMSON_STEM
+    - CRIMSON_HYPHAE
+    - STRIPPED_CRIMSON_STEM
+    - STRIPPED_CRIMSON_HYPHAE
+  leaf-blocks:
+    - NETHER_WART_BLOCK
+    - SHROOMLIGHT
+  attachments:
+    - WEEPING_VINES
+    - WEEPING_VINES_PLANT
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# Warped Forest : même logique, mais feuilles wart bleues et twisting vines.
+WARPED_FOREST:
+  enabled: true
+  min-logs: 1
+  min-leaf-like: 0
+  max-logs: 1536
+  max-blocks: 4096
+  max-radius-xz: 16
+  max-height-y: 64
+  protection-belt-radius: 3
+  leaf-decay-range-xz: 6
+  leaf-decay-range-y: 10
+  isolated-logs-rule: true
+  orphan-leaves-cleanup: true
+  orphan-leaves-radius: 5
+  isolated-logs-radius: 6
+  isolated-log-max: 4
+  allow-non-rooted-start: true
+  max-root-search-depth: 16
+  6way-max-logs: 1152
+  canopy-cleanup-enabled: false
+  canopy-cleanup-padding: 6
+  root-replacement-enabled: true
+  root-replacement-material: NETHERRACK
+  log-blocks:
+    - WARPED_STEM
+    - WARPED_HYPHAE
+    - STRIPPED_WARPED_STEM
+    - STRIPPED_WARPED_HYPHAE
+  leaf-blocks:
+    - WARPED_WART_BLOCK
+    - SHROOMLIGHT
+  attachments:
+    - TWISTING_VINES
+    - TWISTING_VINES_PLANT
+  extra-drops:
+    enabled: false
+    entries: []
+  fallback:
+    enabled: false
+    max-blocks: 2048
+    trunk-core-radius: 2
+    trunk-min-height: 3
+    max-radius: 10
+    min-density: 0.1
+    ring-step: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ❄ CUSTOM / DATAPACK BIOMES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+"WINTER_MOUNTAIN_FOREST,WINTER_MOUNTAIN_FOREST1,WINTER_MOUNTAIN_FOREST2,WINTER_MOUNTAIN_FOREST3,WINTER_MOUNTAIN_FOREST4,OSAKA_RED_CHILD_FOREST,SAKURA_FOREST_PINK,TUNDRA":
+  enabled: true
+  min-logs: 2
+  min-leaves: 3
+  max-logs: 2048
+  interval: 3
+  fill-depth: 16
+  decay-xz: 8
+  decay-y: 14
+  fallback-allowed: true
+

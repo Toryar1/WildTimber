@@ -1,0 +1,63 @@
+name: WildTimber
+version: '${project.version}'
+main: com.wildtimber.WildTimber
+api-version: '1.21'
+author: Antigravity
+description: Plugin d'abattage d'arbres massif et contrôle pour serveurs Paper/Purpur.
+
+commands:
+  wildtimber:
+    description: Commande principale de WildTimber.
+    aliases: [wt]
+    permission: wildtimber.use
+
+permissions:
+  wildtimber.use:
+    description: Permet d'utiliser l'abattage de WildTimber.
+    default: true
+  wildtimber.toggle:
+    description: Permet de désactiver ou activer l'abattage de WildTimber pour soi-même.
+    default: true
+  wildtimber.admin:
+    description: Permissions administratives WildTimber.
+    default: op
+    children:
+      wildtimber.admin.reload: true
+      wildtimber.admin.debug: true
+      wildtimber.admin.undo: true
+      wildtimber.admin.blacklist: true
+      wildtimber.admin.treecontact: true
+      wildtimber.admin.gui: true
+  wildtimber.admin.reload:
+    description: Permet de recharger la configuration.
+    default: op
+  wildtimber.admin.debug:
+    description: Permet d'activer les messages debug.
+    default: op
+  wildtimber.admin.undo:
+    description: Permet d'annuler le dernier abattage d'un arbre.
+    default: op
+  wildtimber.admin.blacklist:
+    description: Permet d'activer ou désactiver la protection par blacklist.
+    default: op
+  wildtimber.admin.treecontact:
+    description: Permet d'activer ou désactiver l'exigence de contact au sol.
+    default: op
+  wildtimber.admin.gui:
+    description: Permet d'ouvrir le GUI de configuration de WildTimber.
+    default: op
+  wildtimber.bypass:
+    description: Bypasser les protections et cooldowns.
+    default: op
+    children:
+      wildtimber.bypass.protection: true
+      wildtimber.bypass.cooldown: true
+  wildtimber.bypass.protection:
+    description: Bypasser les protections de zones.
+    default: op
+  wildtimber.bypass.cooldown:
+    description: Bypasser le cooldown de clics.
+    default: op
+  wildtimber.godmode:
+    description: Permet d'abattre d'un coup un arbre (Godmode).
+    default: op
