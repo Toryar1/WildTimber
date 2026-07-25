@@ -1,5 +1,8 @@
 # 🌲 WildTimber
 
+[![Français](https://img.shields.io/badge/Langue-Français-blue)](README.md)
+[![English](https://img.shields.io/badge/Language-English-red)](README_EN.md)
+
 **WildTimber** est un plugin Spigot / Paper / Purpur moderne et ultra-complet d'abattage d'arbres réaliste pour Minecraft (support Minecraft 1.21 & 26.2+).
 
 ---
