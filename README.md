@@ -71,7 +71,7 @@ mvn clean package -P paper-26.2
 
 Le fichier compilé `WildTimber-paper-1.0.0.jar` se trouvera dans le dossier `target/`.
 
----
-
 ## 📄 Licence & Crédits
-Développé avec ❤️ pour des serveurs Minecraft modernes et performants.
+
+© 2026 **Toryar1**. Tous droits réservés.
+Ce projet est sous **licence propriétaire (Proprietary / All Rights Reserved)**. Toute copie, modification, redistribution ou utilisation commerciale sans autorisation écrite préalable et accord de rétribution financière est strictement interdite. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
