@@ -27,6 +27,8 @@
 
 plugin:
   enabled: true          # true = plugin actif | false = désactivé globalement
+  # Langue du plugin (fr, en, es, de, zh)
+  language: "fr"
   # Mettre à true pour voir les logs de debug dans la console
   debug: false           # Exemple : debug: true → affiche les scans en console
   # Mettre à true pour activer les logs détaillés de drops de feuilles (très spammants !)

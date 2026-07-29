@@ -29,6 +29,7 @@ public class ConfigManager {
     private boolean pluginEnabled;
     private volatile boolean debug;
     private boolean verboseDebug;
+    private String language = "fr";
     private Set<String> enabledWorlds = new HashSet<>();
     private double baseCoefficient;
     private int inactivityDelaySeconds;
@@ -196,7 +197,40 @@ public class ConfigManager {
         saveResourceIfNotExists("config.yml");
         saveResourceIfNotExists("biomes.yml");
         saveResourceIfNotExists("blocks.yml");
-        saveResourceIfNotExists("lang.yml");
+
+        // Sauvegarder les fichiers de langues dans le sous-dossier lang/
+        File langDir = new File(plugin.getDataFolder(), "lang");
+        if (!langDir.exists()) langDir.mkdirs();
+
+        for (String langCode : List.of("fr", "en", "es", "de", "zh")) {
+            File resFile = new File(langDir, "lang_" + langCode + ".yml");
+            if (!resFile.exists()) {
+                InputStream is = plugin.getResource("lang/lang_" + langCode + ".yml");
+                if (is != null) {
+                    try (FileOutputStream fos = new FileOutputStream(resFile)) {
+                        is.transferTo(fos);
+                    } catch (IOException ignored) {}
+                }
+            }
+        }
+
+        // Si lang.yml n'existe pas, copier le fichier correspondant à la langue choisie
+        File langFile = new File(plugin.getDataFolder(), "lang.yml");
+        if (!langFile.exists()) {
+            String selectedLang = "fr";
+            File cfgFile = new File(plugin.getDataFolder(), "config.yml");
+            if (cfgFile.exists()) {
+                FileConfiguration tmpConfig = YamlConfiguration.loadConfiguration(cfgFile);
+                selectedLang = tmpConfig.getString("plugin.language", "fr").toLowerCase();
+            }
+            InputStream is = plugin.getResource("lang/lang_" + selectedLang + ".yml");
+            if (is == null) is = plugin.getResource("lang/lang_fr.yml");
+            if (is != null) {
+                try (FileOutputStream fos = new FileOutputStream(langFile)) {
+                    is.transferTo(fos);
+                } catch (IOException ignored) {}
+            }
+        }
 
         // Migration : injecter les nouvelles clés sans écraser les existantes
         migrateConfig("config.yml");
@@ -256,6 +290,7 @@ public class ConfigManager {
 
     private void parseGlobals() {
         pluginEnabled = config.getBoolean("plugin.enabled", true);
+        language = config.getString("plugin.language", "fr").toLowerCase();
         debug = config.getBoolean("plugin.debug", false);
         verboseDebug = config.getBoolean("plugin.verbose-debug", false);
 
@@ -938,5 +973,29 @@ public class ConfigManager {
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Impossible de sauvegarder biomes.yml", e);
         }
+    }
+
+    public String getLanguage() { return language; }
+
+    public void setLanguage(String newLang) {
+        if (newLang == null) return;
+        String cleaned = newLang.toLowerCase().trim();
+        if (!Set.of("fr", "en", "es", "de", "zh").contains(cleaned)) return;
+
+        this.language = cleaned;
+        config.set("plugin.language", cleaned);
+        saveConfig();
+
+        File targetLang = new File(plugin.getDataFolder(), "lang.yml");
+        String resourcePath = "lang/lang_" + cleaned + ".yml";
+        InputStream is = plugin.getResource(resourcePath);
+        if (is != null) {
+            try (FileOutputStream fos = new FileOutputStream(targetLang)) {
+                is.transferTo(fos);
+            } catch (IOException e) {
+                plugin.getLogger().warning("Erreur lors de la mise à jour du fichier lang.yml : " + e.getMessage());
+            }
+        }
+        load();
     }
 }

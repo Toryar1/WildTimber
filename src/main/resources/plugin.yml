@@ -2,8 +2,9 @@ name: WildTimber
 version: '${project.version}'
 main: com.wildtimber.WildTimber
 api-version: '1.21'
-author: Antigravity
+author: Toryar1
 description: Plugin d'abattage d'arbres massif et contrôle pour serveurs Paper/Purpur.
+softdepend: [PlaceholderAPI]
 
 commands:
   wildtimber:

@@ -4,11 +4,14 @@ import com.wildtimber.config.ConfigManager;
 import com.wildtimber.detection.TreeDetector;
 import com.wildtimber.felling.CutJobManager;
 import com.wildtimber.felling.TreeFeller;
+import com.wildtimber.hook.WildTimberExpansion;
 import com.wildtimber.listener.BlockListener;
 import com.wildtimber.manager.TreeManager;
-import com.wildtimber.protection.DefaultProtectionHook;
+import com.wildtimber.protection.SimulatedProtectionHook;
 import com.wildtimber.protection.ProtectionHook;
 import com.wildtimber.gui.ConfigGUI;
+import com.wildtimber.update.UpdateChecker;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,6 +33,7 @@ public final class WildTimber extends JavaPlugin implements CommandExecutor, Tab
     private TreeFeller treeFeller;
     private CutJobManager cutJobManager;
     private ProtectionHook protectionHook;
+    private UpdateChecker updateChecker;
 
     @Override
     public void onEnable() {
@@ -42,7 +46,10 @@ public final class WildTimber extends JavaPlugin implements CommandExecutor, Tab
         treeDetector = new TreeDetector(this);
         treeFeller = new TreeFeller(this);
         cutJobManager = new CutJobManager(this);
-        protectionHook = new DefaultProtectionHook(); // extensible à l'avenir
+
+        // Hook de protection universel (simule un BlockBreakEvent pour compatibilité
+        // WorldGuard, GriefPrevention, Lands, Towny, Factions, Residence, etc.)
+        protectionHook = new SimulatedProtectionHook();
 
         // 3. Enregistrement des événements
         getServer().getPluginManager().registerEvents(new BlockListener(this), this);
@@ -57,15 +64,27 @@ public final class WildTimber extends JavaPlugin implements CommandExecutor, Tab
             cmd.setTabCompleter(this);
         }
 
-        getLogger().info("[WildTimber] Leaf drops config → enabled=" +
-                configManager.isLeafDropsEnabled() +
-                " | sapling=" + configManager.getLeafDropsSaplingChance() +
-                " | stick=" + configManager.getLeafDropsStickChance() +
-                " | apple=" + configManager.getLeafDropsAppleChance());
+        // 6. Vérificateur de mise à jour SpigotMC (asynchrone)
+        // Remplacez 0 par l'ID de votre ressource SpigotMC une fois publiée
+        int spigotResourceId = 0;
+        updateChecker = new UpdateChecker(this, spigotResourceId);
+        if (spigotResourceId > 0) {
+            updateChecker.checkUpdate(version ->
+                getLogger().info("[UpdateChecker] Nouvelle version disponible sur SpigotMC : " + version)
+            );
+            getServer().getPluginManager().registerEvents(updateChecker, this);
+        }
 
+        // 7. Intégration PlaceholderAPI (optionnel)
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new WildTimberExpansion(this).register();
+            getLogger().info("[WildTimber] PlaceholderAPI détecté — placeholders enregistrés.");
+        }
+
+        getLogger().info("[WildTimber] Langue active : " + configManager.getLanguage());
         getLogger().info("========================================");
-        getLogger().info("   WildTimber v" + getDescription().getVersion() + " charge avec succes !");
-        getLogger().info("   Le plugin fonctionne parfaitement.   ");
+        getLogger().info("   WildTimber v" + getDescription().getVersion() + " chargé avec succès !");
+        getLogger().info("   Langue : " + configManager.getLanguage().toUpperCase());
         getLogger().info("========================================");
     }
 
@@ -301,6 +320,56 @@ public final class WildTimber extends JavaPlugin implements CommandExecutor, Tab
             return true;
         }
 
+        // ── Commande : language ──
+        if (subCommand.equals("language") || subCommand.equals("lang")) {
+            if (!sender.hasPermission("wildtimber.admin.reload")) {
+                sender.sendMessage(configManager.getMessage("no_permission", true));
+                return true;
+            }
+            if (args.length < 2) {
+                sender.sendMessage(configManager.getMessage("prefix", false) + "§eUsage : §6/wt language <fr|en|es|de|zh>");
+                return true;
+            }
+            String lang = args[1].toLowerCase();
+            configManager.setLanguage(lang);
+            sender.sendMessage(configManager.getMessage("language_changed", true).replace("{lang}", lang.toUpperCase()));
+            return true;
+        }
+
+        // ── Commande : info ──
+        if (subCommand.equals("info")) {
+            if (!sender.hasPermission("wildtimber.admin")) {
+                sender.sendMessage(configManager.getMessage("no_permission", true));
+                return true;
+            }
+            String papi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? "§aOui" : "§cNon";
+            sender.sendMessage("§2§l◈ WildTimber §r§7— Informations");
+            sender.sendMessage("§7 Version     : §f" + getDescription().getVersion());
+            sender.sendMessage("§7 Auteur      : §f" + getDescription().getAuthors());
+            sender.sendMessage("§7 Langue      : §f" + configManager.getLanguage().toUpperCase());
+            sender.sendMessage("§7 Arbres actifs : §f" + treeManager.getActiveTrees().size());
+            sender.sendMessage("§7 PlaceholderAPI : " + papi);
+            sender.sendMessage("§7 Statut      : " + (configManager.isPluginEnabled() ? "§aACTIF" : "§cDÉSACTIVÉ"));
+            return true;
+        }
+
+        // ── Commande : help ──
+        if (subCommand.equals("help")) {
+            sender.sendMessage("§2§l╔══ WildTimber — Aide ══╗");
+            if (sender.hasPermission("wildtimber.admin.gui"))     sender.sendMessage("§6 /wt gui              §7→ Ouvre l'interface de configuration");
+            if (sender.hasPermission("wildtimber.admin.reload"))  sender.sendMessage("§6 /wt reload            §7→ Recharge la configuration");
+            if (sender.hasPermission("wildtimber.admin.reload"))  sender.sendMessage("§6 /wt language <code>   §7→ Change la langue (fr, en, es, de, zh)");
+            if (sender.hasPermission("wildtimber.admin.debug"))   sender.sendMessage("§6 /wt debug             §7→ Active/désactive le mode debug");
+            if (sender.hasPermission("wildtimber.admin.blacklist")) sender.sendMessage("§6 /wt blacklist         §7→ Toggle protection blocs construction");
+            if (sender.hasPermission("wildtimber.admin.treecontact")) sender.sendMessage("§6 /wt treecontact       §7→ Toggle exigence contact au sol");
+            if (sender.hasPermission("wildtimber.admin.godmode")) sender.sendMessage("§6 /wt godmode [joueur]  §7→ Active/désactive le godmode");
+            if (sender.hasPermission("wildtimber.admin.undo"))    sender.sendMessage("§6 /wt undo [joueur]     §7→ Annule le dernier abattage");
+            if (sender.hasPermission("wildtimber.toggle"))        sender.sendMessage("§6 /wt toggle [joueur]   §7→ Active/désactive WildTimber pour soi");
+            if (sender.hasPermission("wildtimber.admin"))         sender.sendMessage("§6 /wt info              §7→ Informations sur le plugin");
+            sender.sendMessage("§2§l╚═══════════════════════╝");
+            return true;
+        }
+
         sender.sendMessage(configManager.getMessage("unknown_command", true));
         return true;
     }
@@ -309,40 +378,31 @@ public final class WildTimber extends JavaPlugin implements CommandExecutor, Tab
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
             List<String> suggestions = new ArrayList<>();
-            if (sender.hasPermission("wildtimber.admin.gui")) {
-                suggestions.add("gui");
-            }
+            suggestions.add("help");
+            if (sender.hasPermission("wildtimber.admin.gui"))      suggestions.add("gui");
             if (sender.hasPermission("wildtimber.admin.reload")) {
                 suggestions.add("reload");
+                suggestions.add("language");
             }
-            if (sender.hasPermission("wildtimber.admin.debug")) {
-                suggestions.add("debug");
-            }
-            if (sender.hasPermission("wildtimber.admin.blacklist")) {
-                suggestions.add("blacklist");
-                suggestions.add("protection");
-            }
-            if (sender.hasPermission("wildtimber.admin.treecontact")) {
-                suggestions.add("treecontact");
-            }
-            if (sender.hasPermission("wildtimber.admin.godmode") || sender.hasPermission("wildtimber.godmode")) {
-                suggestions.add("godmode");
-            }
-            if (sender.hasPermission("wildtimber.admin.undo")) {
-                suggestions.add("undo");
-            }
-            if (sender.hasPermission("wildtimber.toggle")) {
-                suggestions.add("toggle");
-            }
+            if (sender.hasPermission("wildtimber.admin.debug"))    suggestions.add("debug");
+            if (sender.hasPermission("wildtimber.admin.blacklist")) { suggestions.add("blacklist"); suggestions.add("protection"); }
+            if (sender.hasPermission("wildtimber.admin.treecontact")) suggestions.add("treecontact");
+            if (sender.hasPermission("wildtimber.admin.godmode") || sender.hasPermission("wildtimber.godmode")) suggestions.add("godmode");
+            if (sender.hasPermission("wildtimber.admin.undo"))     suggestions.add("undo");
+            if (sender.hasPermission("wildtimber.toggle"))         suggestions.add("toggle");
+            if (sender.hasPermission("wildtimber.admin"))          suggestions.add("info");
             return suggestions;
         }
 
         if (args.length == 2) {
             String sub = args[0].toLowerCase();
+            if (sub.equals("language") || sub.equals("lang")) {
+                return List.of("fr", "en", "es", "de", "zh");
+            }
             if (sub.equals("godmode") || sub.equals("god") || sub.equals("undo") || sub.equals("toggle")) {
                 if (sender.hasPermission("wildtimber.admin")) {
                     List<String> players = new ArrayList<>();
-                    for (org.bukkit.entity.Player p : org.bukkit.Bukkit.getOnlinePlayers()) {
+                    for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()) {
                         players.add(p.getName());
                     }
                     return players;
