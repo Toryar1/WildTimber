@@ -702,10 +702,10 @@ public class BlockListener implements Listener {
                             cfg.set("limits.root-replacement.material", hand.getType().name());
                             cm.saveConfig();
                             cm.load();
-                            player.sendMessage("§aMatériau de remplacement mis à jour : " + hand.getType().name());
+                            player.sendMessage(cm.getMessage("gui_value_updated", true).replace("{name}", "root-replacement.material").replace("{value}", hand.getType().name()));
                             player.openInventory(new ConfigGUI(plugin, player, ConfigGUI.MenuType.GLOBAL_CONFIG_ROOTS, null, null, 0).getInventory());
                         } else {
-                            player.sendMessage("§cVous devez tenir un bloc dans votre main !");
+                            player.sendMessage(cm.getMessage("gui_must_hold_block", true));
                         }
                     } else {
                         startChatSession(player, "config", "limits.root-replacement.material", "root-replacement.material", ConfigGUI.MenuType.GLOBAL_CONFIG_ROOTS);
@@ -852,10 +852,10 @@ public class BlockListener implements Listener {
                             bcfg.set(biomeName + ".root-replacement-material", hand.getType().name());
                             cm.saveBiomes();
                             cm.load();
-                            player.sendMessage("§aMatériau de remplacement mis à jour : " + hand.getType().name());
+                            player.sendMessage(cm.getMessage("gui_value_updated", true).replace("{name}", "root-replacement-material").replace("{value}", hand.getType().name()));
                             player.openInventory(new ConfigGUI(plugin, player, ConfigGUI.MenuType.BIOME_EDITOR, biomeName, null, 0).getInventory());
                         } else {
-                            player.sendMessage("§cVous devez tenir un bloc dans votre main !");
+                            player.sendMessage(cm.getMessage("gui_must_hold_block", true));
                         }
                     } else {
                         startChatSession(player, "biomes", biomeName + ".root-replacement-material", "root-replacement-material", ConfigGUI.MenuType.BIOME_EDITOR, biomeName, null);
@@ -870,7 +870,7 @@ public class BlockListener implements Listener {
                         bcfg.set(biomeName, null);
                         cm.saveBiomes();
                         cm.load();
-                        player.sendMessage("§aBiome " + biomeName + " supprimé.");
+                        player.sendMessage(cm.getMessage("gui_biome_deleted", true).replace("{name}", biomeName));
                         player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_BURN, 0.8f, 1.0f);
                         player.openInventory(new ConfigGUI(plugin, player, ConfigGUI.MenuType.BIOME_LIST, null, null, 0).getInventory());
                     }
@@ -894,14 +894,14 @@ public class BlockListener implements Listener {
                             bcfg.set(biomeName + "." + listType, list);
                             cm.saveBiomes();
                             cm.load();
-                            player.sendMessage("§aMatériau " + hand.getType().name() + " ajouté à la liste.");
+                            player.sendMessage(cm.getMessage("gui_material_added", true).replace("{material}", hand.getType().name()));
                             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1.0f);
                         } else {
-                            player.sendMessage("§cCe matériau est déjà présent.");
+                            player.sendMessage(cm.getMessage("gui_material_already_present", true));
                         }
                         player.openInventory(new ConfigGUI(plugin, player, ConfigGUI.MenuType.MATERIAL_LIST_EDITOR, biomeName, listType, gui.getPage()).getInventory());
                     } else {
-                        player.sendMessage("§cVous devez tenir un bloc dans votre main !");
+                        player.sendMessage(cm.getMessage("gui_must_hold_block", true));
                     }
                 } else if (slot == 50) {
                     // Ajouter par nom
@@ -914,7 +914,7 @@ public class BlockListener implements Listener {
                             bcfg.set(biomeName + "." + listType, list);
                             cm.saveBiomes();
                             cm.load();
-                            player.sendMessage("§aMatériau " + matName + " retiré de la liste.");
+                            player.sendMessage(cm.getMessage("gui_material_removed", true).replace("{material}", matName));
                             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_BREAK, 0.8f, 1.0f);
                         }
                         player.openInventory(new ConfigGUI(plugin, player, ConfigGUI.MenuType.MATERIAL_LIST_EDITOR, biomeName, listType, gui.getPage()).getInventory());

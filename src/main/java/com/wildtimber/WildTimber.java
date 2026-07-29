@@ -148,7 +148,7 @@ public final class WildTimber extends JavaPlugin implements CommandExecutor, Tab
                 ConfigGUI.openMainMenu(this, player);
                 return true;
             }
-            sender.sendMessage(configManager.getMessage("prefix", false) + "§eUtilise §6/wt gui§e, §6/wt reload§e, §6/wt debug§e, etc.");
+            sender.sendMessage(configManager.getMessage("cmd_default_usage", true));
             return true;
         }
 
@@ -327,7 +327,7 @@ public final class WildTimber extends JavaPlugin implements CommandExecutor, Tab
                 return true;
             }
             if (args.length < 2) {
-                sender.sendMessage(configManager.getMessage("prefix", false) + "§eUsage : §6/wt language <fr|en|es|de|zh>");
+                sender.sendMessage(configManager.getMessage("cmd_language_usage", true));
                 return true;
             }
             String lang = args[1].toLowerCase();
@@ -342,31 +342,35 @@ public final class WildTimber extends JavaPlugin implements CommandExecutor, Tab
                 sender.sendMessage(configManager.getMessage("no_permission", true));
                 return true;
             }
-            String papi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? "§aOui" : "§cNon";
-            sender.sendMessage("§2§l◈ WildTimber §r§7— Informations");
-            sender.sendMessage("§7 Version     : §f" + getDescription().getVersion());
-            sender.sendMessage("§7 Auteur      : §f" + getDescription().getAuthors());
-            sender.sendMessage("§7 Langue      : §f" + configManager.getLanguage().toUpperCase());
-            sender.sendMessage("§7 Arbres actifs : §f" + treeManager.getActiveTrees().size());
-            sender.sendMessage("§7 PlaceholderAPI : " + papi);
-            sender.sendMessage("§7 Statut      : " + (configManager.isPluginEnabled() ? "§aACTIF" : "§cDÉSACTIVÉ"));
+            String papiStatus = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ?
+                    configManager.getMessage("cmd_info_papi_yes", false) : configManager.getMessage("cmd_info_papi_no", false);
+            String pluginStatus = configManager.isPluginEnabled() ?
+                    configManager.getMessage("cmd_info_status_active", false) : configManager.getMessage("cmd_info_status_inactive", false);
+
+            sender.sendMessage(configManager.getMessage("cmd_info_header", false));
+            sender.sendMessage(configManager.getMessage("cmd_info_version", false).replace("{version}", getDescription().getVersion()));
+            sender.sendMessage(configManager.getMessage("cmd_info_author", false).replace("{author}", String.join(", ", getDescription().getAuthors())));
+            sender.sendMessage(configManager.getMessage("cmd_info_language", false).replace("{lang}", configManager.getLanguage().toUpperCase()));
+            sender.sendMessage(configManager.getMessage("cmd_info_active_trees", false).replace("{count}", String.valueOf(treeManager.getActiveTrees().size())));
+            sender.sendMessage(configManager.getMessage("cmd_info_papi", false).replace("{status}", papiStatus));
+            sender.sendMessage(configManager.getMessage("cmd_info_status", false).replace("{status}", pluginStatus));
             return true;
         }
 
         // ── Commande : help ──
         if (subCommand.equals("help")) {
-            sender.sendMessage("§2§l╔══ WildTimber — Aide ══╗");
-            if (sender.hasPermission("wildtimber.admin.gui"))     sender.sendMessage("§6 /wt gui              §7→ Ouvre l'interface de configuration");
-            if (sender.hasPermission("wildtimber.admin.reload"))  sender.sendMessage("§6 /wt reload            §7→ Recharge la configuration");
-            if (sender.hasPermission("wildtimber.admin.reload"))  sender.sendMessage("§6 /wt language <code>   §7→ Change la langue (fr, en, es, de, zh)");
-            if (sender.hasPermission("wildtimber.admin.debug"))   sender.sendMessage("§6 /wt debug             §7→ Active/désactive le mode debug");
-            if (sender.hasPermission("wildtimber.admin.blacklist")) sender.sendMessage("§6 /wt blacklist         §7→ Toggle protection blocs construction");
-            if (sender.hasPermission("wildtimber.admin.treecontact")) sender.sendMessage("§6 /wt treecontact       §7→ Toggle exigence contact au sol");
-            if (sender.hasPermission("wildtimber.admin.godmode")) sender.sendMessage("§6 /wt godmode [joueur]  §7→ Active/désactive le godmode");
-            if (sender.hasPermission("wildtimber.admin.undo"))    sender.sendMessage("§6 /wt undo [joueur]     §7→ Annule le dernier abattage");
-            if (sender.hasPermission("wildtimber.toggle"))        sender.sendMessage("§6 /wt toggle [joueur]   §7→ Active/désactive WildTimber pour soi");
-            if (sender.hasPermission("wildtimber.admin"))         sender.sendMessage("§6 /wt info              §7→ Informations sur le plugin");
-            sender.sendMessage("§2§l╚═══════════════════════╝");
+            sender.sendMessage(configManager.getMessage("cmd_help_header", false));
+            if (sender.hasPermission("wildtimber.admin.gui"))     sender.sendMessage(configManager.getMessage("cmd_help_gui", false));
+            if (sender.hasPermission("wildtimber.admin.reload"))  sender.sendMessage(configManager.getMessage("cmd_help_reload", false));
+            if (sender.hasPermission("wildtimber.admin.reload"))  sender.sendMessage(configManager.getMessage("cmd_help_language", false));
+            if (sender.hasPermission("wildtimber.admin.debug"))   sender.sendMessage(configManager.getMessage("cmd_help_debug", false));
+            if (sender.hasPermission("wildtimber.admin.blacklist")) sender.sendMessage(configManager.getMessage("cmd_help_blacklist", false));
+            if (sender.hasPermission("wildtimber.admin.treecontact")) sender.sendMessage(configManager.getMessage("cmd_help_treecontact", false));
+            if (sender.hasPermission("wildtimber.admin.godmode")) sender.sendMessage(configManager.getMessage("cmd_help_godmode", false));
+            if (sender.hasPermission("wildtimber.admin.undo"))    sender.sendMessage(configManager.getMessage("cmd_help_undo", false));
+            if (sender.hasPermission("wildtimber.toggle"))        sender.sendMessage(configManager.getMessage("cmd_help_toggle", false));
+            if (sender.hasPermission("wildtimber.admin"))         sender.sendMessage(configManager.getMessage("cmd_help_info", false));
+            sender.sendMessage(configManager.getMessage("cmd_help_footer", false));
             return true;
         }
 

@@ -1,77 +1,190 @@
+<!-- WildTimber - README_EN.md -->
+<!-- Wild Series signature by Toryar1 -->
+
+<div align="center">
+
 # 🌲 WildTimber
 
-[![Français](https://img.shields.io/badge/Langue-Français-blue)](README.md)
-[![English](https://img.shields.io/badge/Language-English-red)](README_EN.md)
+[![License](https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-1.0.0-brightgreen?style=for-the-badge)]()
+[![Paper](https://img.shields.io/badge/Paper-1.19%20→%2026.2-orange?style=for-the-badge)](https://papermc.io)
+[![Java](https://img.shields.io/badge/Java-21+-blue?style=for-the-badge)](https://adoptium.net)
 
-**WildTimber** is a modern, feature-packed, realistic tree-felling Spigot / Paper / Purpur plugin for Minecraft (supporting Minecraft 1.21 & 26.2+).
+[![Français](https://img.shields.io/badge/🇫🇷-Français-blue?style=flat-square)](README.md)
+[![English](https://img.shields.io/badge/🇬🇧-English-red?style=flat-square)](README_EN.md)
+
+**Realistic, biome-configurable tree felling plugin ready for Paper/Purpur servers.**
+
+*Part of the Wild Series — high-performance plugins sharing a common aesthetic and philosophy.*
+
+</div>
 
 ---
 
-## ✨ Key Features
+## 🎯 Overview
 
-* 🪓 **Realistic & Dynamic Tree Felling**:
-  * Automatic tree detection using a 26-way BFS scanning algorithm identifying logs, leaves, roots, and attached blocks.
-  * **Root Contact Check**: Trees must touch solid ground to be felled (globally or per-biome configurable).
-  * **Dynamic Right-Click Break Speed**: Right-click felling speed is dynamically synchronized with the player's vanilla mining speed (`breakSpeed`), perfectly balancing right-click and left-click mining rates.
+**WildTimber** completely reimagines tree chopping in Minecraft. Every tree has its own **Health Points**, a dynamic **BossBar**, and **automatic regeneration** if abandoned mid-felling. All behavior is **configurable per biome**, editable in-game via a **full GUI editor**, and fully respects **100% of existing land protection** plugins on your server.
 
-* 🖥️ **Complete In-Game GUI Editor (`/wt gui`)**:
-  * Full chest-based GUI editor to manage all settings in-game without touching YAML files.
-  * Multi-level management for global configuration and per-biome overrides (`biomes.yml`).
-  * One-click custom biome creation based on your current player location.
-  * Real-time material list editing (logs, leaves, attachments) using held items or interactive chat inputs.
+---
 
-* 🩺 **Tree HP System & BossBar**:
-  * Dynamic visual progress bar (BossBar) displaying tree species name, current percentage, and remaining HP.
-  * Automatic auto-hiding when players step away (> 5 blocks) or remain inactive (> 5 seconds).
-  * Automatic health regeneration over time if a tree is abandoned mid-felling.
-  * Visual crack stage progress rendered directly on the targeted log block (`crack stage`).
+## ✨ Features
 
-* ⚡ **Performance & Security**:
-  * **Staged Cut Scheduler**: Slice-by-slice progressive felling for mega-trees to prevent server tick spikes.
-  * **Built-in Anti-Cheat**: Protection against rapid autoclickers without false positives on legitimate right-click holds.
-  * **Land Claim Compatibility**: Full hook support for land protection plugins.
-  * **Undo Command (`/wt undo`)**: Instantly restores the last tree felled by a player.
+<details>
+<summary><b>🪓 Realistic & Dynamic Tree Felling</b></summary>
+
+- Automatic tree detection using a 26-way BFS algorithm (diagonal branches included)
+- **Root contact check**: trunk must touch the ground to be felled (configurable)
+- **Dynamic right-click speed** synchronized with vanilla mining speed (`breakSpeed`)
+- Protection against adjacent building blocks (planks, slabs, etc.)
+- Fused-tree separation algorithm using bottleneck detection
+
+</details>
+
+<details>
+<summary><b>🩺 HP System & BossBar</b></summary>
+
+- Dynamic progress bar showing tree species name, HP, and percentage
+- Auto-hides when player walks away (>5 blocks) or stays inactive (>5s)
+- **Automatic health regeneration** if tree is abandoned mid-felling
+- Progressive visual crack stages rendered on the targeted log
+
+</details>
+
+<details>
+<summary><b>🖥️ Full In-Game GUI Editor (`/wt gui`)</b></summary>
+
+- Chest-based GUI — manage all settings without touching YAML files
+- **Global** and **per-biome** configuration management (`biomes.yml`)
+- Create custom biomes from your current player location in one click
+- Edit material lists using held items or interactive chat inputs
+
+</details>
+
+<details>
+<summary><b>⚡ Performance & Security</b></summary>
+
+- **Staged Cut Scheduler**: slice-by-slice felling for mega-trees (zero lag)
+- **Built-in Anti-Cheat**: autoclicker protection without false positives
+- **Universal protection compatibility**: WorldGuard, GriefPrevention, Lands, Towny, Factions, Residence…
+- **Undo command** (`/wt undo`): instantly restores the last felled tree
+
+</details>
+
+<details>
+<summary><b>🌐 Multilingual Support</b></summary>
+
+Available languages, automatically extracted on first launch:
+
+| Code | Language |
+|:---:|---|
+| `fr` | 🇫🇷 Français |
+| `en` | 🇬🇧 English |
+| `es` | 🇪🇸 Español |
+| `de` | 🇩🇪 Deutsch |
+| `zh` | 🇨🇳 中文 (Simplified) |
+
+Switch language live: `/wt language <code>`
+
+</details>
 
 ---
 
 ## 📜 Commands & Permissions
 
-All commands are available under the primary `/wildtimber` command (or alias `/wt`).
-
 | Command | Description | Permission |
 | :--- | :--- | :--- |
-| `/wt` or `/wt gui` | Opens the full in-game configuration GUI editor | `wildtimber.admin.gui` |
-| `/wt reload` | Reloads all configuration files (`config.yml`, `biomes.yml`, `blocks.yml`, `lang.yml`) | `wildtimber.admin.reload` |
-| `/wt debug` | Toggles console debug logging mode | `wildtimber.admin.debug` |
-| `/wt blacklist` | Toggles protection against felling trees connected to building blocks | `wildtimber.admin.blacklist` |
-| `/wt treecontact` | Toggles the ground contact requirement | `wildtimber.admin.treecontact` |
-| `/wt godmode [player]` | Toggles one-hit instant tree felling | `wildtimber.admin.godmode` |
-| `/wt undo [player]` | Undoes the last tree felling and restores all blocks | `wildtimber.admin.undo` |
-| `/wt toggle [player]` | Toggles WildTimber felling for oneself | `wildtimber.toggle` |
+| `/wt` or `/wt gui` | Open the in-game configuration GUI | `wildtimber.admin.gui` |
+| `/wt reload` | Reload all configuration files | `wildtimber.admin.reload` |
+| `/wt language <code>` | Switch plugin language live | `wildtimber.admin.reload` |
+| `/wt debug` | Toggle console debug mode | `wildtimber.admin.debug` |
+| `/wt blacklist` | Toggle building block protection | `wildtimber.admin.blacklist` |
+| `/wt treecontact` | Toggle ground contact requirement | `wildtimber.admin.treecontact` |
+| `/wt godmode [player]` | Toggle one-hit instant tree felling | `wildtimber.admin.godmode` |
+| `/wt undo [player]` | Undo last tree felling | `wildtimber.admin.undo` |
+| `/wt toggle [player]` | Toggle WildTimber for yourself | `wildtimber.toggle` |
+| `/wt info` | Display plugin information | `wildtimber.admin` |
+| `/wt help` | Show available commands | *(all)* |
 
 ### 🛡️ Special Permissions
-* `wildtimber.use` *(default: true)*: Allows using the tree felling feature.
-* `wildtimber.bypass.protection` *(default: op)*: Bypasses land protection restrictions.
-* `wildtimber.bypass.cooldown` *(default: op)*: Ignores click cooldowns.
+
+| Permission | Default | Description |
+|---|:---:|---|
+| `wildtimber.use` | ✅ everyone | Access to tree felling |
+| `wildtimber.bypass.protection` | OP | Bypass land protection checks |
+| `wildtimber.bypass.cooldown` | OP | Bypass click cooldowns |
 
 ---
 
-## 🛠️ Build & Installation
+## 🏷️ Placeholders (PlaceholderAPI)
 
-### Requirements
-* Java 21+
-* Maven 3.8+
+If PlaceholderAPI is installed, the following placeholders are available:
 
-### Compilation
-To build the `.jar` artifact optimized for Paper / Purpur 26.2:
+| Placeholder | Description |
+|---|---|
+| `%wildtimber_status%` | Plugin status (ENABLED/DISABLED) |
+| `%wildtimber_godmode%` | Player godmode state |
+| `%wildtimber_active_trees%` | Number of currently active trees |
+| `%wildtimber_version%` | Plugin version |
+| `%wildtimber_disabled%` | WildTimber disabled for this player |
 
+---
+
+## 🛠️ Installation & Build
+
+### Quick Install
+1. Download the `.jar` matching your server version
+2. Drop it in your `plugins/` folder
+3. Restart your server
+4. Language is automatically set from `plugin.language` in `config.yml`
+
+### Supported Versions
+
+| Profile | Maven Command |
+|---|---|
+| Paper 1.19 | `mvn clean package -P paper-1.19` |
+| Paper 1.20 | `mvn clean package -P paper-1.20` |
+| Paper 1.20.6 | `mvn clean package -P paper-1.20.6` |
+| Paper 1.21 | `mvn clean package -P paper-1.21` |
+| Paper 26.1 | `mvn clean package -P paper-26.1` |
+| Paper 26.2 | `mvn clean package -P paper-26.2` |
+
+### Build from Source
 ```bash
+# Requirements: Java 21+ & Maven 3.8+
 mvn clean package -P paper-26.2
+# Output JAR will be in target/
 ```
 
-The compiled `WildTimber-paper-1.0.0.jar` will be placed in the `target/` directory.
+---
 
-## 📄 License & Credits
+## 🐛 Bug Reports
+
+Encountered an issue? Here's how to report it:
+
+1. **Check** it's not a configuration issue or plugin conflict
+2. **Browse** [GitHub Issues](https://github.com/Toryar1/WildTimber/issues) to see if it's already reported
+3. **Open an Issue** with:
+   - Plugin version and server version
+   - Steps to reproduce the bug
+   - Full error output from console
+4. **Contact me on Discord**: **Toryar** for a faster response
+
+> ⚠️ Please do not use Issues for feature requests or general questions.
+
+---
+
+## 📄 License
 
 © 2026 **Toryar1**. All Rights Reserved.
-This project is licensed under a **Proprietary / Confidential License (All Rights Reserved)**. Any unauthorized copying, distribution, modification, or commercial exploitation without prior written authorization and financial compensation is strictly prohibited. See the [LICENSE](LICENSE) file for more details.
+
+This project is under a **Proprietary License**. Any unauthorized copying, distribution, or commercial exploitation without prior written consent and financial compensation is strictly prohibited. See the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+*🌿 Wild Series — Plugins crafted for modern Minecraft servers*
+
+**[WildTimber](https://github.com/Toryar1/WildTimber)** • Made with ❤️ by [Toryar1](https://github.com/Toryar1)
+
+</div>

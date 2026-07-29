@@ -48,7 +48,7 @@ public class ActiveTree {
         this.biomeName = biomeName;
         this.lastCutTime = System.currentTimeMillis();
         this.lastHealTime = System.currentTimeMillis();
-        this.treeName = determineTreeName(logs, world);
+        this.treeName = determineTreeName(logs, world, configManager);
 
         // Création de la BossBar
         String title = configManager.getMessage("bossbar_title", false)
@@ -59,21 +59,20 @@ public class ActiveTree {
         this.bossBar = Bukkit.createBossBar(title, BarColor.GREEN, BarStyle.SOLID);
     }
 
-    private String determineTreeName(Set<BlockPos> logs, World world) {
-        if (logs.isEmpty()) return "Arbre";
+    private String determineTreeName(Set<BlockPos> logs, World world, ConfigManager configManager) {
+        if (logs.isEmpty()) return configManager.getMessage("tree_type.unknown", false);
         BlockPos first = logs.iterator().next();
         Material mat = world.getBlockAt(first.x(), first.y(), first.z()).getType();
         String name = mat.name().replace("_LOG", "").replace("_WOOD", "").replace("_", " ");
-        // Rendre plus joli : OAK -> Chêne
         return switch (name) {
-            case "OAK" -> "Chêne";
-            case "SPRUCE" -> "Sapin";
-            case "BIRCH" -> "Bouleau";
-            case "JUNGLE" -> "Acajou";
-            case "ACACIA" -> "Acacia";
-            case "DARK OAK" -> "Chêne Sombre";
-            case "MANGROVE" -> "Palétuvier";
-            case "CHERRY" -> "Cerisier";
+            case "OAK" -> configManager.getMessage("tree_type.oak", false);
+            case "SPRUCE" -> configManager.getMessage("tree_type.spruce", false);
+            case "BIRCH" -> configManager.getMessage("tree_type.birch", false);
+            case "JUNGLE" -> configManager.getMessage("tree_type.jungle", false);
+            case "ACACIA" -> configManager.getMessage("tree_type.acacia", false);
+            case "DARK OAK" -> configManager.getMessage("tree_type.dark_oak", false);
+            case "MANGROVE" -> configManager.getMessage("tree_type.mangrove", false);
+            case "CHERRY" -> configManager.getMessage("tree_type.cherry", false);
             default -> name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
         };
     }
