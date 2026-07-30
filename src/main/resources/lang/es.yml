@@ -8,22 +8,38 @@ messages:
   godmode_inactive: "&cTala instantánea (Godmode) desactivada."
   language_changed: "&aIdioma cambiado a: &6{lang}"
   reload_success: "&a¡Configuración de WildTimber recargada con éxito!"
-  undo_success: "&aÚltima tala deshaza con éxito ({count} bloques restaurados)."
+  undo_success: "&aÚltima tala deshecha ({count} bloques restaurados)."
   undo_no_snapshot: "&cNo hay tala reciente para deshacer."
-  toggle_enabled: "&aWildTimber se ha activado para ti."
-  toggle_disabled: "&cWildTimber se ha desactivado para ti."
-  click_cooldown: "&cPor favor espera antes de atacar este árbol de nuevo."
+  toggle_enabled: "&aWildTimber activado para ti."
+  toggle_disabled: "&cWildTimber desactivado para ti."
+  click_cooldown: "&cPor favor espera antes de golpear este árbol de nuevo."
   cut_queued: "&7Tala en cola... (posición {position})"
   cut_already_running: "&7Ya hay una tala en curso, por favor espera..."
   cut_partial_fail: "&cTala parcialmente fallida ({processed}/{planned} bloques)"
+  state_enabled: "&aActivado"
+  state_disabled: "&cDesactivado"
+  state_on: "&aSí"
+  state_off: "&cNo"
 
 gui:
   title:
     main_menu: "§8WildTimber - Menú Principal"
-    biomes_list: "§8WildTimber - Lista de Biomas"
+    quick_toggles: "§8WildTimber - Accesos Rápidos"
+    global_config: "§8WildTimber - Config Global"
+    config_general: "§8WildTimber - General"
+    config_limits: "§8WildTimber - Límites"
+    config_decay: "§8WildTimber - Hojas & Descomposición"
+    config_roots: "§8WildTimber - Raíces"
+    config_fallback: "§8WildTimber - Detección Alternativa"
+    biome_list: "§8WildTimber - Lista de Biomas"
     biome_editor: "§8WildTimber - Editor: {biome}"
-    world_protection: "§8WildTimber - Protección de Mundos"
+    material_editor: "§8WildTimber - Materiales: {biome} / {type}"
     language_select: "§8WildTimber - Seleccionar Idioma"
+
+  button:
+    back: "§cAtrás"
+    close: "§cCerrar"
+
   main_menu:
     global_config:
       name: "§6Configuración Global"
@@ -32,36 +48,451 @@ gui:
         - "§7y opciones de regeneración."
         - ""
         - "§e[Clic para abrir]"
-    biomes_config:
+    biome_config:
       name: "§aBiomas y Materiales"
       lore:
         - "§7Configurar troncos, hojas"
-        - "§7y reglas específicas por bioma."
+        - "§7y reglas por bioma."
         - ""
         - "§e[Clic para abrir]"
-    world_protection:
-      name: "§bProtección de Mundos"
+    quick_toggles:
+      name: "§bAccesos Rápidos"
       lore:
-        - "§7Gestionar mundos donde WildTimber"
-        - "§7está activado o desactivado."
+        - "§7Alternar debug, godmode, etc."
+        - "§7rápidamente."
         - ""
         - "§e[Clic para abrir]"
     language:
       name: "§dCambiar Idioma"
       lore:
-        - "§7Cambiar el idioma de visualización"
-        - "§7del plugin y los menús."
+        - "§7Cambiar el idioma del plugin"
+        - "§7y los menús."
         - ""
         - "§7Idioma actual: §f{lang}"
         - ""
-        - "§e[Clic para abrir el menú]"
+        - "§e[Clic izquierdo para abrir]"
+    reload:
+      name: "§eRecargar Config"
+      lore:
+        - "§7Recargar todos los archivos de configuración."
+        - ""
+        - "§c[Clic para recargar]"
+    close:
+      name: "§cCerrar"
+
+  quick_toggles:
+    debug:
+      name: "§eDebug Mode"
+      lore:
+        - "§7Enable debug messages."
+        - ""
+        - "§7State: {state}"
+        - ""
+        - "§e[Click to toggle]"
+    blacklist:
+      name: "§eBlacklist"
+      lore:
+        - "§7Enable blacklist filtering."
+        - ""
+        - "§7State: {state}"
+        - ""
+        - "§e[Click to toggle]"
+    treecontact:
+      name: "§eTree Contact"
+      lore:
+        - "§7Player must touch the tree"
+        - "§7to trigger felling."
+        - ""
+        - "§7State: {state}"
+        - ""
+        - "§e[Click to toggle]"
+    godmode:
+      name: "§6Godmode"
+      lore:
+        - "§7Instant one-click felling."
+        - ""
+        - "§7State: {state}"
+        - ""
+        - "§e[Click to toggle]"
+    cooldown_bypass:
+      name: "§eCooldown Bypass"
+      lore:
+        - "§7Ignore cooldown between hits."
+        - ""
+        - "§7State: {state}"
+
+  global_config:
+    general:
+      name: "§eGeneral"
+      lore:
+        - "§7Cooldowns, hints, durability loss."
+        - ""
+        - "§e[Click]"
+    limits:
+      name: "§eLimits"
+      lore:
+        - "§7Max blocks, height, radius."
+        - ""
+        - "§e[Click]"
+    decay:
+      name: "§eLeaves & Decay"
+      lore:
+        - "§7Decay range and cleanup."
+        - ""
+        - "§e[Click]"
+    roots:
+      name: "§eRoots"
+      lore:
+        - "§7Root replacement settings."
+        - ""
+        - "§e[Click]"
+    fallback:
+      name: "§eFallback Detection"
+      lore:
+        - "§7Alternative tree detection."
+        - ""
+        - "§e[Click]"
+
+  general:
+    click_cooldown:
+      lore:
+        - "§7Minimum delay between hits (ms)."
+        - ""
+        - "§7Current value: §e{value}ms"
+        - ""
+        - "§e[Click to edit]"
+    hint_cooldown:
+      lore:
+        - "§7Delay between hint messages (s)."
+        - ""
+        - "§7Current value: §e{value}s"
+        - ""
+        - "§e[Click to edit]"
+    send_hint:
+      lore:
+        - "§7Send a hint message to the player."
+        - ""
+        - "§7State: §e{state}"
+        - ""
+        - "§e[Click to toggle]"
+    extra_loss_enabled:
+      lore:
+        - "§7Enable extra durability loss."
+        - ""
+        - "§7State: §e{state}"
+        - ""
+        - "§e[Click to toggle]"
+    extra_loss_points:
+      lore:
+        - "§7Durability points lost per felling."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+
+  limits:
+    max_logs:
+      lore:
+        - "§7Maximum number of logs per tree."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_blocks:
+      lore:
+        - "§7Maximum number of blocks per tree."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_radius:
+      lore:
+        - "§7Maximum horizontal radius (XZ)."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_height:
+      lore:
+        - "§7Maximum tree height (Y)."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    sixway_max_logs:
+      lore:
+        - "§7Max logs in 6-way mode."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+
+  decay:
+    decay_range_xz:
+      lore:
+        - "§7Horizontal leaf decay range."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    decay_range_y:
+      lore:
+        - "§7Vertical leaf decay range."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    allow_diagonal:
+      lore:
+        - "§7Allow diagonal leaves."
+        - ""
+        - "§7State: §e{state}"
+        - ""
+        - "§e[Click to toggle]"
+    canopy_cleanup:
+      lore:
+        - "§7Enable canopy cleanup."
+        - ""
+        - "§7State: §e{state}"
+        - ""
+        - "§e[Click to toggle]"
+    canopy_padding:
+      lore:
+        - "§7Canopy cleanup padding."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    leaves_batch:
+      lore:
+        - "§7Leaves persistence batch size."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+
+  roots:
+    fill_padding:
+      lore:
+        - "§7Root fill padding."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    depth_padding:
+      lore:
+        - "§7Root depth padding."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    root_rep_enabled:
+      lore:
+        - "§7Enable root replacement."
+        - ""
+        - "§7State: §e{state}"
+        - ""
+        - "§e[Click to toggle]"
+    root_rep_material:
+      lore:
+        - "§7Root replacement material."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+
+  fallback:
+    enabled:
+      lore:
+        - "§7Enable fallback detection."
+        - ""
+        - "§7State: §e{state}"
+        - ""
+        - "§e[Click to toggle]"
+    max_blocks:
+      lore:
+        - "§7Max blocks in fallback mode."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    trunk_core_radius:
+      lore:
+        - "§7Trunk core radius."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    trunk_min_height:
+      lore:
+        - "§7Minimum trunk height."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_radius:
+      lore:
+        - "§7Maximum fallback radius."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    min_density:
+      lore:
+        - "§7Minimum density to detect a tree."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+
+  biome_list:
+    entry:
+      lore:
+        - "§7State: {state}"
+        - "§7Logs: §e{logs}"
+        - "§7Leaves: §e{leaves}"
+        - ""
+        - "§e[Click to edit]"
+    prev_page: "§7◀ Página anterior"
+    next_page: "§7Página siguiente ▶"
+    create_from_current:
+      name: "§a+ Crear desde bioma actual"
+      lore:
+        - "§7Bioma actual: §e{biome}"
+        - ""
+        - "§e[Clic para crear]"
+
+  biome_editor:
+    inherited: "§7(heredado)"
+    enabled:
+      name: "§aBioma Activado"
+      lore:
+        - "§7Activar WildTimber en este bioma."
+        - ""
+        - "§7Estado: {state}"
+        - ""
+        - "§e[Clic para alternar]"
+    min_logs:
+      lore:
+        - "§7Minimum logs to detect a tree."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    min_leaves:
+      lore:
+        - "§7Minimum leaves to detect a tree."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_logs:
+      lore:
+        - "§7Log limit for this biome."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_blocks:
+      lore:
+        - "§7Block limit for this biome."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_radius_xz:
+      lore:
+        - "§7Max horizontal radius for this biome."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_height_y:
+      lore:
+        - "§7Max height for this biome."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    belt_radius:
+      lore:
+        - "§7Protection belt radius."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    canopy_padding:
+      lore:
+        - "§7Canopy cleanup padding."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    root_rep_enabled:
+      name: "§eSustitución de Raíces"
+      lore:
+        - "§7Enable root replacement."
+        - ""
+        - "§7State: {state}"
+        - ""
+        - "§e[Click to toggle]"
+    root_rep_material:
+      name: "§eMaterial de Raíces"
+      lore:
+        - "§7Replacement material."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    logs_list:
+      name: "§eLista de Troncos"
+      lore:
+        - "§7Gestionar materiales reconocidos"
+        - "§7como troncos en este bioma."
+        - ""
+        - "§e[Clic para abrir]"
+    leaves_list:
+      name: "§eLista de Hojas"
+      lore:
+        - "§7Gestionar materiales reconocidos"
+        - "§7como hojas en este bioma."
+        - ""
+        - "§e[Clic para abrir]"
+    attachments_list:
+      name: "§eLista de Adjuntos"
+      lore:
+        - "§7Gestionar bloques adheridos al árbol."
+        - ""
+        - "§e[Clic para abrir]"
+    delete:
+      name: "§4Eliminar este Bioma"
+      lore:
+        - "§cEliminar la configuración"
+        - "§cde este bioma."
+        - ""
+        - "§4[Clic para eliminar]"
+
+  material_editor:
+    entry:
+      lore:
+        - "§e[Clic izquierdo] §7Eliminar"
+    add_hand:
+      name: "§a+ Agregar desde la mano"
+      lore:
+        - "§7Agregar el material en mano."
+        - ""
+        - "§e[Clic para agregar]"
+    add_name:
+      name: "§a+ Agregar por nombre"
+      lore:
+        - "§7Escribe el nombre en el chat."
+        - ""
+        - "§e[Clic para agregar]"
+
   language_select:
     active: "§a✔ Idioma Actual"
     select: "§e[Clic izquierdo para seleccionar]"
     entry:
       lore:
-        - "§7Código de idioma: §f{code}"
+        - "§7Code: §f{code}"
         - "{state}"
-  button:
-    back: "§cAtrás"
-    close: "§cCerrar"

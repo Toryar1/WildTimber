@@ -1077,15 +1077,24 @@ public class ConfigManager {
 
     public void setLanguage(String newLang) {
         if (newLang == null) return;
-        String cleaned = newLang.toLowerCase().trim();
-        if (!AVAILABLE_LANGUAGES.containsKey(cleaned)) return;
+        String trimmed = newLang.trim();
 
-        this.language = cleaned;
-        config.set("plugin.language", cleaned);
+        // Find the matching key case-insensitively (to support pt_BR, zh_CN etc.)
+        String matched = null;
+        for (String availCode : AVAILABLE_LANGUAGES.keySet()) {
+            if (availCode.equalsIgnoreCase(trimmed)) {
+                matched = availCode;
+                break;
+            }
+        }
+        if (matched == null) return;
+
+        this.language = matched;
+        config.set("plugin.language", matched);
         saveConfig();
 
         File targetLang = new File(plugin.getDataFolder(), "lang.yml");
-        String resourcePath = "lang/lang_" + cleaned + ".yml";
+        String resourcePath = "lang/lang_" + matched + ".yml";
         InputStream is = plugin.getResource(resourcePath);
         if (is != null) {
             try (FileOutputStream fos = new FileOutputStream(targetLang)) {

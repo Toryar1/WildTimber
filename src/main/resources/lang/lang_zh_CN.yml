@@ -2,66 +2,490 @@ prefix: "&6[WildTimber]&r "
 
 messages:
   no_permission: "&c你没有权限使用此命令。"
-  plugin_disabled_world: "&cWildTimber 已在此世界中禁用。"
+  plugin_disabled_world: "&cWildTimber 在此世界中已禁用。"
   tree_felled_summary: "&a树木已砍倒！ &7(原木: &e{logs}&7, 树叶: &e{leaves}&7, 生态系: &e{biome}&7, 耗时: &e{duration}ms&7)"
-  godmode_active: "&a已启用秒砍模式 (Godmode)。"
-  godmode_inactive: "&c已禁用秒砍模式 (Godmode)。"
-  language_changed: "&a语言已成功更改为: &6{lang}"
-  reload_success: "&aWildTimber 配置文件已成功重载！"
-  undo_success: "&a成功撤销上次砍伐 (已还原 {count} 个方块)。"
-  undo_no_snapshot: "&c没有可撤销的近期砍伐记录。"
+  godmode_active: "&a已启用秒砍 (Godmode)。"
+  godmode_inactive: "&c已禁用秒砍 (Godmode)。"
+  language_changed: "&a语言已更改为: &6{lang}"
+  reload_success: "&aWildTimber 配置已重新加载！"
+  undo_success: "&a上次砍伐已撤销（已恢复 {count} 个方块）。"
+  undo_no_snapshot: "&c没有最近的砍伐可撤销。"
   toggle_enabled: "&aWildTimber 已为您启用。"
   toggle_disabled: "&cWildTimber 已为您禁用。"
-  click_cooldown: "&c请稍后再尝试砍伐这棵树。"
+  click_cooldown: "&c请稍候再次击打此树。"
   cut_queued: "&7砍伐已加入队列... (位置 {position})"
   cut_already_running: "&7砍伐正在进行中，请稍候..."
   cut_partial_fail: "&c砍伐部分失败 ({processed}/{planned} 个方块)"
+  state_enabled: "&a已启用"
+  state_disabled: "&c已禁用"
+  state_on: "&a是"
+  state_off: "&c否"
 
 gui:
   title:
     main_menu: "§8WildTimber - 主菜单"
-    biomes_list: "§8WildTimber - 群系列表"
+    quick_toggles: "§8WildTimber - 快捷开关"
+    global_config: "§8WildTimber - 全局配置"
+    config_general: "§8WildTimber - 常规设置"
+    config_limits: "§8WildTimber - 限制"
+    config_decay: "§8WildTimber - 树叶与衰减"
+    config_roots: "§8WildTimber - 根部"
+    config_fallback: "§8WildTimber - 备用检测"
+    biome_list: "§8WildTimber - 生态系列表"
     biome_editor: "§8WildTimber - 编辑器: {biome}"
-    world_protection: "§8WildTimber - 世界保护"
+    material_editor: "§8WildTimber - 材质: {biome} / {type}"
     language_select: "§8WildTimber - 选择语言"
+
+  button:
+    back: "§c返回"
+    close: "§c关闭"
+
   main_menu:
     global_config:
       name: "§6全局配置"
       lore:
-        - "§7修改砍伐速度、冷却时间"
-        - "§7以及再生选项。"
+        - "§7修改速度、冷却和再生选项。"
         - ""
         - "§e[点击打开]"
-    biomes_config:
-      name: "§a群系与材质"
+    biome_config:
+      name: "§a生态系与材质"
       lore:
-        - "§7配置原木、树叶"
-        - "§7以及特定群系规则。"
+        - "§7配置原木、树叶和生态系规则。"
         - ""
         - "§e[点击打开]"
-    world_protection:
-      name: "§b世界保护"
+    quick_toggles:
+      name: "§b快捷开关"
       lore:
-        - "§7管理启用或禁用"
-        - "§7WildTimber 的世界。"
+        - "§7快速切换调试、上帝模式等。"
         - ""
         - "§e[点击打开]"
     language:
       name: "§d切换语言"
       lore:
-        - "§7更改插件和菜单的"
-        - "§7显示语言。"
+        - "§7更改插件和菜单的显示语言。"
         - ""
         - "§7当前语言: §f{lang}"
         - ""
-        - "§e[点击打开菜单]"
-  language_select:
-    active: "§a✔ 当前语言"
-    select: "§e[左键点击选择]"
+        - "§e[左键点击打开]"
+    reload:
+      name: "§e重载配置"
+      lore:
+        - "§7重载所有配置文件。"
+        - ""
+        - "§c[点击重载]"
+    close:
+      name: "§c关闭"
+
+  quick_toggles:
+    debug:
+      name: "§eDebug Mode"
+      lore:
+        - "§7Enable debug messages."
+        - ""
+        - "§7State: {state}"
+        - ""
+        - "§e[Click to toggle]"
+    blacklist:
+      name: "§eBlacklist"
+      lore:
+        - "§7Enable blacklist filtering."
+        - ""
+        - "§7State: {state}"
+        - ""
+        - "§e[Click to toggle]"
+    treecontact:
+      name: "§eTree Contact"
+      lore:
+        - "§7Player must touch the tree"
+        - "§7to trigger felling."
+        - ""
+        - "§7State: {state}"
+        - ""
+        - "§e[Click to toggle]"
+    godmode:
+      name: "§6Godmode"
+      lore:
+        - "§7Instant one-click felling."
+        - ""
+        - "§7State: {state}"
+        - ""
+        - "§e[Click to toggle]"
+    cooldown_bypass:
+      name: "§eCooldown Bypass"
+      lore:
+        - "§7Ignore cooldown between hits."
+        - ""
+        - "§7State: {state}"
+
+  global_config:
+    general:
+      name: "§eGeneral"
+      lore:
+        - "§7Cooldowns, hints, durability loss."
+        - ""
+        - "§e[Click]"
+    limits:
+      name: "§eLimits"
+      lore:
+        - "§7Max blocks, height, radius."
+        - ""
+        - "§e[Click]"
+    decay:
+      name: "§eLeaves & Decay"
+      lore:
+        - "§7Decay range and cleanup."
+        - ""
+        - "§e[Click]"
+    roots:
+      name: "§eRoots"
+      lore:
+        - "§7Root replacement settings."
+        - ""
+        - "§e[Click]"
+    fallback:
+      name: "§eFallback Detection"
+      lore:
+        - "§7Alternative tree detection."
+        - ""
+        - "§e[Click]"
+
+  general:
+    click_cooldown:
+      lore:
+        - "§7Minimum delay between hits (ms)."
+        - ""
+        - "§7Current value: §e{value}ms"
+        - ""
+        - "§e[Click to edit]"
+    hint_cooldown:
+      lore:
+        - "§7Delay between hint messages (s)."
+        - ""
+        - "§7Current value: §e{value}s"
+        - ""
+        - "§e[Click to edit]"
+    send_hint:
+      lore:
+        - "§7Send a hint message to the player."
+        - ""
+        - "§7State: §e{state}"
+        - ""
+        - "§e[Click to toggle]"
+    extra_loss_enabled:
+      lore:
+        - "§7Enable extra durability loss."
+        - ""
+        - "§7State: §e{state}"
+        - ""
+        - "§e[Click to toggle]"
+    extra_loss_points:
+      lore:
+        - "§7Durability points lost per felling."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+
+  limits:
+    max_logs:
+      lore:
+        - "§7Maximum number of logs per tree."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_blocks:
+      lore:
+        - "§7Maximum number of blocks per tree."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_radius:
+      lore:
+        - "§7Maximum horizontal radius (XZ)."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_height:
+      lore:
+        - "§7Maximum tree height (Y)."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    sixway_max_logs:
+      lore:
+        - "§7Max logs in 6-way mode."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+
+  decay:
+    decay_range_xz:
+      lore:
+        - "§7Horizontal leaf decay range."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    decay_range_y:
+      lore:
+        - "§7Vertical leaf decay range."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    allow_diagonal:
+      lore:
+        - "§7Allow diagonal leaves."
+        - ""
+        - "§7State: §e{state}"
+        - ""
+        - "§e[Click to toggle]"
+    canopy_cleanup:
+      lore:
+        - "§7Enable canopy cleanup."
+        - ""
+        - "§7State: §e{state}"
+        - ""
+        - "§e[Click to toggle]"
+    canopy_padding:
+      lore:
+        - "§7Canopy cleanup padding."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    leaves_batch:
+      lore:
+        - "§7Leaves persistence batch size."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+
+  roots:
+    fill_padding:
+      lore:
+        - "§7Root fill padding."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    depth_padding:
+      lore:
+        - "§7Root depth padding."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    root_rep_enabled:
+      lore:
+        - "§7Enable root replacement."
+        - ""
+        - "§7State: §e{state}"
+        - ""
+        - "§e[Click to toggle]"
+    root_rep_material:
+      lore:
+        - "§7Root replacement material."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+
+  fallback:
+    enabled:
+      lore:
+        - "§7Enable fallback detection."
+        - ""
+        - "§7State: §e{state}"
+        - ""
+        - "§e[Click to toggle]"
+    max_blocks:
+      lore:
+        - "§7Max blocks in fallback mode."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    trunk_core_radius:
+      lore:
+        - "§7Trunk core radius."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    trunk_min_height:
+      lore:
+        - "§7Minimum trunk height."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_radius:
+      lore:
+        - "§7Maximum fallback radius."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    min_density:
+      lore:
+        - "§7Minimum density to detect a tree."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+
+  biome_list:
     entry:
       lore:
-        - "§7语言代码: §f{code}"
+        - "§7State: {state}"
+        - "§7Logs: §e{logs}"
+        - "§7Leaves: §e{leaves}"
+        - ""
+        - "§e[Click to edit]"
+    prev_page: "§7◀ 上一页"
+    next_page: "§7下一页 ▶"
+    create_from_current:
+      name: "§a+ 从当前生态系创建"
+      lore:
+        - "§7当前生态系: §e{biome}"
+        - ""
+        - "§e[点击创建]"
+
+  biome_editor:
+    inherited: "§7(继承)"
+    enabled:
+      name: "§a生态系已启用"
+      lore:
+        - "§7在此生态系中启用WildTimber。"
+        - ""
+        - "§7状态: {state}"
+        - ""
+        - "§e[点击切换]"
+    min_logs:
+      lore:
+        - "§7Minimum logs to detect a tree."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    min_leaves:
+      lore:
+        - "§7Minimum leaves to detect a tree."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_logs:
+      lore:
+        - "§7Log limit for this biome."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_blocks:
+      lore:
+        - "§7Block limit for this biome."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_radius_xz:
+      lore:
+        - "§7Max horizontal radius for this biome."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    max_height_y:
+      lore:
+        - "§7Max height for this biome."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    belt_radius:
+      lore:
+        - "§7Protection belt radius."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    canopy_padding:
+      lore:
+        - "§7Canopy cleanup padding."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    root_rep_enabled:
+      name: "§e根部替换"
+      lore:
+        - "§7Enable root replacement."
+        - ""
+        - "§7State: {state}"
+        - ""
+        - "§e[Click to toggle]"
+    root_rep_material:
+      name: "§e根部材质"
+      lore:
+        - "§7Replacement material."
+        - ""
+        - "§7Current value: §e{value}"
+        - ""
+        - "§e[Click to edit]"
+    logs_list:
+      name: "§e原木列表"
+      lore:
+        - "§7管理此生态系中的原木材质。"
+        - ""
+        - "§e[点击打开]"
+    leaves_list:
+      name: "§e树叶列表"
+      lore:
+        - "§7管理此生态系中的树叶材质。"
+        - ""
+        - "§e[点击打开]"
+    attachments_list:
+      name: "§e附件列表"
+      lore:
+        - "§7管理附着在树上的方块。"
+        - ""
+        - "§e[点击打开]"
+    delete:
+      name: "§4删除生态系"
+      lore:
+        - "§c删除此生态系的配置。"
+        - ""
+        - "§4[点击删除]"
+
+  material_editor:
+    entry:
+      lore:
+        - "§e[左键] §7移除"
+    add_hand:
+      name: "§a+ 从手中添加"
+      lore:
+        - "§7添加手持材质。"
+        - ""
+        - "§e[点击添加]"
+    add_name:
+      name: "§a+ 按名称添加"
+      lore:
+        - "§7在聊天中输入材质名称。"
+        - ""
+        - "§e[点击添加]"
+
+  language_select:
+    active: "§a✔ 当前语言"
+    select: "§e[左键选择]"
+    entry:
+      lore:
+        - "§7Code: §f{code}"
         - "{state}"
-  button:
-    back: "§c返回"
-    close: "§c关闭"
