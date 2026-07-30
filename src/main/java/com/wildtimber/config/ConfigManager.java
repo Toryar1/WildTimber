@@ -290,19 +290,46 @@ public class ConfigManager {
 
     private void migrateLangConfig() {
         File userFile = new File(plugin.getDataFolder(), "lang.yml");
+
+        // Resolve language code case-insensitively (supports pt_BR, zh_CN, etc.)
         String selectedLang = "fr";
         if (config != null) {
-            selectedLang = config.getString("plugin.language", "fr").toLowerCase().trim();
+            String raw = config.getString("plugin.language", "fr").trim();
+            for (String code : AVAILABLE_LANGUAGES.keySet()) {
+                if (code.equalsIgnoreCase(raw)) { selectedLang = code; break; }
+            }
         }
+
         InputStream defaultStream = plugin.getResource("lang/lang_" + selectedLang + ".yml");
-        if (defaultStream == null) {
-            defaultStream = plugin.getResource("lang.yml");
-        }
+        if (defaultStream == null) defaultStream = plugin.getResource("lang/lang_fr.yml");
         if (defaultStream == null) return;
 
-        FileConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
+        FileConfiguration defaultConfig = YamlConfiguration.loadConfiguration(
+                new InputStreamReader(defaultStream, java.nio.charset.StandardCharsets.UTF_8));
         FileConfiguration userConfig = YamlConfiguration.loadConfiguration(userFile);
 
+        // Count keys in JAR vs disk — if JAR has more, the lang file is outdated
+        int defaultKeyCount = defaultConfig.getKeys(true).size();
+        int userKeyCount = userConfig.getKeys(true).size();
+
+        if (defaultKeyCount > userKeyCount) {
+            // Overwrite entire lang.yml with fresh copy from JAR (preserves all new keys)
+            try {
+                InputStream freshStream = plugin.getResource("lang/lang_" + selectedLang + ".yml");
+                if (freshStream == null) freshStream = plugin.getResource("lang/lang_fr.yml");
+                if (freshStream != null) {
+                    try (java.io.FileOutputStream fos = new java.io.FileOutputStream(userFile)) {
+                        freshStream.transferTo(fos);
+                    }
+                    plugin.getLogger().info("[Migration] lang.yml remplacé depuis JAR (" + userKeyCount + " → " + defaultKeyCount + " clés) pour la langue " + selectedLang + ".");
+                    return;
+                }
+            } catch (IOException e) {
+                plugin.getLogger().log(Level.WARNING, "Impossible de remplacer lang.yml : " + e.getMessage());
+            }
+        }
+
+        // Fallback: inject only missing keys
         boolean modified = false;
         for (String key : defaultConfig.getKeys(true)) {
             String cleanedKey = cleanYamlKey(key);
@@ -329,7 +356,15 @@ public class ConfigManager {
 
     private void parseGlobals() {
         pluginEnabled = config.getBoolean("plugin.enabled", true);
-        language = config.getString("plugin.language", "fr").toLowerCase();
+        // Preserve the exact case of the language code (e.g. pt_BR, zh_CN)
+        String rawLang = config.getString("plugin.language", "fr").trim();
+        language = "fr"; // default
+        for (String availCode : AVAILABLE_LANGUAGES.keySet()) {
+            if (availCode.equalsIgnoreCase(rawLang)) {
+                language = availCode;
+                break;
+            }
+        }
         debug = config.getBoolean("plugin.debug", false);
         verboseDebug = config.getBoolean("plugin.verbose-debug", false);
 
