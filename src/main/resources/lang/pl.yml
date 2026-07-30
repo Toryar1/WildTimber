@@ -1,0 +1,67 @@
+prefix: "&6[WildTimber]&r "
+
+messages:
+  no_permission: "&cNie masz uprawnień do użycia tej komendy."
+  plugin_disabled_world: "&cWildTimber jest wyłączony w tym świecie."
+  tree_felled_summary: "&aDrzewo ścięte! &7(Pnie: &e{logs}&7, Liście: &e{leaves}&7, Biom: &e{biome}&7, Czas: &e{duration}ms&7)"
+  godmode_active: "&aNatychmiastowe ścinanie (Godmode) włączone."
+  godmode_inactive: "&cNatychmiastowe ścinanie (Godmode) wyłączone."
+  language_changed: "&aZmieniono język na: &6{lang}"
+  reload_success: "&aKonfiguracja WildTimber została pomyślnie przeładowana!"
+  undo_success: "&aOstatnie ścinanie pomyślnie cofnięte (przywrócono {count} bloków)."
+  undo_no_snapshot: "&cBrak niedawnego ścinania do cofnięcia."
+  toggle_enabled: "&aWildTimber został dla Ciebie włączony."
+  toggle_disabled: "&aWildTimber został dla Ciebie wyłączony."
+  click_cooldown: "&cPoczekaj chwilę przed ponownym zaatakowaniem tego drzewa."
+  cut_queued: "&7Ścinanie w kolejce... (pozycja {position})"
+  cut_already_running: "&7Ścinanie jest już w toku, proszę czekać..."
+  cut_partial_fail: "&cŚcinanie częściowo nieudane ({processed}/{planned} bloków)"
+
+gui:
+  title:
+    main_menu: "§8WildTimber - Menu Główne"
+    biomes_list: "§8WildTimber - Lista Biomów"
+    biome_editor: "§8WildTimber - Edytor: {biome}"
+    world_protection: "§8WildTimber - Ochrona Światów"
+    language_select: "§8WildTimber - Wybierz Język"
+  main_menu:
+    global_config:
+      name: "§6Konfiguracja Globalna"
+      lore:
+        - "§7Zmień prędkość, cooldowny"
+        - "§7oraz opcje regeneracji."
+        - ""
+        - "§e[Kliknij, aby otworzyć]"
+    biomes_config:
+      name: "§aBiomy i Materiały"
+      lore:
+        - "§7Konfiguruj pnie, liście"
+        - "§7i zasady poszczególnych biomów."
+        - ""
+        - "§e[Kliknij, aby otworzyć]"
+    world_protection:
+      name: "§bOchrona Światów"
+      lore:
+        - "§7Zarządzaj światami, w których"
+        - "§7WildTimber jest włączony."
+        - ""
+        - "§e[Kliknij, aby otworzyć]"
+    language:
+      name: "§dZmień Język"
+      lore:
+        - "§7Zmień język wyświetlania"
+        - "§7pluginu i menu."
+        - ""
+        - "§7Aktualny język: §f{lang}"
+        - ""
+        - "§e[Kliknij, aby otworzyć menu]"
+  language_select:
+    active: "§a✔ Aktualny Język"
+    select: "§e[Kliknij lewym przyciskiem myszy, aby wybrać]"
+    entry:
+      lore:
+        - "§7Kod języka: §f{code}"
+        - "{state}"
+  button:
+    back: "§cPowrót"
+    close: "§cZamknij"

@@ -35,14 +35,10 @@ plugin:
   verbose-debug: false
 
 worlds:
-  # Liste des mondes où WildTimber est actif.
-  # Exemple : "world", "world_nether", "survival", "skyblock"
-  enabled:
-    - "world"
-    - "world_nether"
-    - "overworld"
-    - "survival"
-    - "main"
+  # Liste des mondes exclus (où WildTimber est désactivé).
+  # Si vide, le plugin est actif sur tous les mondes par défaut.
+  disabled:
+    - "ignored_world_example"
 
 health:
   # Coefficient multiplicateur global des PV de l'arbre.

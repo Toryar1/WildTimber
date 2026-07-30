@@ -1,0 +1,67 @@
+prefix: "&6[WildTimber]&r "
+
+messages:
+  no_permission: "&cJe hebt geen toestemming om dit commando te gebruiken."
+  plugin_disabled_world: "&cWildTimber is uitgeschakeld in deze wereld."
+  tree_felled_summary: "&aBoom gekapt! &7(Stammen: &e{logs}&7, Bladeren: &e{leaves}&7, Bioom: &e{biome}&7, Duur: &e{duration}ms&7)"
+  godmode_active: "&aDirect kappen (Godmode) ingeschakeld."
+  godmode_inactive: "&cDirect kappen (Godmode) uitgeschakeld."
+  language_changed: "&aTaal gewijzigd naar: &6{lang}"
+  reload_success: "&aWildTimber configuratie succesvol herladen!"
+  undo_success: "&aLaatste kapbeurt succesvol ongedaan gemaakt ({count} blokken hersteld)."
+  undo_no_snapshot: "&cGeen recente kapbeurt om ongedaan te maken."
+  toggle_enabled: "&aWildTimber is voor jou ingeschakeld."
+  toggle_disabled: "&cWildTimber is voor jou uitgeschakeld."
+  click_cooldown: "&cWacht even voordat je deze boom opnieuw aanvalt."
+  cut_queued: "&7Kappen in wachtrij... (positie {position})"
+  cut_already_running: "&7Er is al een kapbeurt bezig, even geduld..."
+  cut_partial_fail: "&cKappen gedeeltelijk mislukt ({processed}/{planned} blokken)"
+
+gui:
+  title:
+    main_menu: "§8WildTimber - Hoofdmenu"
+    biomes_list: "§8WildTimber - Biomenlijst"
+    biome_editor: "§8WildTimber - Editor: {biome}"
+    world_protection: "§8WildTimber - Wereldbescherming"
+    language_select: "§8WildTimber - Selecteer Taal"
+  main_menu:
+    global_config:
+      name: "§6Globale Configuratie"
+      lore:
+        - "§7Snelheid, cooldowns en"
+        - "§7regeneratie-opties wijzigen."
+        - ""
+        - "§e[Klik om te openen]"
+    biomes_config:
+      name: "§aBiomen & Materialen"
+      lore:
+        - "§7Stammen, bladeren en specifieke"
+        - "§7bioomregels configureren."
+        - ""
+        - "§e[Klik om te openen]"
+    world_protection:
+      name: "§bWereldbescherming"
+      lore:
+        - "§7Werelden beheren waar WildTimber"
+        - "§7is ingeschakeld of uitgeschakeld."
+        - ""
+        - "§e[Klik om te openen]"
+    language:
+      name: "§dTaal Wijzigen"
+      lore:
+        - "§7Weergavetaal voor de plugin"
+        - "§7en menu's wijzigen."
+        - ""
+        - "§7Huidige taal: §f{lang}"
+        - ""
+        - "§e[Klik om menu te openen]"
+  language_select:
+    active: "§a✔ Huidige Taal"
+    select: "§e[Linksklik om te selecteren]"
+    entry:
+      lore:
+        - "§7Taalcode: §f{code}"
+        - "{state}"
+  button:
+    back: "§cTerug"
+    close: "§cSluiten"

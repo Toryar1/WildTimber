@@ -1,8 +1,11 @@
 package com.wildtimber.config;
 
 import com.wildtimber.WildTimber;
+import com.wildtimber.gui.ConfigGUI;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -30,7 +33,7 @@ public class ConfigManager {
     private volatile boolean debug;
     private boolean verboseDebug;
     private String language = "fr";
-    private Set<String> enabledWorlds = new HashSet<>();
+    private Set<String> disabledWorlds = new HashSet<>();
     private double baseCoefficient;
     private int inactivityDelaySeconds;
     private boolean regenEnabled;
@@ -184,7 +187,7 @@ public class ConfigManager {
 
         plugin.getLogger().info("=== CONFIGURATION CHARGEE ===");
         plugin.getLogger().info("Statut : " + (pluginEnabled ? "ACTIF" : "DESACTIVE") + " | Mode Debug : " + debug);
-        plugin.getLogger().info("Mondes : " + enabledWorlds);
+        plugin.getLogger().info("Mondes Exclus : " + disabledWorlds);
         plugin.getLogger().info("Bûches enregistrées : " + logWeights.size() + " types de blocs");
         plugin.getLogger().info("Feuilles enregistrées : " + leafWeights.size() + " types de blocs");
         plugin.getLogger().info("Biomes configurés : " + biomes.size() + " biomes (défaut inclus)");
@@ -202,10 +205,11 @@ public class ConfigManager {
         File langDir = new File(plugin.getDataFolder(), "lang");
         if (!langDir.exists()) langDir.mkdirs();
 
-        for (String langCode : List.of("fr", "en", "es", "de", "zh")) {
+        for (String langCode : AVAILABLE_LANGUAGES.keySet()) {
             File resFile = new File(langDir, "lang_" + langCode + ".yml");
             if (!resFile.exists()) {
                 InputStream is = plugin.getResource("lang/lang_" + langCode + ".yml");
+                if (is == null) is = plugin.getResource("lang/" + langCode + ".yml");
                 if (is != null) {
                     try (FileOutputStream fos = new FileOutputStream(resFile)) {
                         is.transferTo(fos);
@@ -221,9 +225,10 @@ public class ConfigManager {
             File cfgFile = new File(plugin.getDataFolder(), "config.yml");
             if (cfgFile.exists()) {
                 FileConfiguration tmpConfig = YamlConfiguration.loadConfiguration(cfgFile);
-                selectedLang = tmpConfig.getString("plugin.language", "fr").toLowerCase();
+                selectedLang = tmpConfig.getString("plugin.language", "fr").trim();
             }
             InputStream is = plugin.getResource("lang/lang_" + selectedLang + ".yml");
+            if (is == null) is = plugin.getResource("lang/" + selectedLang + ".yml");
             if (is == null) is = plugin.getResource("lang/lang_fr.yml");
             if (is != null) {
                 try (FileOutputStream fos = new FileOutputStream(langFile)) {
@@ -236,7 +241,7 @@ public class ConfigManager {
         migrateConfig("config.yml");
         migrateConfig("biomes.yml");
         migrateConfig("blocks.yml");
-        migrateConfig("lang.yml");
+        migrateLangConfig();
     }
 
     private void saveResourceIfNotExists(String filename) {
@@ -283,6 +288,40 @@ public class ConfigManager {
         }
     }
 
+    private void migrateLangConfig() {
+        File userFile = new File(plugin.getDataFolder(), "lang.yml");
+        String selectedLang = "fr";
+        if (config != null) {
+            selectedLang = config.getString("plugin.language", "fr").toLowerCase().trim();
+        }
+        InputStream defaultStream = plugin.getResource("lang/lang_" + selectedLang + ".yml");
+        if (defaultStream == null) {
+            defaultStream = plugin.getResource("lang.yml");
+        }
+        if (defaultStream == null) return;
+
+        FileConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
+        FileConfiguration userConfig = YamlConfiguration.loadConfiguration(userFile);
+
+        boolean modified = false;
+        for (String key : defaultConfig.getKeys(true)) {
+            String cleanedKey = cleanYamlKey(key);
+            if (!userConfig.contains(cleanedKey)) {
+                userConfig.set(cleanedKey, defaultConfig.get(key));
+                modified = true;
+            }
+        }
+
+        if (modified) {
+            try {
+                userConfig.save(userFile);
+                plugin.getLogger().info("[Migration] lang.yml mis à jour avec les nouvelles clés de " + selectedLang + ".");
+            } catch (IOException e) {
+                plugin.getLogger().log(Level.WARNING, "Impossible de sauvegarder la migration de lang.yml", e);
+            }
+        }
+    }
+
     private FileConfiguration loadYaml(String filename) {
         File file = new File(plugin.getDataFolder(), filename);
         return YamlConfiguration.loadConfiguration(file);
@@ -299,7 +338,7 @@ public class ConfigManager {
         leafDropsStickChance = config.getDouble("leaf-drops.stick-chance", 0.02);
         leafDropsAppleChance = config.getDouble("leaf-drops.apple-chance", 0.005);
 
-        enabledWorlds = new HashSet<>(config.getStringList("worlds.enabled"));
+        disabledWorlds = new HashSet<>(config.getStringList("worlds.disabled"));
 
         baseCoefficient = config.getDouble("health.base-coefficient", 1.0);
         inactivityDelaySeconds = config.getInt("health.inactivity-delay-seconds", 180);
@@ -732,10 +771,20 @@ public class ConfigManager {
     private void parseLang() {
         prefix = translateColor(langConfig.getString("prefix", "§6[WildTimber]§r "));
         messages.clear();
+
         ConfigurationSection msgSec = langConfig.getConfigurationSection("messages");
         if (msgSec != null) {
-            for (String key : msgSec.getKeys(false)) {
-                messages.put(key, translateColor(msgSec.getString(key)));
+            for (String key : msgSec.getKeys(true)) {
+                if (msgSec.isString(key)) {
+                    messages.put(key, translateColor(msgSec.getString(key)));
+                }
+            }
+        }
+
+        for (String key : langConfig.getKeys(true)) {
+            if (langConfig.isString(key) && !key.startsWith("prefix")) {
+                String cleanKey = key.startsWith("messages.") ? key.substring("messages.".length()) : key;
+                messages.putIfAbsent(cleanKey, translateColor(langConfig.getString(key)));
             }
         }
     }
@@ -749,7 +798,17 @@ public class ConfigManager {
      * Récupère un message configuré et formate sa couleur.
      */
     public String getMessage(String key, boolean includePrefix) {
-        String msg = messages.getOrDefault(key, "Message manquant: " + key);
+        String msg = messages.get(key);
+        if (msg == null) {
+            msg = langConfig.getString("messages." + key);
+            if (msg == null) msg = langConfig.getString(key);
+            if (msg != null) {
+                msg = translateColor(msg);
+                messages.put(key, msg);
+            } else {
+                msg = "§cMissing message: " + key;
+            }
+        }
         return includePrefix ? prefix + msg : msg;
     }
 
@@ -758,7 +817,30 @@ public class ConfigManager {
     public boolean isPluginEnabled() { return pluginEnabled; }
     public boolean isDebug() { return debug; }
     public void setDebug(boolean debug) { this.debug = debug; }
-    public Set<String> getEnabledWorlds() { return enabledWorlds; }
+    public Set<String> getDisabledWorlds() { return disabledWorlds; }
+    public boolean isWorldEnabled(String worldName) {
+        if (worldName == null) return false;
+        return !disabledWorlds.contains(worldName);
+    }
+    public List<String> getMessageList(String key) {
+        List<String> raw = langConfig.getStringList("messages." + key);
+        if (raw.isEmpty()) {
+            raw = langConfig.getStringList(key);
+        }
+        if (raw.isEmpty()) {
+            String val = langConfig.getString("messages." + key);
+            if (val == null) val = langConfig.getString(key);
+            if (val != null) {
+                return List.of(translateColor(val));
+            }
+            return List.of("§cMissing message list: " + key);
+        }
+        List<String> translated = new ArrayList<>();
+        for (String s : raw) {
+            translated.add(translateColor(s));
+        }
+        return translated;
+    }
     public double getBaseCoefficient() { return baseCoefficient; }
     public int getInactivityDelaySeconds() { return inactivityDelaySeconds; }
     public boolean isRegenEnabled() { return regenEnabled; }
@@ -959,6 +1041,22 @@ public class ConfigManager {
     public FileConfiguration getConfig() { return config; }
     public FileConfiguration getBiomesConfig() { return biomesConfig; }
 
+    public static final Map<String, String> AVAILABLE_LANGUAGES;
+    static {
+        Map<String, String> m = new LinkedHashMap<>();
+        m.put("fr", "Français");
+        m.put("en", "English");
+        m.put("de", "Deutsch");
+        m.put("es", "Español");
+        m.put("pt_BR", "Português Brasileiro");
+        m.put("nl", "Nederlands");
+        m.put("pl", "Polski");
+        m.put("ru", "Русский");
+        m.put("zh_CN", "简体中文");
+        m.put("it", "Italiano");
+        AVAILABLE_LANGUAGES = Collections.unmodifiableMap(m);
+    }
+
     public void saveConfig() {
         try {
             config.save(new File(plugin.getDataFolder(), "config.yml"));
@@ -980,7 +1078,7 @@ public class ConfigManager {
     public void setLanguage(String newLang) {
         if (newLang == null) return;
         String cleaned = newLang.toLowerCase().trim();
-        if (!Set.of("fr", "en", "es", "de", "zh").contains(cleaned)) return;
+        if (!AVAILABLE_LANGUAGES.containsKey(cleaned)) return;
 
         this.language = cleaned;
         config.set("plugin.language", cleaned);
@@ -997,5 +1095,14 @@ public class ConfigManager {
             }
         }
         load();
+
+        // Rafraîchit les interfaces GUI de tous les joueurs ayant un menu ouvert
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getOpenInventory() != null && p.getOpenInventory().getTopInventory() != null) {
+                if (p.getOpenInventory().getTopInventory().getHolder() instanceof ConfigGUI gui) {
+                    p.openInventory(new ConfigGUI(plugin, p, gui.getMenuType(), gui.getBiomeName(), gui.getListType(), gui.getPage()).getInventory());
+                }
+            }
+        }
     }
 }

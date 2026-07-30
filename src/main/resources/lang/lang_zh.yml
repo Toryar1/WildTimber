@@ -31,7 +31,8 @@ messages:
   fallback_used: "&7已使用简易砍伐模式（黏连树木）。"
   cut_queued: "&7砍伐已加入队列... (位置 {position})"
   cut_already_running: "&7已有砍伐任务在进行中，请稍候..."
-  cut_partial_fail: "&c部分砍伐失败 ({processed}/{planned} 方块)"
+  cut_partial_fail: "&c砍伐部分失败（{processed}/{planned} 个方块）"
+  tree_felled_summary: "{godmode}&a✔ 树木已被砍倒: &f{logs} 原木 &7+ &f{leaves} 树叶\n&7(&e{biome}&7 | &b{duration}s&7)"
   only_players: "&c此命令仅限玩家使用。"
   specify_player: "&c请指定一名玩家。"
   player_not_found: "&c未找到该玩家。"
@@ -97,4 +98,303 @@ messages:
   fell_complete_godmode: "&c[上帝模式]&r &a✔ 树木已砍倒：&f{logs} 根原木 &7+ &f{leaves} 片树叶\n&7(&e{biome} &7| &b{duration}秒&7)"
   gui_must_hold_block: "&c你必须手持一个方块！"
   gui_material_removed: "&a材质 {material} 已从列表中移除。"
+
+  # GUI Translations
+  gui.title.main_menu: "§8WildTimber - 主菜单"
+  gui.main_menu.global_config.name: "§6§l全局配置"
+  gui.main_menu.global_config.lore:
+    - "§7允许修改限制、"
+    - "§7工具损耗系数以及"
+    - "§7树叶衰减设置。"
+  gui.main_menu.biome_config.name: "§a§l生态群系配置"
+  gui.main_menu.biome_config.lore:
+    - "§7所有生态群系的列表。"
+    - "§7单独添加、删除"
+    - "§7和配置每个群系。"
+  gui.main_menu.quick_toggles.name: "§e§l快速切换"
+  gui.main_menu.quick_toggles.lore:
+    - "§7随时启用/禁用调试模式、"
+    - "§7保护以及地面接触要求。"
+  gui.main_menu.language.name: "§9§l语言 / Language"
+  gui.main_menu.language.lore:
+    - "§7当前语言: §f{lang}"
+    - "§e[左键点击打开语言菜单]"
+  gui.title.language_select: "§8WildTimber - 选择语言"
+  gui.language_select.active: "§a✔ 当前语言"
+  gui.language_select.select: "§e[左键点击选择]"
+  gui.language_select.entry.lore:
+    - "§7语言代码: §f{code}"
+    - ""
+    - "{state}"
+  gui.main_menu.reload.name: "§b§l重新加载配置"
+  gui.main_menu.reload.lore:
+    - "§7直接从磁盘重新加载"
+    - "§7所有 YAML 配置文件。"
+  gui.main_menu.close.name: "§c§l关闭"
+  gui.button.back: "§7返回"
+
+  gui.title.quick_toggles: "§8WildTimber - 快速切换"
+  gui.quick_toggles.debug.name: "§e调试模式"
+  gui.quick_toggles.debug.lore:
+    - "§7控制台调试日志输出。"
+    - "§7状态: {state}"
+    - "§e[左键点击切换]"
+  gui.quick_toggles.blacklist.name: "§6黑名单保护"
+  gui.quick_toggles.blacklist.lore:
+    - "§7防止砍伐建筑方块。"
+    - "§7状态: {state}"
+    - "§e[左键点击切换]"
+  gui.quick_toggles.treecontact.name: "§e需要接触地面"
+  gui.quick_toggles.treecontact.lore:
+    - "§7树木必须接触地面。"
+    - "§7状态: {state}"
+    - "§e[左键点击切换]"
+  gui.quick_toggles.godmode.name: "§d我的上帝模式"
+  gui.quick_toggles.godmode.lore:
+    - "§7一击砍倒树木。"
+    - "§7状态: {state}"
+    - "§e[左键点击切换]"
+  gui.quick_toggles.cooldown_bypass.name: "§c我的冷却绕过"
+  gui.quick_toggles.cooldown_bypass.lore:
+    - "§7绕过点击冷却时间。"
+    - "§7所需权限: wildtimber.bypass.cooldown"
+    - "§7你的状态: {state}"
+
+  gui.title.global_config: "§8WildTimber - 全局配置"
+  gui.global_config.general.name: "§e§l常规与工具耐用度"
+  gui.global_config.general.lore:
+    - "§7冷却时间、提示信息和额外工具磨损。"
+  gui.global_config.limits.name: "§e§l扫描限制"
+  gui.global_config.limits.lore:
+    - "§7最大原木数、扫描半径等。"
+  gui.global_config.decay.name: "§e§l衰减与树冠"
+  gui.global_config.decay.lore:
+    - "§7树叶衰减半径、对角线传播。"
+  gui.global_config.roots.name: "§e§l树根与回填"
+  gui.global_config.roots.lore:
+    - "§7地下树根替换和回填填充。"
+  gui.global_config.fallback.name: "§e§l备用扫描"
+  gui.global_config.fallback.lore:
+    - "§7备用圆柱扫描的半径和密度。"
+
+  gui.title.config_general: "§8配置 - 常规与工具"
+  gui.general.click_cooldown.lore:
+    - "§7点击之间的最小延迟。"
+    - "§7数值: §f{value} 毫秒"
+    - "§e[左键点击修改]"
+  gui.general.hint_cooldown.lore:
+    - "§7提示信息冷却时间。"
+    - "§7数值: §f{value} 秒"
+    - "§e[左键点击修改]"
+  gui.general.send_hint.lore:
+    - "§7点击时发送帮助提示。"
+    - "§7状态: {state}"
+    - "§e[左键点击切换]"
+  gui.general.extra_loss_enabled.lore:
+    - "§7工具额外耐用度损耗。"
+    - "§7状态: {state}"
+    - "§e[左键点击切换]"
+  gui.general.extra_loss_points.lore:
+    - "§7每次额外损失的耐用度。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+
+  gui.title.config_limits: "§8配置 - 扫描限制"
+  gui.limits.max_logs.lore:
+    - "§7单棵树允许的最大原木数。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.limits.max_blocks.lore:
+    - "§7最大总方块数(原木+树叶)。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.limits.max_radius.lore:
+    - "§7最大水平扫描半径。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.limits.max_height.lore:
+    - "§7最大垂直扫描高度。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.limits.sixway_max_logs.lore:
+    - "§76方向扫描的最大预算。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+
+  gui.title.config_decay: "§8配置 - 衰减与树冠"
+  gui.decay.decay_range_xz.lore:
+    - "§7树叶水平衰减半径。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.decay.decay_range_y.lore:
+    - "§7树叶垂直衰减半径。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.decay.allow_diagonal.lore:
+    - "§7允许树叶对角线传播。"
+    - "§7状态: {state}"
+    - "§e[左键点击切换]"
+  gui.decay.canopy_cleanup.lore:
+    - "§7砍伐后清理树冠。"
+    - "§7状态: {state}"
+    - "§e[左键点击切换]"
+  gui.decay.canopy_padding.lore:
+    - "§7树冠清理扫描填充。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.decay.leaves_batch.lore:
+    - "§7每 tick 处理的树叶数。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+
+  gui.title.config_roots: "§8配置 - 树根与回填"
+  gui.roots.fill_padding.lore:
+    - "§7回填时的水平填充边缘。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.roots.depth_padding.lore:
+    - "§7最低原木下的额外回填深度。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.roots.root_rep_enabled.lore:
+    - "§7替换地下树根方块。"
+    - "§7状态: {state}"
+    - "§e[左键点击切换]"
+  gui.roots.root_rep_material.lore:
+    - "§7替换材质。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击在聊天框修改]"
+    - "§6[Shift + 点击使用手持物品]"
+
+  gui.title.config_fallback: "§8配置 - 备用扫描"
+  gui.fallback.enabled.lore:
+    - "§7启用备用圆柱形扫描。"
+    - "§7状态: {state}"
+    - "§e[左键点击切换]"
+  gui.fallback.max_blocks.lore:
+    - "§7备用扫描的最大允许方块数。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.fallback.trunk_core_radius.lore:
+    - "§7寻找树干的核心半径。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.fallback.trunk_min_height.lore:
+    - "§7判定为树干的最小原木高度。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.fallback.max_radius.lore:
+    - "§7备用圆柱的最大半径。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.fallback.min_density.lore:
+    - "§7继续扫描圆柱的最小密度要求。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+
+  gui.title.biome_list: "§8WildTimber - 生态群系列表"
+  gui.biome_list.entry.lore:
+    - "§7状态: {state}"
+    - "§7原木: §f{logs} 种"
+    - "§7树叶: §f{leaves} 种"
+    - ""
+    - "§6[左键点击进行配置]"
+    - "§c[Shift + 右键点击进行删除]"
+  gui.biome_list.prev_page: "§a◀ 上一页"
+  gui.biome_list.next_page: "§a下一页 ▶"
+  gui.biome_list.create_from_current.name: "§a§l[+] 从当前生态群系创建"
+  gui.biome_list.create_from_current.lore:
+    - "§7为您所在的群系创建配置："
+    - "§b{biome}"
+    - ""
+    - "§e[左键点击创建]"
+
+  gui.title.biome_editor: "§8生态群系: {biome}"
+  gui.biome_editor.enabled.name: "§e启用此群系"
+  gui.biome_editor.enabled.lore:
+    - "§7状态: {state}"
+    - "§e[左键点击切换]"
+  gui.biome_editor.min_logs.lore:
+    - "§7判定为树木的最小原木数。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.biome_editor.min_leaves.lore:
+    - "§7判定为树木的最小树叶数。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.biome_editor.max_logs.lore:
+    - "§7最大原木数 (可选)。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+    - "§6[右键点击重置]"
+  gui.biome_editor.max_blocks.lore:
+    - "§7最大方块数 (可选)。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+    - "§6[右键点击重置]"
+  gui.biome_editor.max_radius_xz.lore:
+    - "§7最大水平半径 XZ (可选)。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+    - "§6[右键点击重置]"
+  gui.biome_editor.max_height_y.lore:
+    - "§7最大高度 Y (可选)。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+    - "§6[右键点击重置]"
+  gui.biome_editor.belt_radius.lore:
+    - "§7保护腰带半径。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.biome_editor.canopy_padding.lore:
+    - "§7树冠清理填充半径。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击修改]"
+  gui.biome_editor.root_rep_enabled.name: "§eroot-replacement-enabled"
+  gui.biome_editor.root_rep_enabled.lore:
+    - "§7替换树根。"
+    - "§7状态: {state}"
+    - "§e[左键点击切换]"
+  gui.biome_editor.root_rep_material.name: "§eroot-replacement-material"
+  gui.biome_editor.root_rep_material.lore:
+    - "§7替换材质。"
+    - "§7数值: §f{value}"
+    - "§e[左键点击在聊天框修改]"
+    - "§6[Shift + 点击使用手持物品]"
+  gui.biome_editor.logs_list.name: "§6§l原木列表"
+  gui.biome_editor.logs_list.lore:
+    - "§7管理原木方块类型。"
+    - "§e[左键点击编辑]"
+  gui.biome_editor.leaves_list.name: "§a§l树叶列表"
+  gui.biome_editor.leaves_list.lore:
+    - "§7管理树叶方块类型。"
+    - "§e[左键点击编辑]"
+  gui.biome_editor.attachments_list.name: "§b§l附属物列表"
+  gui.biome_editor.attachments_list.lore:
+    - "§7管理附属物方块类型。"
+    - "§e[左键点击编辑]"
+  gui.biome_editor.delete.name: "§c§l删除生态群系"
+  gui.biome_editor.delete.lore:
+    - "§7永久删除此生态群系的配置。"
+    - ""
+    - "§c[Shift + 左键点击确认]"
+  gui.biome_editor.inherited: "继承"
+
+  gui.title.material_editor: "§8编辑器: {biome} - {type}"
+  gui.material_editor.entry.lore:
+    - "§7已注册的材质。"
+    - ""
+    - "§c[点击移除]"
+  gui.material_editor.add_hand.name: "§a§l[+] 添加手持物品"
+  gui.material_editor.add_hand.lore:
+    - "§7将主手持有的方块类型"
+    - "§7添加到列表中。"
+    - ""
+    - "§e[左键点击添加]"
+  gui.material_editor.add_name.name: "§b§l[+] 按名称添加"
+  gui.material_editor.add_name.lore:
+    - "§7在聊天框手动输入"
+    - "§7要添加的材质名称。"
+    - ""
+    - "§e[左键点击添加]"        
 

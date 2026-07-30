@@ -1,0 +1,67 @@
+prefix: "&6[WildTimber]&r "
+
+messages:
+  no_permission: "&cУ вас нет прав для использования этой команды."
+  plugin_disabled_world: "&cWildTimber отключен в этом мире."
+  tree_felled_summary: "&aДерево срублено! &7(Бревна: &e{logs}&7, Листва: &e{leaves}&7, Биом: &e{biome}&7, Время: &e{duration}мс&7)"
+  godmode_active: "&aМгновенная рубка (Godmode) включена."
+  godmode_inactive: "&cМгновенная рубка (Godmode) выключена."
+  language_changed: "&aЯзык успешно изменен на: &6{lang}"
+  reload_success: "&aКонфигурация WildTimber успешно перезагружена!"
+  undo_success: "&aПоследняя рубка отменена ({count} блоков восстановлено)."
+  undo_no_snapshot: "&cНет недавней рубки для отмены."
+  toggle_enabled: "&aWildTimber включен для вас."
+  toggle_disabled: "&cWildTimber отключен для вас."
+  click_cooldown: "&cПожалуйста, подождите перед повторной рубкой этого дерева."
+  cut_queued: "&7Рубка добавлена в очередь... (позиция {position})"
+  cut_already_running: "&7Рубка уже выполняется, пожалуйста, подождите..."
+  cut_partial_fail: "&cРубка частично не удалась ({processed}/{planned} блоков)"
+
+gui:
+  title:
+    main_menu: "§8WildTimber - Главное меню"
+    biomes_list: "§8WildTimber - Список биомов"
+    biome_editor: "§8WildTimber - Редактор: {biome}"
+    world_protection: "§8WildTimber - Защита миров"
+    language_select: "§8WildTimber - Выбор языка"
+  main_menu:
+    global_config:
+      name: "§6Глобальная конфигурация"
+      lore:
+        - "§7Изменение скорости, перезарядок"
+        - "§7и параметров регенерации."
+        - ""
+        - "§e[Нажмите, чтобы открыть]"
+    biomes_config:
+      name: "§aБиомы и материалы"
+      lore:
+        - "§7Настройка бревен, листвы"
+        - "§7и правил для биомов."
+        - ""
+        - "§e[Нажмите, чтобы открыть]"
+    world_protection:
+      name: "§bЗащита миров"
+      lore:
+        - "§7Управление мирами, где"
+        - "§7WildTimber включен или выключен."
+        - ""
+        - "§e[Нажмите, чтобы открыть]"
+    language:
+      name: "§dСменить язык"
+      lore:
+        - "§7Сменить язык отображения"
+        - "§7плагина и меню."
+        - ""
+        - "§7Текущий язык: §f{lang}"
+        - ""
+        - "§e[Нажмите, чтобы открыть]"
+  language_select:
+    active: "§a✔ Текущий язык"
+    select: "§e[Левый клик для выбора]"
+    entry:
+      lore:
+        - "§7Код языка: §f{code}"
+        - "{state}"
+  button:
+    back: "§cНазад"
+    close: "§cЗакрыть"

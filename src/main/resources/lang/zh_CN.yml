@@ -1,0 +1,67 @@
+prefix: "&6[WildTimber]&r "
+
+messages:
+  no_permission: "&c你没有权限使用此命令。"
+  plugin_disabled_world: "&cWildTimber 已在此世界中禁用。"
+  tree_felled_summary: "&a树木已砍倒！ &7(原木: &e{logs}&7, 树叶: &e{leaves}&7, 生态系: &e{biome}&7, 耗时: &e{duration}ms&7)"
+  godmode_active: "&a已启用秒砍模式 (Godmode)。"
+  godmode_inactive: "&c已禁用秒砍模式 (Godmode)。"
+  language_changed: "&a语言已成功更改为: &6{lang}"
+  reload_success: "&aWildTimber 配置文件已成功重载！"
+  undo_success: "&a成功撤销上次砍伐 (已还原 {count} 个方块)。"
+  undo_no_snapshot: "&c没有可撤销的近期砍伐记录。"
+  toggle_enabled: "&aWildTimber 已为您启用。"
+  toggle_disabled: "&cWildTimber 已为您禁用。"
+  click_cooldown: "&c请稍后再尝试砍伐这棵树。"
+  cut_queued: "&7砍伐已加入队列... (位置 {position})"
+  cut_already_running: "&7砍伐正在进行中，请稍候..."
+  cut_partial_fail: "&c砍伐部分失败 ({processed}/{planned} 个方块)"
+
+gui:
+  title:
+    main_menu: "§8WildTimber - 主菜单"
+    biomes_list: "§8WildTimber - 群系列表"
+    biome_editor: "§8WildTimber - 编辑器: {biome}"
+    world_protection: "§8WildTimber - 世界保护"
+    language_select: "§8WildTimber - 选择语言"
+  main_menu:
+    global_config:
+      name: "§6全局配置"
+      lore:
+        - "§7修改砍伐速度、冷却时间"
+        - "§7以及再生选项。"
+        - ""
+        - "§e[点击打开]"
+    biomes_config:
+      name: "§a群系与材质"
+      lore:
+        - "§7配置原木、树叶"
+        - "§7以及特定群系规则。"
+        - ""
+        - "§e[点击打开]"
+    world_protection:
+      name: "§b世界保护"
+      lore:
+        - "§7管理启用或禁用"
+        - "§7WildTimber 的世界。"
+        - ""
+        - "§e[点击打开]"
+    language:
+      name: "§d切换语言"
+      lore:
+        - "§7更改插件和菜单的"
+        - "§7显示语言。"
+        - ""
+        - "§7当前语言: §f{lang}"
+        - ""
+        - "§e[点击打开菜单]"
+  language_select:
+    active: "§a✔ 当前语言"
+    select: "§e[左键点击选择]"
+    entry:
+      lore:
+        - "§7语言代码: §f{code}"
+        - "{state}"
+  button:
+    back: "§c返回"
+    close: "§c关闭"

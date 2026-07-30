@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Leaves;
 
+import com.wildtimber.util.EnchantCompat;
 import java.util.*;
 
 /**
@@ -122,7 +123,7 @@ public class TreeFeller {
         ItemStack tool = null;
         if (lastCutter != null) {
             tool = lastCutter.getInventory().getItemInMainHand();
-            fortuneLevel = tool.getEnchantmentLevel(Enchantment.FORTUNE);
+            fortuneLevel = EnchantCompat.getLevel(tool, "fortune", "LOOT_BONUS_BLOCKS");
         }
 
         int beltRadius = biomeConfig != null ? biomeConfig.protectionBeltRadius() : 4;
@@ -1687,8 +1688,8 @@ public class TreeFeller {
         boolean isGravityBlock = aboveMat == Material.SAND
                 || aboveMat == Material.RED_SAND
                 || aboveMat == Material.GRAVEL
-                || aboveMat == Material.SUSPICIOUS_SAND
-                || aboveMat == Material.SUSPICIOUS_GRAVEL
+                || aboveMat.name().equals("SUSPICIOUS_SAND")
+                || aboveMat.name().equals("SUSPICIOUS_GRAVEL")
                 || aboveMat.name().endsWith("_CONCRETE_POWDER");
 
         if (isGroundPlant(aboveMat)) {
@@ -2085,9 +2086,14 @@ public class TreeFeller {
     public void sendFellCompletionMessage(Player player, int logsCount, int leavesCount, String biomeName, double durationSec) {
         if (player == null || !player.isOnline()) return;
         boolean godmode = plugin.getTreeManager().isPlayerGodMode(player.getUniqueId());
-        
-        String prefix = godmode ? "§c[GODMODE]§r" : "";
-        String msg = prefix + "§a✔ Arbre abattu : §f" + logsCount + " bûches §7+ §f" + leavesCount + " feuilles\n§7(§e" + biomeName + "§7 | §b" + String.format(Locale.US, "%.1f", durationSec) + "s§7)";
+
+        String godmodePrefix = godmode ? "§c[GODMODE]§r " : "";
+        String msg = configManager.getMessage("tree_felled_summary", false)
+                .replace("{godmode}", godmodePrefix)
+                .replace("{logs}", String.valueOf(logsCount))
+                .replace("{leaves}", String.valueOf(leavesCount))
+                .replace("{biome}", biomeName)
+                .replace("{duration}", String.format(Locale.US, "%.1f", durationSec));
         player.sendMessage(msg);
     }
 

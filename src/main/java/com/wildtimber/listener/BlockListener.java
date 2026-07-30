@@ -11,12 +11,14 @@ import com.wildtimber.felling.TreeFeller;
 import com.wildtimber.manager.ActiveTree;
 import com.wildtimber.manager.TreeManager;
 import com.wildtimber.protection.ProtectionHook;
+import com.wildtimber.util.EnchantCompat;
 import com.wildtimber.gui.ConfigGUI;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.block.Biome;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 import org.bukkit.*;
@@ -122,11 +124,11 @@ public class BlockListener implements Listener {
         World world = block.getWorld();
 
         // Vérification du monde activé
-        if (!configManager.getEnabledWorlds().contains(world.getName())) {
+        if (!configManager.isWorldEnabled(world.getName())) {
             if (configManager.isDebug()) {
                 org.bukkit.Bukkit.getLogger().info(ConsoleColor.DEBUG_PREFIX + "Monde '" + world.getName()
-                        + "' non listé dans worlds.enabled (liste : "
-                        + configManager.getEnabledWorlds() + ") → ignoré");
+                        + "' désactivé par worlds.disabled (liste : "
+                        + configManager.getDisabledWorlds() + ") → ignoré");
             }
             return;
         }
@@ -266,7 +268,7 @@ public class BlockListener implements Listener {
 
         Block block = event.getBlock();
         World world = block.getWorld();
-        if (!configManager.getEnabledWorlds().contains(world.getName())) return;
+        if (!configManager.isWorldEnabled(world.getName())) return;
 
         Player player = event.getPlayer();
         if (treeManager.isPlayerDisabled(player.getUniqueId())) {
@@ -369,8 +371,8 @@ public class BlockListener implements Listener {
         } else {
             Material toolType = tool == null ? Material.AIR : tool.getType();
             double toolMultiplier = configManager.getToolMultiplier(toolType);
-            int effLevel = tool == null ? 0 : tool.getEnchantmentLevel(Enchantment.EFFICIENCY);
-            int sharpLevel = tool == null ? 0 : tool.getEnchantmentLevel(Enchantment.SHARPNESS);
+            int effLevel = tool == null ? 0 : EnchantCompat.getLevel(tool, "efficiency", "DIG_SPEED");
+            int sharpLevel = tool == null ? 0 : EnchantCompat.getLevel(tool, "sharpness", "DAMAGE_ALL");
             damage = toolMultiplier + (effLevel * configManager.getEfficiencyDamage()) + (sharpLevel * configManager.getSharpnessDamage());
         }
 
@@ -496,7 +498,7 @@ public class BlockListener implements Listener {
         if (!isAxe(item.getType())) return;
         if (!(item.getItemMeta() instanceof Damageable dmg)) return;
 
-        int unbreakingLevel = item.getEnchantmentLevel(Enchantment.UNBREAKING);
+        int unbreakingLevel = EnchantCompat.getLevel(item, "unbreaking", "DURABILITY");
         // Probabilité de perdre de la durabilité (avec Unbreaking)
         double chance = 1.0 / (unbreakingLevel + 1.0);
 
@@ -573,8 +575,29 @@ public class BlockListener implements Listener {
                     player.closeInventory();
                     plugin.getServer().dispatchCommand(player, "wt reload");
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 0.8f, 1.0f);
+                } else if (slot == 33) {
+                    player.openInventory(new ConfigGUI(plugin, player, ConfigGUI.MenuType.LANGUAGE_SELECT, null, null, 0).getInventory());
                 } else if (slot == 40) {
                     player.closeInventory();
+                }
+                break;
+
+            case LANGUAGE_SELECT:
+                if (slot == 40) {
+                    ConfigGUI.openMainMenu(plugin, player);
+                } else {
+                    int[] langSlots = {11, 12, 13, 14, 15, 20, 21, 22, 23, 24};
+                    List<String> codes = new ArrayList<>(ConfigManager.AVAILABLE_LANGUAGES.keySet());
+                    for (int i = 0; i < langSlots.length && i < codes.size(); i++) {
+                        if (slot == langSlots[i]) {
+                            String langCode = codes.get(i);
+                            cm.setLanguage(langCode);
+                            player.sendMessage(cm.getMessage("language_changed", true).replace("{lang}", langCode.toUpperCase()));
+                            player.openInventory(new ConfigGUI(plugin, player, ConfigGUI.MenuType.LANGUAGE_SELECT, null, null, 0).getInventory());
+                            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.8f, 1.0f);
+                            break;
+                        }
+                    }
                 }
                 break;
 
