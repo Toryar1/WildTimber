@@ -102,17 +102,19 @@ messages:
   "gui.title.global_config": "§8WildTimber - Configuration Globale"
   "gui.title.quick_toggles": "§8Bascules Rapides"
   "gui.main_menu.global_config.name": "§a§lConfiguration Globale"
-  "gui.main_menu.biomes.name": "§e§lConfiguration des Biomes"
+  "gui.main_menu.biome_config.name": "§e§lConfiguration des Biomes"
   "gui.main_menu.quick_toggles.name": "§b§lBascules Rapides"
   "gui.main_menu.language.name": "§d§lChanger la Langue"
+  "gui.main_menu.reload.name": "§e§lRecharger le Plugin"
   "gui.main_menu.close.name": "§c§lFermer"
   "gui.button.back": "§c◀ Retour"
   "gui.language_select.active": "§a§l{name} §7(Actif)"
   "gui.language_select.select": "§e§l{name} §7[Cliquer pour choisir]"
-  "gui.toggles.enabled.name": "§aStatut du Plugin"
-  "gui.toggles.debug.name": "§eMode Debug"
-  "gui.toggles.blacklist.name": "§bProtection Constructions"
-  "gui.toggles.contact.name": "§dExigence Sol (Contact)"
+  "gui.quick_toggles.debug.name": "§eMode Debug"
+  "gui.quick_toggles.blacklist.name": "§bProtection Constructions"
+  "gui.quick_toggles.treecontact.name": "§dExigence Sol (Contact)"
+  "gui.quick_toggles.godmode.name": "§aMode Dieu (Godmode)"
+  "gui.quick_toggles.cooldown_bypass.name": "§fBypass Cooldown"
   "gui.global_config.general.name": "§a§lGénéral & Outils"
   "gui.global_config.limits.name": "§e§lLimites de Scan"
   "gui.global_config.decay.name": "§b§lDecay & Canopée"
@@ -142,7 +144,7 @@ messages:
   "gui.main_menu.global_config.lore":
     - "§7Configurer les options générales,"
     - "§7limites, découpe et racines."
-  "gui.main_menu.biomes.lore":
+  "gui.main_menu.biome_config.lore":
     - "§7Gérer les paramètres spécifiques"
     - "§7à chaque biome."
   "gui.main_menu.quick_toggles.lore":
@@ -150,16 +152,24 @@ messages:
     - "§7les fonctionnalités du plugin."
   "gui.main_menu.language.lore":
     - "§7Changer la langue du plugin."
-  "gui.toggles.enabled.lore":
+  "gui.main_menu.reload.lore":
+    - "§7Recharger la configuration"
+    - "§7depuis les fichiers disk."
+  "gui.language_select.entry.lore":
+    - "§7Langue actuelle: {lang}"
+  "gui.quick_toggles.debug.lore":
     - "§7Statut: {state}"
     - "§e[Clic gauche pour basculer]"
-  "gui.toggles.debug.lore":
+  "gui.quick_toggles.blacklist.lore":
     - "§7Statut: {state}"
     - "§e[Clic gauche pour basculer]"
-  "gui.toggles.blacklist.lore":
+  "gui.quick_toggles.treecontact.lore":
     - "§7Statut: {state}"
     - "§e[Clic gauche pour basculer]"
-  "gui.toggles.contact.lore":
+  "gui.quick_toggles.godmode.lore":
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.quick_toggles.cooldown_bypass.lore":
     - "§7Statut: {state}"
     - "§e[Clic gauche pour basculer]"
   "gui.global_config.general.lore":
