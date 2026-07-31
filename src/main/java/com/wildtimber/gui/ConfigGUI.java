@@ -171,19 +171,19 @@ public class ConfigGUI implements InventoryHolder {
                 inventory = Bukkit.createInventory(this, 45, cm.getMessage("gui.title.config_general", false));
                 fillBorders(inventory);
                 inventory.setItem(10, createItemWithDynamicLore(cm, Material.CLOCK,
-                        "§eclick-cooldown-ms", "gui.general.click_cooldown.lore",
+                        "gui.general.click_cooldown.name", "gui.general.click_cooldown.lore",
                         "{value}", String.valueOf(cm.getClickCooldownMs())));
                 inventory.setItem(11, createItemWithDynamicLore(cm, Material.COMPASS,
-                        "§ehint-cooldown-seconds", "gui.general.hint_cooldown.lore",
+                        "gui.general.hint_cooldown.name", "gui.general.hint_cooldown.lore",
                         "{value}", String.valueOf(cm.getHintCooldownSeconds())));
                 inventory.setItem(12, createItemWithDynamicLore(cm, Material.PAPER,
-                        "§esend-hint-message", "gui.general.send_hint.lore",
+                        "gui.general.send_hint.name", "gui.general.send_hint.lore",
                         "{state}", cm.isSendHintMessage() ? cm.getMessage("state_on", false) : cm.getMessage("state_off", false)));
                 inventory.setItem(13, createItemWithDynamicLore(cm, Material.ANVIL,
-                        "§eextra-loss.enabled", "gui.general.extra_loss_enabled.lore",
+                        "gui.general.extra_loss_enabled.name", "gui.general.extra_loss_enabled.lore",
                         "{state}", cm.isExtraLossEnabled() ? cm.getMessage("state_on", false) : cm.getMessage("state_off", false)));
                 inventory.setItem(14, createItemWithDynamicLore(cm, Material.IRON_INGOT,
-                        "§eextra-loss.points-per-interval", "gui.general.extra_loss_points.lore",
+                        "gui.general.extra_loss_points.name", "gui.general.extra_loss_points.lore",
                         "{value}", String.valueOf(cm.getExtraLossPoints())));
                 inventory.setItem(40, createItem(Material.ARROW, cm.getMessage("gui.button.back", false)));
                 break;
@@ -192,19 +192,19 @@ public class ConfigGUI implements InventoryHolder {
                 inventory = Bukkit.createInventory(this, 45, cm.getMessage("gui.title.config_limits", false));
                 fillBorders(inventory);
                 inventory.setItem(10, createItemWithDynamicLore(cm, Material.OAK_LOG,
-                        "§emax-logs", "gui.limits.max_logs.lore",
+                        "gui.limits.max_logs.name", "gui.limits.max_logs.lore",
                         "{value}", String.valueOf(cm.getMaxLogs())));
                 inventory.setItem(11, createItemWithDynamicLore(cm, Material.BRICKS,
-                        "§emax-blocks", "gui.limits.max_blocks.lore",
+                        "gui.limits.max_blocks.name", "gui.limits.max_blocks.lore",
                         "{value}", String.valueOf(cm.getMaxBlocks())));
                 inventory.setItem(12, createItemWithDynamicLore(cm, Material.MAP,
-                        "§emax-radius-xz", "gui.limits.max_radius.lore",
+                        "gui.limits.max_radius.name", "gui.limits.max_radius.lore",
                         "{value}", String.valueOf(cm.getMaxRadiusXZ())));
                 inventory.setItem(13, createItemWithDynamicLore(cm, Material.LADDER,
-                        "§emax-height-y", "gui.limits.max_height.lore",
+                        "gui.limits.max_height.name", "gui.limits.max_height.lore",
                         "{value}", String.valueOf(cm.getMaxHeightY())));
                 inventory.setItem(14, createItemWithDynamicLore(cm, Material.WOODEN_AXE,
-                        "§e6way-max-logs", "gui.limits.sixway_max_logs.lore",
+                        "gui.limits.sixway_max_logs.name", "gui.limits.sixway_max_logs.lore",
                         "{value}", String.valueOf(cm.getSixWayMaxLogs())));
                 inventory.setItem(40, createItem(Material.ARROW, cm.getMessage("gui.button.back", false)));
                 break;
@@ -213,22 +213,22 @@ public class ConfigGUI implements InventoryHolder {
                 inventory = Bukkit.createInventory(this, 45, cm.getMessage("gui.title.config_decay", false));
                 fillBorders(inventory);
                 inventory.setItem(10, createItemWithDynamicLore(cm, Material.OAK_LEAVES,
-                        "§eleaf-decay-range-xz", "gui.decay.decay_range_xz.lore",
+                        "gui.decay.decay_range_xz.name", "gui.decay.decay_range_xz.lore",
                         "{value}", String.valueOf(cm.getLeafDecayRangeXZ())));
                 inventory.setItem(11, createItemWithDynamicLore(cm, Material.JUNGLE_LEAVES,
-                        "§eleaf-decay-range-y", "gui.decay.decay_range_y.lore",
+                        "gui.decay.decay_range_y.name", "gui.decay.decay_range_y.lore",
                         "{value}", String.valueOf(cm.getLeafDecayRangeY())));
                 inventory.setItem(12, createItemWithDynamicLore(cm, Material.SUGAR_CANE,
-                        "§eallow-diagonal-leaves", "gui.decay.allow_diagonal.lore",
+                        "gui.decay.allow_diagonal.name", "gui.decay.allow_diagonal.lore",
                         "{state}", cm.isAllowDiagonalLeaves() ? cm.getMessage("state_on", false) : cm.getMessage("state_off", false)));
                 inventory.setItem(13, createItemWithDynamicLore(cm, Material.SHEARS,
-                        "§ecanopy-cleanup-enabled", "gui.decay.canopy_cleanup.lore",
+                        "gui.decay.canopy_cleanup.name", "gui.decay.canopy_cleanup.lore",
                         "{state}", cm.isCanopyCleanupEnabled() ? cm.getMessage("state_on", false) : cm.getMessage("state_off", false)));
                 inventory.setItem(14, createItemWithDynamicLore(cm, Material.STRING,
-                        "§ecanopy-cleanup-padding", "gui.decay.canopy_padding.lore",
+                        "gui.decay.canopy_padding.name", "gui.decay.canopy_padding.lore",
                         "{value}", String.valueOf(cm.getCanopyCleanupPadding())));
                 inventory.setItem(15, createItemWithDynamicLore(cm, Material.AMETHYST_SHARD,
-                        "§eleaves-persistence-batch-size", "gui.decay.leaves_batch.lore",
+                        "gui.decay.leaves_batch.name", "gui.decay.leaves_batch.lore",
                         "{value}", String.valueOf(cm.getLeavesPersistenceBatchSize())));
                 inventory.setItem(40, createItem(Material.ARROW, cm.getMessage("gui.button.back", false)));
                 break;
@@ -237,17 +237,17 @@ public class ConfigGUI implements InventoryHolder {
                 inventory = Bukkit.createInventory(this, 45, cm.getMessage("gui.title.config_roots", false));
                 fillBorders(inventory);
                 inventory.setItem(10, createItemWithDynamicLore(cm, Material.DIRT,
-                        "§eroot-fill-padding", "gui.roots.fill_padding.lore",
+                        "gui.roots.fill_padding.name", "gui.roots.fill_padding.lore",
                         "{value}", String.valueOf(cm.getRootFillPadding())));
                 inventory.setItem(11, createItemWithDynamicLore(cm, Material.COARSE_DIRT,
-                        "§eroot-fill-depth-padding", "gui.roots.depth_padding.lore",
+                        "gui.roots.depth_padding.name", "gui.roots.depth_padding.lore",
                         "{value}", String.valueOf(cm.getRootFillDepthPadding())));
                 inventory.setItem(12, createItemWithDynamicLore(cm, Material.ROOTED_DIRT,
-                        "§eroot-replacement.enabled", "gui.roots.root_rep_enabled.lore",
+                        "gui.roots.root_rep_enabled.name", "gui.roots.root_rep_enabled.lore",
                         "{state}", cm.isRootReplacementEnabled() ? cm.getMessage("state_on", false) : cm.getMessage("state_off", false)));
                 inventory.setItem(13, createItemWithDynamicLore(cm,
                         cm.getRootReplacementMaterial().isItem() ? cm.getRootReplacementMaterial() : Material.DIRT,
-                        "§eroot-replacement.material", "gui.roots.root_rep_material.lore",
+                        "gui.roots.root_rep_material.name", "gui.roots.root_rep_material.lore",
                         "{value}", cm.getRootReplacementMaterial().name()));
                 inventory.setItem(40, createItem(Material.ARROW, cm.getMessage("gui.button.back", false)));
                 break;
@@ -256,22 +256,22 @@ public class ConfigGUI implements InventoryHolder {
                 inventory = Bukkit.createInventory(this, 45, cm.getMessage("gui.title.config_fallback", false));
                 fillBorders(inventory);
                 inventory.setItem(10, createItemWithDynamicLore(cm, Material.COMPASS,
-                        "§efallback.enabled", "gui.fallback.enabled.lore",
+                        "gui.fallback.enabled.name", "gui.fallback.enabled.lore",
                         "{state}", cm.isFallbackEnabled() ? cm.getMessage("state_on", false) : cm.getMessage("state_off", false)));
                 inventory.setItem(11, createItemWithDynamicLore(cm, Material.CLAY,
-                        "§efallback.max-blocks", "gui.fallback.max_blocks.lore",
+                        "gui.fallback.max_blocks.name", "gui.fallback.max_blocks.lore",
                         "{value}", String.valueOf(cm.getFallbackMaxBlocks())));
                 inventory.setItem(12, createItemWithDynamicLore(cm, Material.OAK_WOOD,
-                        "§efallback.trunk-core-radius", "gui.fallback.trunk_core_radius.lore",
+                        "gui.fallback.trunk_core_radius.name", "gui.fallback.trunk_core_radius.lore",
                         "{value}", String.valueOf(cm.getFallbackTrunkCoreRadius())));
                 inventory.setItem(13, createItemWithDynamicLore(cm, Material.OAK_FENCE,
-                        "§efallback.trunk-min-height", "gui.fallback.trunk_min_height.lore",
+                        "gui.fallback.trunk_min_height.name", "gui.fallback.trunk_min_height.lore",
                         "{value}", String.valueOf(cm.getFallbackTrunkMinHeight())));
                 inventory.setItem(14, createItemWithDynamicLore(cm, Material.SPYGLASS,
-                        "§efallback.max-radius", "gui.fallback.max_radius.lore",
+                        "gui.fallback.max_radius.name", "gui.fallback.max_radius.lore",
                         "{value}", String.valueOf(cm.getFallbackMaxRadius())));
                 inventory.setItem(15, createItemWithDynamicLore(cm, Material.SPONGE,
-                        "§efallback.min-density", "gui.fallback.min_density.lore",
+                        "gui.fallback.min_density.name", "gui.fallback.min_density.lore",
                         "{value}", String.valueOf(cm.getFallbackMinDensity())));
                 inventory.setItem(40, createItem(Material.ARROW, cm.getMessage("gui.button.back", false)));
                 break;
@@ -298,7 +298,8 @@ public class ConfigGUI implements InventoryHolder {
                             .replace("{logs}", String.valueOf(logs.size()))
                             .replace("{leaves}", String.valueOf(leaves.size())));
 
-                    inventory.setItem(slot, createItemWithLore(Material.MAP, "§e§lBiome : " + name, entryLore));
+                    String itemTitle = cm.getMessage("gui.biome_list.entry.title", false).replace("{biome}", name);
+                    inventory.setItem(slot, createItemWithLore(Material.MAP, itemTitle, entryLore));
                     slot++;
                     if (slot % 9 == 8) slot += 2;
                 }

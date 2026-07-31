@@ -167,116 +167,143 @@ messages:
     - "§7Rayon et densité du scan"
     - "§7cylindrique de secours."
   "gui.title.config_general": "§8Configuration - Général & Outils"
+  "gui.general.click_cooldown.name": "§eDélai Clics (ms)"
   "gui.general.click_cooldown.lore":
     - "§7Délai minimum entre clics."
     - "§7Valeur: §f{value} ms"
     - "§e[Clic gauche pour modifier]"
+  "gui.general.hint_cooldown.name": "§eDélai Aide (s)"
   "gui.general.hint_cooldown.lore":
     - "§7Délai des messages d'aide."
     - "§7Valeur: §f{value} s"
     - "§e[Clic gauche pour modifier]"
+  "gui.general.send_hint.name": "§eEnvoyer Message d'Aide"
   "gui.general.send_hint.lore":
     - "§7Envoyer message d'aide."
     - "§7Statut: {state}"
     - "§e[Clic gauche pour basculer]"
+  "gui.general.extra_loss_enabled.name": "§eUsure Extra Outils"
   "gui.general.extra_loss_enabled.lore":
     - "§7Perte durabilité extra."
     - "§7Statut: {state}"
     - "§e[Clic gauche pour basculer]"
+  "gui.general.extra_loss_points.name": "§ePoints Usure Extra"
   "gui.general.extra_loss_points.lore":
     - "§7Points perdus en plus."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
   "gui.title.config_limits": "§8Configuration - Limites de Scan"
+  "gui.limits.max_logs.name": "§eMax Bûches par Arbre"
   "gui.limits.max_logs.lore":
     - "§7Nombre max de bûches/arbre."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.limits.max_blocks.name": "§eMax Blocs Total"
   "gui.limits.max_blocks.lore":
     - "§7Total max (bûches+feuilles)."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.limits.max_radius.name": "§eRayon Horizontal Max (XZ)"
   "gui.limits.max_radius.lore":
     - "§7Rayon XZ maximum."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.limits.max_height.name": "§eHauteur Verticale Max (Y)"
   "gui.limits.max_height.lore":
     - "§7Hauteur Y maximale."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.limits.sixway_max_logs.name": "§eMax Bûches (Mode 6-Way)"
   "gui.limits.sixway_max_logs.lore":
     - "§7Budget max scan 6-way."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
   "gui.title.config_decay": "§8Configuration - Decay & Canopée"
+  "gui.decay.decay_range_xz.name": "§eRayon Decay Leaves (XZ)"
   "gui.decay.decay_range_xz.lore":
     - "§7Rayon XZ decay feuilles."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.decay.decay_range_y.name": "§eRayon Decay Leaves (Y)"
   "gui.decay.decay_range_y.lore":
     - "§7Rayon Y decay feuilles."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.decay.allow_diagonal.name": "§eFeuilles en Diagonale"
   "gui.decay.allow_diagonal.lore":
     - "§7Feuilles en diagonale."
     - "§7Statut: {state}"
     - "§e[Clic gauche pour basculer]"
+  "gui.decay.canopy_cleanup.name": "§eNettoyage Canopée"
   "gui.decay.canopy_cleanup.lore":
     - "§7Nettoyage post-abattage."
     - "§7Statut: {state}"
     - "§e[Clic gauche pour basculer]"
+  "gui.decay.canopy_padding.name": "§eMarge Canopée (Padding)"
   "gui.decay.canopy_padding.lore":
     - "§7Marge scan canopée."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.decay.leaves_batch.name": "§eFeuilles par Tick (Batch)"
   "gui.decay.leaves_batch.lore":
     - "§7Feuilles par tick."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
   "gui.title.config_roots": "§8Configuration - Racines & Rebouchage"
+  "gui.roots.fill_padding.name": "§eMarge Rebouchage (XZ)"
   "gui.roots.fill_padding.lore":
     - "§7Marge XZ de rebouchage."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.roots.depth_padding.name": "§eMarge Profondeur Racines"
   "gui.roots.depth_padding.lore":
     - "§7Profondeur sous bûche bas."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.roots.root_rep_enabled.name": "§eRemplacement Racines"
   "gui.roots.root_rep_enabled.lore":
     - "§7Remplacer racines."
     - "§7Statut: {state}"
     - "§e[Clic gauche pour basculer]"
+  "gui.roots.root_rep_material.name": "§eBloc de Remplacement"
   "gui.roots.root_rep_material.lore":
     - "§7Matériau de remplacement."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche modifier dans le chat]"
     - "§6[Shift + Clic avec objet en main]"
   "gui.title.config_fallback": "§8Configuration - Secours Cylindrique"
+  "gui.fallback.enabled.name": "§eActiver Mode Secours"
   "gui.fallback.enabled.lore":
     - "§7Activer scan secours."
     - "§7Statut: {state}"
     - "§e[Clic gauche pour basculer]"
+  "gui.fallback.max_blocks.name": "§eMax Blocs Secours"
   "gui.fallback.max_blocks.lore":
     - "§7Blocs max en secours."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.fallback.trunk_core_radius.name": "§eRayon Cœur du Tronc"
   "gui.fallback.trunk_core_radius.lore":
     - "§7Rayon cœur du tronc."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.fallback.trunk_min_height.name": "§eHauteur Min Tronc"
   "gui.fallback.trunk_min_height.lore":
     - "§7Hauteur min du tronc."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.fallback.max_radius.name": "§eRayon Max Cylindre"
   "gui.fallback.max_radius.lore":
     - "§7Rayon max cylindre."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
+  "gui.fallback.min_density.name": "§eDensité Min Requise"
   "gui.fallback.min_density.lore":
     - "§7Densité min requise."
     - "§7Valeur: §f{value}"
     - "§e[Clic gauche pour modifier]"
   "gui.title.biome_list": "§8WildTimber - Liste des Biomes"
+  "gui.biome_list.entry.title": "§e§lBiome : {biome}"
   "gui.biome_list.entry.lore":
     - "§7Statut: {state}"
     - "§7Bûches: §f{logs} types"
