@@ -502,7 +502,7 @@ public class ConfigGUI implements InventoryHolder {
      * The name can be a literal string (§e...) OR a lang key if it doesn't start with §.
      */
     private ItemStack createItemWithDynamicLore(ConfigManager cm, Material mat, String nameOrKey, String loreKey, String placeholder, String value) {
-        String name = nameOrKey;
+        String name = (nameOrKey != null && !nameOrKey.startsWith("§")) ? cm.getMessage(nameOrKey, false) : nameOrKey;
         List<String> lore = new ArrayList<>(cm.getMessageList(loreKey));
         lore.replaceAll(l -> l.replace(placeholder, value));
         return createItemWithLore(mat, name, lore);
