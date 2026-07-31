@@ -1,38 +1,38 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# config.yml — WildTimber Main Configuration
+# config.yml — WildTimber 主配置文件
 # ─────────────────────────────────────────────────────────────────────────────
 #
-# DETECTION MODULE OVERVIEW:
-# WildTimber uses 3 complementary detection modules to manage trees:
+# 检测模块概览：
+# WildTimber 使用 3 个互补检测模块来管理树木：
 #
-# 1. MAIN MODULE (BFS 26-way + Bottlenecks):
-#    Analyzes trunk and canopy in 26-way (diagonals included, ideal for custom
-#    trees with diagonal branches). If multiple trunks are detected, it attempts
-#    to separate merged trees by cutting thin junctions (bottlenecks) according
-#    to the size and cost criteria configured under trees.*.
+# 1. 主模块（BFS 26方向 + 瓶颈）：
+#    以26方向分析树干和树冠（包括对角线，适合有对角枝的自定义树）。
+#    如果检测到多个树干，尝试通过切割细连接（瓶颈）来分离合并树，
+#    根据 trees.* 下配置的大小和成本标准来分割。
+#    
 #
-# 2. 6WAY MODULE (BFS 6-way):
-#    If the main detection (26-way) encompasses a cluster exceeding the allowed
-#    limits (tree_too_large), the plugin immediately re-runs in strict 6-way
-#    connectivity. This separates trees touching only at corners.
+# 2. 6方向模块（BFS 6-way）：
+#    如果主检测（26方向）包含超出允许限制的过大簇，插件立即以
+#    严格的6方向连接性重新扫描。这自动分离只在角落接触的树。
+#    
 #
-# 3. FALLBACK MODULE (Cylindrical Fallback):
-#    If bottleneck separation fails (trees too interleaved), the plugin cuts a
-#    cylindrical portion around the struck trunk based on local log/leaf density.
+# 3. 后备模块（圆柱形后备）：
+#    如果瓶颈分离失败，插件将根据局部密度切割被击树干周围的圆柱形部分。
+#    
 # ─────────────────────────────────────────────────────────────────────────────
 
 plugin:
-  enabled: true          # true = plugin active | false = globally disabled
-  # Plugin language code (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
+  enabled: true          # true = 插件启用 | false = 全局禁用
+  # 插件语言代码（en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it）
   language: "en"
-  # Set to true to see debug logs in the console
-  debug: false           # Example: debug: true → displays scans in console
-  # Set to true to enable detailed leaf drop logs (very spammy!)
+  # 设置为 true 以在控制台看到调试日志
+  debug: false           # 示例：debug: true → 在控制台显示扫描
+  # 设置为 true 启用详细叶片掉落日志（非常刷屏！）
   verbose-debug: false
 
 worlds:
-  # List of worlds where WildTimber is disabled.
-  # If empty, the plugin is active on all worlds by default.
+  # WildTimber 禁用的世界列表。
+  # 如果为空，插件默认在所有世界中激活。
   disabled:
     - "ignored_world_example"
 
@@ -242,7 +242,7 @@ limits:
   leaves-persistence-batch-size: 64
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Anti-cheat
+# 反作弊
 # ─────────────────────────────────────────────────────────────────────────────
 anti-cheat:
   # true = enable anti-cheat detection
@@ -255,7 +255,7 @@ anti-cheat:
   max-regular-clicks: 8
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Multi-source partitioning (separation of adjacent trees)
+# 多源分区（相邻树木分离）
 # ─────────────────────────────────────────────────────────────────────────────
 trees:
   # Minimum number of logs connected to the ground to consider a trunk valid.
@@ -284,26 +284,26 @@ trees:
   bridge-search-radius: 16
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Performance (progressive cutting for very large trees)
+# 性能（大型树木的渐进砍伐）
 # ─────────────────────────────────────────────────────────────────────────────
 performance:
-  # true = enable staged cutting for large trees
+  # true = 为大型树木启用分阶段砍伐
   staged-cut-enabled: true
 
-  # Beyond this total block count (logs + leaves), cut in multiple passes.
-  # Example: 256 → trees larger than 256 blocks will be cut progressively
+  # 超过此总块数（原木+树叶），分多次砍伐。
+  # 示例：256 → 超过 256 块的树将逐步砍伐
   staged-cut-min-blocks: 256
 
-  # Height (in blocks) of a slice destroyed per step.
-  # Example: 1 → 1 Y level cut per pass
+  # 每步摧毁的切片高度（以块为单位）。
+  # 示例：1 → 每次砍伐 1 个 Y 层
   staged-cut-slice-height: 1
 
-  # Delay between each slice (in server ticks, 20 ticks = 1 second).
-  # Example: 5 → 1 slice every 5 ticks (4 per second)
+  # 每个切片之间的延迟（以服务器 ticks 计，20 ticks = 1 秒）。
+  # 示例：5 → 每 5 ticks 1 个切片
   staged-cut-interval-ticks: 5
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Underground root backfilling
+# 地下根部回填
 # ─────────────────────────────────────────────────────────────────────────────
 roots:
   # true = replaces underground logs with a solid block instead of air.
@@ -341,7 +341,7 @@ roots:
   root-fill-depth-padding: 2
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Cylindrical fallback algorithm (Fallback detection module)
+# 圆柱形后备算法
 # ─────────────────────────────────────────────────────────────────────────────
 fallback:
   # true = enable the cylindrical fallback algorithm when the main method fails
@@ -371,10 +371,10 @@ fallback:
   ring-step: 1
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Drops from removed leaves
+# 移除叶片的掉落物
 # ─────────────────────────────────────────────────────────────────────────────
 leaf-drops:
-  enabled: true          # enable/disable leaf drops
-  sapling-chance: 0.05   # 5% per leaf (DO NOT MODIFY)
-  stick-chance: 0.02     # 2% per leaf (DO NOT MODIFY)
-  apple-chance: 0.005    # 0.5% (oak + dark forest only) (DO NOT MODIFY)
+  enabled: true          # 启用/禁用叶片掉落
+  sapling-chance: 0.05   # 每片叶子 5%（请勿修改）
+  stick-chance: 0.02     # 每片叶子 2%（请勿修改）
+  apple-chance: 0.005    # 0.5%（仅橡木+黑暗森林）（请勿修改）

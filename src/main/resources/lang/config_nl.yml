@@ -1,38 +1,38 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# config.yml — WildTimber Main Configuration
+# config.yml — WildTimber Hoofdconfiguratie
 # ─────────────────────────────────────────────────────────────────────────────
 #
-# DETECTION MODULE OVERVIEW:
-# WildTimber uses 3 complementary detection modules to manage trees:
+# OVERZICHT DETECTIEMODULES:
+# WildTimber gebruikt 3 complementaire detectiemodules voor boombeheer:
 #
-# 1. MAIN MODULE (BFS 26-way + Bottlenecks):
-#    Analyzes trunk and canopy in 26-way (diagonals included, ideal for custom
-#    trees with diagonal branches). If multiple trunks are detected, it attempts
-#    to separate merged trees by cutting thin junctions (bottlenecks) according
-#    to the size and cost criteria configured under trees.*.
+# 1. HOOFDMODULE (BFS 26-richtingen + Knelpunten):
+#    Analyseert stam en kroon in 26 richtingen (diagonalen inbegrepen, ideaal voor
+#    aangepaste bomen met diagonale takken). Bij meerdere stammen probeert het
+#    samengegroeide bomen te scheiden door dunne verbindingen (knelpunten) te snijden
+#    volgens de grootte- en kostencriteria geconfigureerd onder trees.*.
 #
-# 2. 6WAY MODULE (BFS 6-way):
-#    If the main detection (26-way) encompasses a cluster exceeding the allowed
-#    limits (tree_too_large), the plugin immediately re-runs in strict 6-way
-#    connectivity. This separates trees touching only at corners.
+# 2. 6-RICHTINGEN-MODULE (BFS 6-way):
+#    Als de hoofddetectie (26-richtingen) een te groot cluster omvat, herstart het
+#    plugin onmiddellijk in strikte 6-richtingen-connectiviteit. Dit scheidt
+#    automatisch bomen die alleen aan hoeken raken.
 #
-# 3. FALLBACK MODULE (Cylindrical Fallback):
-#    If bottleneck separation fails (trees too interleaved), the plugin cuts a
-#    cylindrical portion around the struck trunk based on local log/leaf density.
+# 3. FALLBACK-MODULE (Cilindrische Fallback):
+#    Als kneelpuntsscheiding mislukt, snijdt het plugin een cilindrisch gedeelte
+#    rond de getroffen stam op basis van lokale dichtheid.
 # ─────────────────────────────────────────────────────────────────────────────
 
 plugin:
-  enabled: true          # true = plugin active | false = globally disabled
-  # Plugin language code (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
+  enabled: true          # true = plugin actief | false = globaal uitgeschakeld
+  # Plugin taalcode (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
   language: "en"
-  # Set to true to see debug logs in the console
-  debug: false           # Example: debug: true → displays scans in console
-  # Set to true to enable detailed leaf drop logs (very spammy!)
+  # Op true zetten om debug-logs in de console te zien
+  debug: false           # Voorbeeld: debug: true → toont scans in de console
+  # Op true zetten voor gedetailleerde bladdrop-logs (erg spam-intensief!)
   verbose-debug: false
 
 worlds:
-  # List of worlds where WildTimber is disabled.
-  # If empty, the plugin is active on all worlds by default.
+  # Lijst van werelden waar WildTimber uitgeschakeld is.
+  # Als leeg, is de plugin standaard in alle werelden actief.
   disabled:
     - "ignored_world_example"
 
@@ -255,7 +255,7 @@ anti-cheat:
   max-regular-clicks: 8
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Multi-source partitioning (separation of adjacent trees)
+# Meerbronpartitionering (scheiding van aangrenzende bomen)
 # ─────────────────────────────────────────────────────────────────────────────
 trees:
   # Minimum number of logs connected to the ground to consider a trunk valid.
@@ -284,26 +284,26 @@ trees:
   bridge-search-radius: 16
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Performance (progressive cutting for very large trees)
+# Prestaties (progressief kappen voor zeer grote bomen)
 # ─────────────────────────────────────────────────────────────────────────────
 performance:
-  # true = enable staged cutting for large trees
+  # true = gefaseerd kappen activeren voor grote bomen
   staged-cut-enabled: true
 
-  # Beyond this total block count (logs + leaves), cut in multiple passes.
-  # Example: 256 → trees larger than 256 blocks will be cut progressively
+  # Boven dit totale blokgetal (stammen + bladeren) in meerdere passes kappen.
+  # Voorbeeld: 256 → bomen groter dan 256 blokken worden progressief gekapt
   staged-cut-min-blocks: 256
 
-  # Height (in blocks) of a slice destroyed per step.
-  # Example: 1 → 1 Y level cut per pass
+  # Hoogte (in blokken) van een per stap vernietigde schijf.
+  # Voorbeeld: 1 → 1 Y-niveau per doorgang gekapt
   staged-cut-slice-height: 1
 
-  # Delay between each slice (in server ticks, 20 ticks = 1 second).
-  # Example: 5 → 1 slice every 5 ticks (4 per second)
+  # Vertraging tussen elke schijf (in serverticks, 20 ticks = 1 seconde).
+  # Voorbeeld: 5 → 1 schijf elke 5 ticks
   staged-cut-interval-ticks: 5
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Underground root backfilling
+# Ondergrondse worteltoewijzing
 # ─────────────────────────────────────────────────────────────────────────────
 roots:
   # true = replaces underground logs with a solid block instead of air.
@@ -341,7 +341,7 @@ roots:
   root-fill-depth-padding: 2
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Cylindrical fallback algorithm (Fallback detection module)
+# Cilindrisch fallback-algoritme
 # ─────────────────────────────────────────────────────────────────────────────
 fallback:
   # true = enable the cylindrical fallback algorithm when the main method fails
@@ -371,10 +371,10 @@ fallback:
   ring-step: 1
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Drops from removed leaves
+# Drops van verwijderde bladeren
 # ─────────────────────────────────────────────────────────────────────────────
 leaf-drops:
-  enabled: true          # enable/disable leaf drops
-  sapling-chance: 0.05   # 5% per leaf (DO NOT MODIFY)
-  stick-chance: 0.02     # 2% per leaf (DO NOT MODIFY)
-  apple-chance: 0.005    # 0.5% (oak + dark forest only) (DO NOT MODIFY)
+  enabled: true          # bladdrop in-/uitschakelen
+  sapling-chance: 0.05   # 5% per blad (NIET WIJZIGEN)
+  stick-chance: 0.02     # 2% per blad (NIET WIJZIGEN)
+  apple-chance: 0.005    # 0.5% (alleen eiken + donker bos) (NIET WIJZIGEN)

@@ -10,6 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import com.wildtimber.util.ConfigCommentRewriter;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -184,6 +185,10 @@ public class ConfigManager {
         parseBlocks();
         parseBiomes();
         parseLang();
+
+        if (language != null) {
+            ConfigCommentRewriter.rewrite(plugin, language);
+        }
 
         plugin.getLogger().info("=== CONFIGURATION CHARGEE ===");
         plugin.getLogger().info("Statut : " + (pluginEnabled ? "ACTIF" : "DESACTIVE") + " | Mode Debug : " + debug);
@@ -489,8 +494,8 @@ public class ConfigManager {
         // Performance (staged cut)
         stagedCutEnabled = config.getBoolean("performance.staged-cut-enabled", true);
         stagedCutMinBlocks = config.getInt("performance.staged-cut-min-blocks", 256);
-        stagedCutSliceHeight = config.getInt("performance.staged-cut-slice-height", 4);
-        stagedCutIntervalTicks = config.getInt("performance.staged-cut-interval-ticks", 20);
+        stagedCutSliceHeight = config.getInt("performance.staged-cut-slice-height", 1);
+        stagedCutIntervalTicks = config.getInt("performance.staged-cut-interval-ticks", 5);
 
         // Roots (backfill)
         backfillEnabled = config.getBoolean("roots.backfill-enabled",
@@ -1127,6 +1132,7 @@ public class ConfigManager {
         this.language = matched;
         config.set("plugin.language", matched);
         saveConfig();
+        ConfigCommentRewriter.rewrite(plugin, matched);
 
         File targetLang = new File(plugin.getDataFolder(), "lang.yml");
         String resourcePath = "lang/lang_" + matched + ".yml";

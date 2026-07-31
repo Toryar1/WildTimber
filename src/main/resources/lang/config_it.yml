@@ -1,38 +1,38 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# config.yml — WildTimber Main Configuration
+# config.yml — Configurazione Principale di WildTimber
 # ─────────────────────────────────────────────────────────────────────────────
 #
-# DETECTION MODULE OVERVIEW:
-# WildTimber uses 3 complementary detection modules to manage trees:
+# PANORAMICA DEI MODULI DI RILEVAMENTO:
+# WildTimber usa 3 moduli complementari per gestire gli alberi:
 #
-# 1. MAIN MODULE (BFS 26-way + Bottlenecks):
-#    Analyzes trunk and canopy in 26-way (diagonals included, ideal for custom
-#    trees with diagonal branches). If multiple trunks are detected, it attempts
-#    to separate merged trees by cutting thin junctions (bottlenecks) according
-#    to the size and cost criteria configured under trees.*.
+# 1. MODULO PRINCIPALE (BFS 26-vie + Colli di bottiglia):
+#    Analizza tronco e chioma in 26 vie (diagonali incluse, ideale per alberi
+#    personalizzati con rami diagonali). Se rileva più tronchi, tenta di separare
+#    alberi fusi tagliando giunzioni sottili (colli di bottiglia) secondo
+#    i criteri di dimensione e costo configurati sotto trees.*.
 #
-# 2. 6WAY MODULE (BFS 6-way):
-#    If the main detection (26-way) encompasses a cluster exceeding the allowed
-#    limits (tree_too_large), the plugin immediately re-runs in strict 6-way
-#    connectivity. This separates trees touching only at corners.
+# 2. MODULO 6-VIE (BFS 6-way):
+#    Se la rilevazione principale (26-vie) abbraccia un cluster troppo grande, il plugin
+#    riavvia immediatamente in connettività stretta a 6 vie. Questo separa
+#    automaticamente alberi che si toccano solo negli angoli.
 #
-# 3. FALLBACK MODULE (Cylindrical Fallback):
-#    If bottleneck separation fails (trees too interleaved), the plugin cuts a
-#    cylindrical portion around the struck trunk based on local log/leaf density.
+# 3. MODULO FALLBACK (Cilindrico di Riserva):
+#    Se la separazione per colli di bottiglia fallisce, il plugin taglia una porzione
+#    cilindrica intorno al tronco colpito basandosi sulla densità locale.
 # ─────────────────────────────────────────────────────────────────────────────
 
 plugin:
-  enabled: true          # true = plugin active | false = globally disabled
-  # Plugin language code (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
+  enabled: true          # true = plugin attivo | false = disabilitato globalmente
+  # Codice lingua del plugin (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
   language: "en"
-  # Set to true to see debug logs in the console
-  debug: false           # Example: debug: true → displays scans in console
-  # Set to true to enable detailed leaf drop logs (very spammy!)
+  # Impostare a true per vedere i log di debug nella console
+  debug: false           # Esempio: debug: true → mostra le scansioni nella console
+  # Impostare a true per log dettagliati dei drop di foglie (molto spam!)
   verbose-debug: false
 
 worlds:
-  # List of worlds where WildTimber is disabled.
-  # If empty, the plugin is active on all worlds by default.
+  # Elenco dei mondi in cui WildTimber è disabilitato.
+  # Se vuoto, il plugin è attivo in tutti i mondi di default.
   disabled:
     - "ignored_world_example"
 
@@ -255,7 +255,7 @@ anti-cheat:
   max-regular-clicks: 8
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Multi-source partitioning (separation of adjacent trees)
+# Partizionamento multi-sorgente (separazione di alberi adiacenti)
 # ─────────────────────────────────────────────────────────────────────────────
 trees:
   # Minimum number of logs connected to the ground to consider a trunk valid.
@@ -284,26 +284,26 @@ trees:
   bridge-search-radius: 16
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Performance (progressive cutting for very large trees)
+# Prestazioni (taglio progressivo per alberi molto grandi)
 # ─────────────────────────────────────────────────────────────────────────────
 performance:
-  # true = enable staged cutting for large trees
+  # true = abilitare il taglio a stadi per alberi grandi
   staged-cut-enabled: true
 
-  # Beyond this total block count (logs + leaves), cut in multiple passes.
-  # Example: 256 → trees larger than 256 blocks will be cut progressively
+  # Oltre questo numero totale di blocchi, tagliare in più passate.
+  # Esempio: 256 → alberi più grandi di 256 blocchi verranno tagliati progressivamente
   staged-cut-min-blocks: 256
 
-  # Height (in blocks) of a slice destroyed per step.
-  # Example: 1 → 1 Y level cut per pass
+  # Altezza (in blocchi) di una fetta distrutta per step.
+  # Esempio: 1 → 1 livello Y tagliato per passata
   staged-cut-slice-height: 1
 
-  # Delay between each slice (in server ticks, 20 ticks = 1 second).
-  # Example: 5 → 1 slice every 5 ticks (4 per second)
+  # Ritardo tra ogni fetta (in tick del server, 20 tick = 1 secondo).
+  # Esempio: 5 → 1 fetta ogni 5 tick
   staged-cut-interval-ticks: 5
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Underground root backfilling
+# Riempimento delle radici sotterranee
 # ─────────────────────────────────────────────────────────────────────────────
 roots:
   # true = replaces underground logs with a solid block instead of air.
@@ -341,7 +341,7 @@ roots:
   root-fill-depth-padding: 2
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Cylindrical fallback algorithm (Fallback detection module)
+# Algoritmo di fallback cilindrico
 # ─────────────────────────────────────────────────────────────────────────────
 fallback:
   # true = enable the cylindrical fallback algorithm when the main method fails
@@ -371,10 +371,10 @@ fallback:
   ring-step: 1
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Drops from removed leaves
+# Drop dalle foglie rimosse
 # ─────────────────────────────────────────────────────────────────────────────
 leaf-drops:
-  enabled: true          # enable/disable leaf drops
-  sapling-chance: 0.05   # 5% per leaf (DO NOT MODIFY)
-  stick-chance: 0.02     # 2% per leaf (DO NOT MODIFY)
-  apple-chance: 0.005    # 0.5% (oak + dark forest only) (DO NOT MODIFY)
+  enabled: true          # abilitare/disabilitare i drop di foglie
+  sapling-chance: 0.05   # 5% per foglia (NON MODIFICARE)
+  stick-chance: 0.02     # 2% per foglia (NON MODIFICARE)
+  apple-chance: 0.005    # 0.5% (solo quercia + foresta oscura) (NON MODIFICARE)
