@@ -12,46 +12,46 @@
 #    gemäß den Größen- und Kostenkriterien unter trees.* zu trennen.
 #
 # 2. 6-WEGE-MODUL (BFS 6-Wege):
-#    Falls die Haupterkennung (26-Wege) einen zu großen Cluster erfasst, startet
-#    das Plugin sofort einen strikten 6-Wege-Scan neu. Dies trennt automatisch
-#    Bäume, die sich nur an Ecken berühren.
+#    Falls die Haupterkennung (26-Wege) einen zu großen Cluster erfasst,
+#    startet das Plugin sofort neu mit strikter 6-Wege-Konnektivität.
+#    Dies trennt Bäume, die sich nur an den Ecken berühren.
 #
-# 3. FALLBACK-MODUL (Zylindrischer Rückfall):
-#    Falls die Engpasstrennung fehlschlägt, schneidet das Plugin einen zylindrischen
-#    Bereich um den getroffenen Stamm basierend auf lokaler Dichte.
+# 3. FALLBACK-MODUL (Zylinder-Fallback):
+#    Wenn die Trennung fehlschlägt, schneidet das Plugin einen zylindrischen
+#    Teil um den getroffenen Stamm basierend auf lokaler Dichte.
 # ─────────────────────────────────────────────────────────────────────────────
 
 plugin:
   enabled: true          # true = Plugin aktiv | false = global deaktiviert
-  # Plugin-Sprachcode (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
+  # Sprachcode des Plugins (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
   language: "en"
-  # Auf true setzen, um Debug-Logs in der Konsole zu sehen
-  debug: false           # Beispiel: debug: true → zeigt Scans in der Konsole
-  # Auf true setzen für detaillierte Blatt-Drop-Logs (sehr spam-intensiv!)
+  # Auf true setzen für Debug-Logs in der Konsole
+  debug: false           # Beispiel: debug: true -> zeigt Scans in der Konsole an
+  # Auf true setzen für detaillierte Blatt-Drop-Logs
   verbose-debug: false
 
 worlds:
   # Liste der Welten, in denen WildTimber deaktiviert ist.
-  # Wenn leer, ist das Plugin standardmäßig in allen Welten aktiv.
+  # Wenn leer, ist das Plugin standardmäßig auf allen Welten aktiv.
   disabled:
     - "ignored_world_example"
 
 health:
-  # Globaler HP-Multiplikator für Bäume.
-  # Gesamt-HP = Summe der Stammgewichte × base-coefficient
+  # Globaler HP-Koeffizient für Bäume.
+  # Gesamt-HP = Summe der Stammgewichte * base-coefficient
   # Beispiel: 1.0 = normal | 2.0 = Baum doppelt so widerstandsfähig
   base-coefficient: 1.0
 
   # Inaktivitätsverzögerung (in Sekunden) bevor die Regeneration beginnt.
-  # Beispiel: 180 = 3 Minuten Inaktivität → Regeneration startet
+  # Beispiel: 180 = 3 Minuten Inaktivität -> Regeneration startet
   inactivity-delay-seconds: 180
 
   regen:
     # true = HP regeneriert, wenn der Baum seit inactivity-delay-seconds nicht getroffen wurde
-    enabled: true        # Beispiel: false → Baum behält seinen Schaden dauerhaft
+    enabled: true        # Beispiel: false -> Baum behält seinen Schaden unbegrenzt
 
     # Prozentsatz der maximalen HP, der pro Regenerationstick wiederhergestellt wird.
-    # Beispiel: 10.0 = 10% pro Schritt → vollständige Erholung in 10 Schritten
+    # Beispiel: 10.0 = 10% pro Schritt -> vollständige Erholung in 10 Schritten
     percent-per-step: 10.0
 
     # Intervall zwischen Regenerationsticks, in Sekunden.
@@ -65,112 +65,112 @@ trigger:
   # Auslösemodus. Derzeit wird nur RIGHT_CLICK_AXE unterstützt.
   mode: "RIGHT_CLICK_AXE"
 
-  # true = Hinweisnachricht an Spieler senden, die einen Stamm brechen ohne den Baum zu engagieren
-  send-hint-message: true   # Beispiel: false → keine Hilfsmeldung
+  # true = Hinweisnachricht an Spieler senden, die einen Stamm ohne Erfassung schlagen
+  send-hint-message: true   # Beispiel: false -> keine Hinweistexte
 
-  # Verzögerung (in Sekunden) zwischen zwei Hinweisnachrichten für denselben Spieler.
+  # Verzögerung (in Sekunden) zwischen zwei Hinweistexten für denselben Spieler.
   # Beispiel: 60 = ein Hinweis pro Minute pro Spieler
   hint-cooldown-seconds: 60
 
   # Mindestverzögerung zwischen zwei gezählten Klicks (in Millisekunden)
-  # Beispiel: 350 → ein Klick alle 350ms maximal
+  # Beispiel: 350 -> maximal ein Klick alle 350ms
   click-cooldown-ms: 350
 
 durability:
-  # Basisschaden pro Klick basierend auf dem verwendeten Werkzeug.
-  # Spezialtaste AIR (oder HAND) = leere Hand.
-  # Beispiel: DIAMOND_AXE: 5.0 → Diamantaxt fügt 5 HP pro Klick zu
+  # Grundschaden am Baum pro Klick je nach verwendetem Werkzeug.
+  # Spezialschlüssel AIR (oder HAND) = leere Hand.
+  # Beispiel: DIAMOND_AXE: 5.0 -> Diamantaxt richtet 5 HP pro Klick an
   multipliers:
     WOODEN_AXE: 1.0       # Holzaxt
     STONE_AXE: 1.5        # Steinaxt
     IRON_AXE: 2.0         # Eisenaxt
     GOLDEN_AXE: 2.5       # Goldaxt
     DIAMOND_AXE: 3.5      # Diamantaxt
-    NETHERITE_AXE: 5.0    # Netheritatxt
-    AIR: 0.5              # Leere Hand (HAND → verwendet intern AIR)
+    NETHERITE_AXE: 5.0    # Netheritaxt
+    AIR: 0.5              # Leere Hand (HAND -> nutzt intern AIR)
 
   # Zusätzlicher Schaden pro Verzauberungsstufe.
   enchantments:
-    # Bonusschaden pro Effizienz-Stufe.
-    # Beispiel: 0.5 → Effizienz III fügt 3 × 0.5 = 1.5 extra HP hinzu
+    # Bonus-Schaden pro Effizienz-Stufe.
+    # Beispiel: 0.5 -> Effizienz III fügt 3 * 0.5 = 1.5 extra HP hinzu
     efficiency: 0.5
 
-    # Bonusschaden pro Schärfe-Stufe.
-    # Beispiel: 0.3 → Schärfe V fügt 5 × 0.3 = 1.5 extra HP hinzu
+    # Bonus-Schaden pro Schärfe-Stufe.
+    # Beispiel: 0.3 -> Schärfe V fügt 5 * 0.3 = 1.5 extra HP hinzu
     sharpness: 0.3
 
-  # Interner Effizienz-Multiplikator (für zukünftige Verwendung reserviert).
+  # Interner Effizienzmultiplikator.
   efficiency-level-multiplier: 0.2
 
   extra-loss:
     # true = Werkzeug verliert beim Fällen zusätzliche Haltbarkeit
-    enabled: true          # Beispiel: false → kein zusätzlicher Verschleiß
+    enabled: true          # Beispiel: false -> keine zusätzliche Abnutzung
 
-    # Extra Haltbarkeitspunkte verloren pro Treffer.
-    # Beispiel: 1 = 1 extra Haltbarkeitspunkt pro Klick
+    # Zusätzliche Haltbarkeitspunkte, die pro Schlag verloren gehen.
+    # Beispiel: 1 = 1 zusätzlicher Haltbarkeitspunkt pro Klick
     points-per-interval: 1
 
-    # Chance-Prozentsatz (0-100) extra Haltbarkeit pro Treffer zu verlieren.
-    # Beispiel: 50 = 50% Chance Haltbarkeitspunkte zu verlieren
+    # Wahrscheinlichkeit (0-100) für zusätzlichen Haltbarkeitsverlust.
+    # Beispiel: 50 = 50% Chance auf Haltbarkeitsverlust
     chance-percent: 100
 
 limits:
-  # Baumerkennungs-Preset:
-  # - CUSTOM  : Verwendet alle unten definierten Regeln und Limits. (Empfohlen)
-  # - VANILLA : Ignoriert die Limits unten und verwendet Standard-Minecraft-Baum-Presets
+  # Baumerkennungs-Voreinstellung:
+  # - CUSTOM  : Verwendet alle unten definierten Regeln. (Empfohlen)
+  # - VANILLA : Ignoriert untenstehende Grenzen und nutzt Vanilla-Standards
   preset: "CUSTOM"
 
-  # Ob Blacklist-Blöcke (Baumaterialien) das Fällen verhindern.
-  # true (Standard): schützt Spielerkonstruktionen.
-  # false: ignoriert die Baukonstruktions-Blacklist beim Fällen.
+  # Ob Blacklist-Blöcke (Bauwerke) das Fällen verhindern.
+  # true (Standard): schützt Spielerbauten.
+  # false: ignoriert Bauschutz beim Fällen.
   blacklist-enabled: true
 
-  # true = der Baum muss Bodenkontakt haben (verwurzelt) um zu fallen.
-  # false = schwebende oder nicht verwurzelte Bäume werden akzeptiert.
+  # true = Baum muss Bodenkontakt haben (erfasst), um gefällt zu werden.
+  # false = schwimmende Bäume werden akzeptiert.
   tree-contact-required: true
 
-  # Maximale Stammanzahl vor dem 'zu groß'-Status.
-  # Beispiel: 1024 → lehnt Bäume mit mehr als 1024 Stämmen ab
+  # Maximale Anzahl an Stämmen pro Baum.
+  # Beispiel: 1024 -> verweigert Bäume mit mehr als 1024 Stämmen
   max-logs: 1024
 
-  # Maximale Gesamtblockanzahl (Stämme + Blätter) in einem Baum.
-  # Beispiel: 4096 → globales Limit von 4096 Blöcken pro Baum
+  # Maximale Gesamtzahl an Blöcken (Stämme + Blätter).
+  # Beispiel: 4096 -> globales Limit von 4096 Blöcken pro Baum
   max-blocks: 4096
 
-  # Maximaler horizontaler Radius (XZ, in Blöcken) des Erkennungsscans.
-  # Beispiel: 16 → sucht Stämme bis zu 16 Blöcke horizontaler Entfernung
+  # Maximaler horizontaler Radius (XZ) des Scans vom Stamm.
+  # Beispiel: 16 -> sucht Stämme bis 16 Blöcke horizontale Distanz
   max-radius-xz: 16
 
-  # Maximale vertikale Höhe (Y, in Blöcken) des Erkennungsscans.
-  # Sollte generell größer als max-radius-xz sein (Bäume sind höher als breit).
-  # Beispiel: 64 → sucht Stämme bis zu 64 Blöcke Höhe
+  # Maximale vertikale Höhe (Y) des Scans vom geklickten Block.
+  # Sollte generell größer als max-radius-xz sein.
+  # Beispiel: 64 -> sucht Stämme bis 64 Blöcke Höhe
   max-height-y: 64
 
-  # Maximale verbundene Nicht-Baum-Blöcke (derzeit nicht verwendet).
+  # Maximale Anzahl verbundener Nicht-Baumblöcke.
   max-connected-non-tree-blocks: 50
 
-  # Maximale BFS-Ausbreitungsweite für Blatterkennung und -zerfall.
-  # - leaf-decay-range-xz: maximale horizontale Blatt-Scan-Weite (XZ) vom Stamm.
-  # - leaf-decay-range-y : maximale vertikale Blatt-Scan-Weite (Y) vom Stamm.
-  # Beispiel: xz: 6, y: 8 → sucht Blätter bis 6 Blöcke horizontal und 8 vertikal.
+  # Maximale BFS-Reichweite für Blatterkennung und Zerfall.
+  # - leaf-decay-range-xz: maximaler horizontaler Radius des Blattscans.
+  # - leaf-decay-range-y : maximaler vertikaler Radius des Blattscans.
+  # Beispiel: xz: 6, y: 8 -> sucht Blätter bis 6 Blöcke horiz. und 8 vert.
   leaf-decay-range-xz: 6
   leaf-decay-range-y: 8
 
-  # Diagonalerkennung erlauben (26 Richtungen statt 6 orthogonale Flächen)
-  # - allow-diagonal-logs: verbindet Stämme diagonal (dünne Äste)
-  # - allow-diagonal-leaves: verbindet Blätter diagonal (weitläufige Kronen)
+  # Diagonale Erkennung erlauben (26 Richtungen statt 6)
+  # - allow-diagonal-logs: verbindet Stämme diagonal
+  # - allow-diagonal-leaves: verbindet Blätter diagonal
   allow-diagonal-logs: true
   allow-diagonal-leaves: true
 
-  # Dynamische Radiuserhöhungsfaktoren für große Bäume:
-  # Alle X geschnittenen Stämme (leaf-decay-scaling-logs), +Y XZ-Radius und +Z Y-Radius.
-  # leaf-decay-scaling-logs auf 0 oder negativ setzen um die dynamische Erhöhung zu deaktivieren.
+  # Faktoren für dynamische Radiuserhöhung bei großen Bäumen:
+  # Alle X gefällten Stämme +Y zum XZ-Radius und +Z zum Y-Radius hinzufügen.
+  # Auf 0 setzen zum Deaktivieren.
   leaf-decay-scaling-logs: 100
   leaf-decay-scaling-xz-bonus: 1
   leaf-decay-scaling-y-bonus: 2
 
-  # Blöcke als Zubehör/schwebend betrachtet, die nach dem Fällen gereinigt werden.
-  # Beispiel: SNOW, HONEYCOMB_BLOCK, HONEY_BLOCK, DARK_OAK_FENCE, DARK_OAK_FENCE_GATE
+  # Blöcke, die nach dem Fällen aufgeräumt werden.
+  # Beispiel: SNOW, HONEYCOMB_BLOCK, HONEY_BLOCK...
   cleanup-floating-blocks:
     - "SNOW"
     - "HONEYCOMB_BLOCK"
@@ -178,67 +178,67 @@ limits:
     - "DARK_OAK_FENCE"
     - "DARK_OAK_FENCE_GATE"
 
-  # Stamm-Ertrags-Multiplikator beim Fällen.
-  # Gefallene Stämme = ceil(Stammanzahl × log-yield-multiplier)
-  # Beispiel: 0.75 → 100-Stamm-Baum ergibt 75 Stämme | 1.0 = voller Ertrag
+  # Ertragsmultiplikator für Stämme beim Fällen.
+  # Gedroppte Stämme = ceil(Stämme_gesamt * log-yield-multiplier)
+  # Beispiel: 0.75 -> ein 100-Stamm-Baum ergibt 75 Stämme
   log-yield-multiplier: 0.75
 
-  # Anzahl der Ast-Suchiterationen in der Krone.
-  # Das Plugin sucht iterativ nach Stämmen neben erkannten Blättern die nicht am Boden verwurzelt sind.
-  # Erhöhen wenn Stämme nach dem Fällen bei sehr verzweigten Custombäumen verbleiben.
-  # Beispiel: 5 → 5 Astsuch-Durchgänge (empfohlener Standard)
-  #          10 → präziser für sehr komplexe Bäume, etwas langsamer
+  # Anzahl der Astsuch-Iterationen im Blätterdach.
+  # Sucht iterativ nach Stämmen neben Blättern.
+  # Erhöhen, wenn Stämme bei großen Bäumen übrig bleiben.
+  # Beispiel: 5 -> 5 Durchgänge (empfohlener Standard)
+  #          10 -> präziser für sehr komplexe Bäume
   max-branch-discovery-iterations: 5
 
-  # Maximale Größe (in Blöcken) eines vollständig isolierten Waisenclusters zum Absorbieren.
-  # Ein Waisencluster ist eine Gruppe von Stämmen/Blättern die weder den Boden noch den Baum berührt.
-  # Wenn klein genug, gilt es als Teil des Baums (isolierter Ast).
-  # Beispiel: 10 → absorbiert Fragmente ≤ 10 Blöcke | 0 = deaktivieren
+  # Maximale Größe eines isolierten verwaisten Clusters.
+  # Ein verwaister Cluster berührt weder Boden noch Hauptbaum.
+  # Wenn klein genug, wird er als Teil des Baumes betrachtet.
+  # Beispiel: 10 -> absorbiert Fragmente <= 10 Blöcke
   max-orphan-cluster-size: 10
 
-  # Regel für isolierte Stämme in der Krone (keine direkte Stammverbindung aber von Blättern umgeben).
-  # true = betrachtet diese Stämme als Teil des Hauptbaums wenn sie verbundene Blätter berühren.
+  # Regel für isolierte Stämme im Blätterdach.
+  # true = betrachtet diese Stämme als Teil des Hauptbaumes.
   isolated-logs-rule: true
 
-  # Optionen zur Reinigung verwaister Blätter um den Baum nach dem Fällen.
+  # Optionen zum Aufräumen einzelner Blätter nach dem Fällen.
   orphan-leaves-cleanup:
-    # true = reinigt automatisch Blätter ohne nahes Stamm (vermeidet schwebende Blätter)
+    # true = räumt Blätter ohne Stamm in der Nähe automatisch auf
     enabled: true
-    # Scan-Radius um den gefällten Baum für solitäre Blätter
+    # Scanradius um den gefällten Baum
     radius: 5
 
-  # Optionen zum Ersetzen unterirdischer Wurzeln
+  # Optionen zum Ersetzen unterirdischer Wurzeln (Erde statt Luft)
   root-replacement:
-    # true = aktiviert das Ersetzen unterirdischer Wurzeln durch festen Block
+    # true = aktiviert Ersatz unterirdischer Wurzeln durch feste Blöcke
     enabled: true
-    # Ersatzmaterial (Bukkit-Materialname)
+    # Ersatzmaterial (Bukkit Materialname)
     # Beispiel: DIRT, COARSE_DIRT, NETHERRACK...
     material: "DIRT"
 
-  # Radius (in Blöcken) um das Baumvolumen für Waisenstammsuche nach dem Fällen.
+  # Radius um das Baumvolumen zur Suche verwaister Stämme.
   isolated-logs-radius: 6
 
-  # Maximale verbundene Stämme in einer Gruppe um als Waise zu gelten.
+  # Maximale Anzahl verbundener Stämme für verwaiste Gruppen.
   isolated-log-max: 4
 
-  # true = Spieler darf den Scan auf einem nicht verwurzelten Stamm starten (z.B. hoher Ast).
-  # Das Plugin steigt vertikal ab um den echten Stamm zu finden.
+  # true = erlaubt Scan-Start an nicht verwurzelten Stämmen.
+  # Das Plugin steigt vertikal ab, um den echten Stamm zu finden.
   allow-non-rooted-start: false
 
-  # Maximale Suchtiefe nach unten für einen verwurzelten Stamm.
+  # Maximale Suchtiefe nach unten für verwurzelte Stämme.
   max-root-search-depth: 16
 
-  # Maximales Budget für den eingeschränkten 6-Wege-BFS (unabhängig von max-logs)
-  # Ermöglicht das Fällen riesiger Bäume ohne ihr gesamtes Volumen zu scannen
+  # Maximales Budget für den eingeschränkten 6-Wege-BFS
+  # Ermöglicht das Fällen riesiger Bäume ohne vollen Scan
   6way-max-logs: 2048
 
-  # Kronensäuberungsphase nach dem Fällen aktivieren (empfohlen für große IRIS-Bäume)
+  # Blätterdach-Aufräumphase nach dem Fällen aktivieren
   canopy-cleanup-enabled: true
 
-  # Padding (Blöcke) um die Baum-Begrenzungsbox für Waisenblatt-Scan
+  # Randabstand um den Baum zum Scannen verwaister Blätter
   canopy-cleanup-padding: 12
 
-  # Anzahl der pro Tick verarbeiteten Blätter für Persistenzaktualisierungen (Standard: 64)
+  # Anzahl verarbeiteter Blätter pro Tick (Standard: 64)
   leaves-persistence-batch-size: 64
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -247,134 +247,134 @@ limits:
 anti-cheat:
   # true = Anti-Cheat-Erkennung aktivieren
   enabled: true
-  # Minimale Abklingzeit zwischen zwei Klicks (in Millisekunden)
+  # Mindestabklingzeit zwischen zwei Klicks (in ms)
   min-click-interval-ms: 100
-  # Minimale Ansichtsänderung (Yaw oder Pitch in Grad) zwischen Klicks
+  # Erforderliche Mindeständerung des Blickwinkels (in Grad)
   min-look-change-degrees: 0.1
-  # Maximale aufeinanderfolgende Klicks mit zu regelmäßigem Intervall
+  # Maximale Anzahl aufeinanderfolgender Klicks mit zu regelmäßigem Intervall
   max-regular-clicks: 8
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Mehrquellen-Partitionierung (Trennung angrenzender Bäume)
+# Mehrfachstamm-Trennung (Trennung benachbarter Bäume)
 # ─────────────────────────────────────────────────────────────────────────────
 trees:
-  # Mindestanzahl bodenverbundener Stämme, um einen gültigen Baumstamm zu betrachten.
-  # Beispiel: 4 → ein Stamm muss mindestens 4 Stämme haben
+  # Mindestanzahl mit dem Boden verbundener Stämme für einen Stamm.
+  # Beispiel: 4 -> ein Stamm muss mindestens 4 Blöcke haben
   min-logs-rooted: 4
 
-  # Mindestanzahl isolierter Stämme (nicht am Boden) für einen virtuellen Stamm.
-  # Ermöglicht die Behandlung kleiner schwebender Gruppen als Mini-Bäume.
-  # Beispiel: 3 → ein Cluster von 3+ schwebenden Stämmen wird als Baum behandelt
+  # Mindestanzahl isolierter Stämme für virtuellen Stamm.
+  # Allows treating small floating groups as mini-trees.
+  # Beispiel: 3 -> Gruppe von 3+ schwimmenden Stämmen wird als Baum behandelt
   min-logs-isolated: 3
 
-  # Maximale Dicke (in Stämmen) eines Engpasses zwischen zwei Teilbäumen.
-  # Wenn eine Verbindungssektion mehr Stämme hat, wird nicht getrennt.
-  # Beispiel: 4 → eine Verbindung von ≤ 4 Stämmen ist ein trennbarer Engpass
+  # Maximale Dicke (in Stämmen) eines Engpasses zwischen Bäumen.
+  # Bei mehr Stämmen werden die Bäume nicht getrennt.
+  # Beispiel: 4 -> Verbindung von <= 4 Stämmen ist trennbarer Engpass
   max-bridge-section-size: 4
 
-  # Maximale Kosten (höhengewichtet) eines zulässigen Engpasses.
-  # Je höher und breiter eine Verbindung, desto höher ihre Kosten.
+  # Maximale Kosten eines zulässigen Engpasses.
+  # Je höher und breiter eine Verbindung, desto höher die Kosten.
   max-bridge-cost: 20.0
 
   # Höhengewichtungskoeffizient für Schnitte.
-  # Beispiel: 0.1 → leichter Vorteil für hohe Schnitte
+  # Beispiel: 0.1 -> leichter Vorteil für hohe Schnitte
   height-weight-alpha: 0.1
 
-  # Maximaler Radius um den Zielstamm für Verbindungssuche zwischen Bäumen.
+  # Maximaler Radius um den Zielstamm zur Verbindungs-Suche.
   bridge-search-radius: 16
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Performance (progressives Fällen für sehr große Bäume)
+# Performance (schrittweiser Schnitt für sehr große Bäume)
 # ─────────────────────────────────────────────────────────────────────────────
 performance:
-  # true = stufenweises Fällen für große Bäume aktivieren
+  # true = schrittweisen Schnitt für große Bäume aktivieren
   staged-cut-enabled: true
 
-  # Über dieser Gesamtblockanzahl (Stämme + Blätter) in mehreren Durchgängen fällen.
-  # Beispiel: 256 → Bäume über 256 Blöcke werden progressiv gefällt
+  # Ab dieser Gesamtblockanzahl wird in mehreren Durchgängen gefällt.
+  # Beispiel: 256 -> Bäume über 256 Blöcken werden schrittweise gefällt
   staged-cut-min-blocks: 256
 
-  # Höhe (in Blöcken) einer pro Schritt zerstörten Scheibe.
-  # Beispiel: 1 → 1 Y-Ebene pro Durchgang
+  # Höhe (in Blöcken) einer zerstörten Scheibe pro Schritt.
+  # Beispiel: 1 -> 1 Y-Ebene pro Durchgang
   staged-cut-slice-height: 1
 
-  # Verzögerung zwischen jeder Scheibe (in Server-Ticks, 20 Ticks = 1 Sekunde).
-  # Beispiel: 5 → 1 Scheibe alle 5 Ticks
+  # Verzögerung zwischen Scheiben (in Server-Ticks, 20 Ticks = 1 Sekunde).
+  # Beispiel: 5 -> 1 Scheibe alle 5 Ticks (4 pro Sekunde)
   staged-cut-interval-ticks: 5
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Unterirdisches Wurzelauffüllen
+# Unterirdische Wurzelverfüllung
 # ─────────────────────────────────────────────────────────────────────────────
 roots:
-  # true = unterirdische Stämme durch einen festen Block ersetzen statt Luft.
+  # true = ersetzt unterirdische Stämme durch feste Blöcke statt Luft.
   backfill-enabled: true
 
-  # Standardblock wenn kein fester Nachbar gefunden wird.
+  # Standardblock, wenn kein fester Nachbar gefunden wird.
   backfill-block: "DIRT"
 
-  # Auffüllmodus: HOLE_DETECTOR (empfohlen), LEGACY (original), oder NONE
+  # Verfüllmodus: HOLE_DETECTOR (empfohlen), LEGACY oder NONE
   fill-mode: "HOLE_DETECTOR"
 
-  # Maximale Scan- und Auffülltiefe
+  # Maximale Scan- und Verfülltiefe
   fill-depth: 16
 
-  # Zusätzliche horizontale Blöcke um die XZ-Begrenzungsbox
+  # Zusätzliche Blöcke horizontal um den Stamm
   fill-radius-extra: 0
 
-  # Natürlicher Bodenspreizfaktor im Zentrum (Elefantenfuß)
+  # Natürlicher Verfüllungs-Erweiterungsfaktor im Zentrum (Elefantenfuß)
   elephant-factor: 1.5
 
-  # Maximale erlaubte Neigung zwischen benachbarten Säulen beim Glätten (in Blöcken)
-  # Kleinerer Wert = flachere Oberfläche
+  # Maximal zulässige Steigung zwischen benachbarten Spalten
+  # Niedrigerer Wert = flachere Oberfläche
   max-slope: 2
 
-  # Anzahl der Nachbarn für IDW-Interpolation (empfohlen: 8)
+  # Anzahl der für IDW-Interpolation genutzten Nachbarn (empfohlen: 8)
   idw-neighbors: 8
 
-  # [LEGACY] Maximale Auffülltiefe (in Blöcken unter der Oberfläche).
+  # [LEGACY] Maximale Verfülltiefe.
   max-backfill-depth: 6
 
-  # [LEGACY] XZ-Blöcke über den Stamm hinaus für den Flutfüll-Bereich
+  # [LEGACY] Randabstand an Blöcken über den Stamm hinaus
   root-fill-padding: 2
 
-  # [LEGACY] Zusätzliche Tiefenmarge unter dem tiefsten geschnittenen Stamm
+  # [LEGACY] Tiefenabstand unter dem untersten Stamm
   root-fill-depth-padding: 2
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Zylindrischer Fallback-Algorithmus (Fallback-Erkennungsmodul)
+# Zylindrischer Fallback-Algorithmus (Fallback-Modul)
 # ─────────────────────────────────────────────────────────────────────────────
 fallback:
-  # true = zylindrischen Fallback aktivieren wenn die Hauptmethode fehlschlägt
+  # true = zylindrischen Fallback-Scan bei Fehlschlag aktivieren
   enabled: true
 
-  # Maximale Blockanzahl für die Fallback-Anwendung.
-  # Darüber hinaus wird massives Fällen verweigert.
+  # Maximale Blockanzahl, für die der Fallback gilt.
+  # Darüber hinaus wird massives Fällen abgelehnt.
   max-blocks: 2048
 
-  # Horizontaler Radius für die Suche nach Hauptstammsäulen.
-  # Beispiel: 1 → Säulen unmittelbar neben dem getroffenen Stamm
+  # Horizontaler Radius zur Suche nach Stammkernspalten.
+  # Beispiel: 1 -> Spalten direkt neben dem getroffenen Stamm
   trunk-core-radius: 1
 
-  # Minimale aufeinanderfolgende vertikale Stämme für eine Stammsäule.
+  # Mindestanzahl aufeinanderfolgender vertikaler Stämme.
   trunk-min-height: 3
 
   # Maximaler horizontaler Radius im Fallback-Modus.
-  # Beispiel: 8 → Zylinder mit Radius 8 um den Stamm
+  # Beispiel: 8 -> Zylinder mit Radius 8 um den Stamm
   max-radius: 8
 
-  # Minimale Dichte (0.0 bis 1.0) um einen Ring einzuschließen.
-  # Wenn die Ringdichte unter diesen Schwellwert fällt, stoppt die Erweiterung.
-  # Beispiel: 0.10 → mindestens 10% Baumblöcke
+  # Mindestdichte (0.0 bis 1.0) zur Einbeziehung eines Rings.
+  # Fällt die Dichte darunter, stoppt die Erweiterung.
+  # Beispiel: 0.10 -> mindestens 10% Baumblöcke
   min-density: 0.10
 
   # Breite der Distanzringe (in Blöcken).
   ring-step: 1
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Drops aus entfernten Blättern
+# Drops von entfernten Blättern
 # ─────────────────────────────────────────────────────────────────────────────
 leaf-drops:
   enabled: true          # Blatt-Drops aktivieren/deaktivieren
   sapling-chance: 0.05   # 5% pro Blatt (NICHT ÄNDERN)
   stick-chance: 0.02     # 2% pro Blatt (NICHT ÄNDERN)
-  apple-chance: 0.005    # 0.5% (Eiche + dunkler Wald nur) (NICHT ÄNDERN)
+  apple-chance: 0.005    # 0.5% (nur Eiche + Schwarzeiche) (NICHT ÄNDERN)

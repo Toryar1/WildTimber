@@ -26,7 +26,7 @@ plugin:
   # Plugin language code (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
   language: "en"
   # Set to true to see debug logs in the console
-  debug: false           # Example: debug: true → displays scans in console
+  debug: false           # Example: debug: true -> displays scans in console
   # Set to true to enable detailed leaf drop logs (very spammy!)
   verbose-debug: false
 
@@ -38,20 +38,20 @@ worlds:
 
 health:
   # Global HP coefficient multiplier for trees.
-  # Total HP = sum of log weights × base-coefficient
+  # Total HP = sum of log weights * base-coefficient
   # Example: 1.0 = normal | 2.0 = tree twice as resistant
   base-coefficient: 1.0
 
   # Inactivity delay (in seconds) before regeneration begins.
-  # Example: 180 = 3 minutes of inactivity → regeneration starts
+  # Example: 180 = 3 minutes of inactivity -> regeneration starts
   inactivity-delay-seconds: 180
 
   regen:
     # true = HP regenerates if the tree hasn't been hit for inactivity-delay-seconds
-    enabled: true        # Example: false → tree keeps its damage indefinitely
+    enabled: true        # Example: false -> tree keeps its damage indefinitely
 
     # Percentage of max HP recovered per regeneration tick.
-    # Example: 10.0 = 10% per step → full recovery in 10 steps
+    # Example: 10.0 = 10% per step -> full recovery in 10 steps
     percent-per-step: 10.0
 
     # Interval between each regeneration tick, in seconds.
@@ -66,20 +66,20 @@ trigger:
   mode: "RIGHT_CLICK_AXE"
 
   # true = send a hint message to the player who breaks a log without engaging the tree
-  send-hint-message: true   # Example: false → no help message
+  send-hint-message: true   # Example: false -> no help message
 
   # Delay (in seconds) between two hint messages for the same player.
   # Example: 60 = one hint per minute per player
   hint-cooldown-seconds: 60
 
   # Minimum delay between two counted clicks (in milliseconds)
-  # Example: 350 → one click every 350ms maximum
+  # Example: 350 -> one click every 350ms maximum
   click-cooldown-ms: 350
 
 durability:
   # Base damage dealt to the tree per click based on the tool used.
   # Special key AIR (or HAND) = empty hand.
-  # Example: DIAMOND_AXE: 5.0 → diamond axe deals 5 HP per click
+  # Example: DIAMOND_AXE: 5.0 -> diamond axe deals 5 HP per click
   multipliers:
     WOODEN_AXE: 1.0       # Wooden axe
     STONE_AXE: 1.5        # Stone axe
@@ -87,16 +87,16 @@ durability:
     GOLDEN_AXE: 2.5       # Golden axe
     DIAMOND_AXE: 3.5      # Diamond axe
     NETHERITE_AXE: 5.0    # Netherite axe
-    AIR: 0.5              # Empty hand (HAND → uses AIR internally)
+    AIR: 0.5              # Empty hand (HAND -> uses AIR internally)
 
   # Additional damage added per enchantment level.
   enchantments:
     # Bonus damage per Efficiency level.
-    # Example: 0.5 → Efficiency III adds 3 × 0.5 = 1.5 extra HP
+    # Example: 0.5 -> Efficiency III adds 3 * 0.5 = 1.5 extra HP
     efficiency: 0.5
 
     # Bonus damage per Sharpness level.
-    # Example: 0.3 → Sharpness V adds 5 × 0.3 = 1.5 extra HP
+    # Example: 0.3 -> Sharpness V adds 5 * 0.3 = 1.5 extra HP
     sharpness: 0.3
 
   # Internal efficiency multiplier (reserved for future use).
@@ -104,7 +104,7 @@ durability:
 
   extra-loss:
     # true = the tool loses extra durability during felling
-    enabled: true          # Example: false → no extra wear
+    enabled: true          # Example: false -> no extra wear
 
     # Extra durability points lost per hit.
     # Example: 1 = 1 extra durability point per click
@@ -130,20 +130,20 @@ limits:
   tree-contact-required: true
 
   # Maximum number of logs in a tree before it is considered too large.
-  # Example: 1024 → refuses to process a tree with more than 1024 logs
+  # Example: 1024 -> refuses to process a tree with more than 1024 logs
   max-logs: 1024
 
   # Maximum total block count (logs + leaves) in a tree.
-  # Example: 4096 → global limit of 4096 blocks per tree
+  # Example: 4096 -> global limit of 4096 blocks per tree
   max-blocks: 4096
 
   # Maximum horizontal radius (XZ, in blocks) of the detection scan from the trunk.
-  # Example: 16 → searches for logs up to 16 blocks of horizontal distance
+  # Example: 16 -> searches for logs up to 16 blocks of horizontal distance
   max-radius-xz: 16
 
   # Maximum vertical height (Y, in blocks) of the detection scan from the clicked block.
   # Should generally be larger than max-radius-xz since trees are taller than wide.
-  # Example: 64 → searches for logs up to 64 blocks in height
+  # Example: 64 -> searches for logs up to 64 blocks in height
   max-height-y: 64
 
   # Maximum number of connected non-tree blocks tolerated (not currently used).
@@ -152,7 +152,7 @@ limits:
   # Maximum BFS propagation distance for leaf detection and decay.
   # - leaf-decay-range-xz: maximum horizontal distance (XZ) of leaf scan from trunk.
   # - leaf-decay-range-y : maximum vertical distance (Y) of leaf scan from trunk.
-  # Example: xz: 6, y: 8 → searches leaves up to 6 blocks horizontally and 8 vertically.
+  # Example: xz: 6, y: 8 -> searches leaves up to 6 blocks horizontally and 8 vertically.
   leaf-decay-range-xz: 6
   leaf-decay-range-y: 8
 
@@ -179,21 +179,21 @@ limits:
     - "DARK_OAK_FENCE_GATE"
 
   # Log yield multiplier during felling.
-  # Dropped logs = ceil(log_count × log-yield-multiplier)
-  # Example: 0.75 → a 100-log tree yields 75 logs | 1.0 = full yield
+  # Dropped logs = ceil(log_count * log-yield-multiplier)
+  # Example: 0.75 -> a 100-log tree yields 75 logs | 1.0 = full yield
   log-yield-multiplier: 0.75
 
   # Number of branch search iterations in the canopy.
   # The plugin iteratively searches logs adjacent to detected leaves not rooted to ground.
   # Increase if logs remain after felling on very branchy custom trees.
-  # Example: 5 → 5 branch detection passes (recommended default)
-  #          10 → more precise for very complex trees, slightly slower
+  # Example: 5 -> 5 branch detection passes (recommended default)
+  #          10 -> more precise for very complex trees, slightly slower
   max-branch-discovery-iterations: 5
 
   # Maximum size (in blocks) of a completely isolated orphan cluster to absorb.
   # An orphan cluster is a group of logs/leaves touching neither ground nor tree.
   # If small enough, it's considered part of the tree (isolated twig).
-  # Example: 10 → absorbs fragments ≤ 10 blocks | 0 = disable
+  # Example: 10 -> absorbs fragments <= 10 blocks | 0 = disable
   max-orphan-cluster-size: 10
 
   # Rule for isolated logs in the canopy (no direct trunk connection but surrounded by leaves).
@@ -259,17 +259,17 @@ anti-cheat:
 # ─────────────────────────────────────────────────────────────────────────────
 trees:
   # Minimum number of logs connected to the ground to consider a trunk valid.
-  # Example: 4 → a trunk must have at least 4 logs before being recognized
+  # Example: 4 -> a trunk must have at least 4 logs before being recognized
   min-logs-rooted: 4
 
   # Minimum number of isolated logs (not on ground) to create a virtual trunk.
   # Allows treating small floating groups as mini-trees.
-  # Example: 3 → a cluster of 3+ floating logs is treated as a tree
+  # Example: 3 -> a cluster of 3+ floating logs is treated as a tree
   min-logs-isolated: 3
 
   # Maximum thickness (in logs) of a bottleneck between two sub-trees.
   # If a junction has more logs than this value, trees are not separated.
-  # Example: 4 → a connection of ≤ 4 logs is considered a separable bottleneck
+  # Example: 4 -> a connection of <= 4 logs is considered a separable bottleneck
   max-bridge-section-size: 4
 
   # Maximum cost (weighted by height) of an admissible bottleneck.
@@ -277,7 +277,7 @@ trees:
   max-bridge-cost: 20.0
 
   # Height weighting coefficient for cuts.
-  # Example: 0.1 → slight advantage to high cuts
+  # Example: 0.1 -> slight advantage to high cuts
   height-weight-alpha: 0.1
 
   # Maximum radius around the targeted trunk to search for junctions between trees.
@@ -291,15 +291,15 @@ performance:
   staged-cut-enabled: true
 
   # Beyond this total block count (logs + leaves), cut in multiple passes.
-  # Example: 256 → trees larger than 256 blocks will be cut progressively
+  # Example: 256 -> trees larger than 256 blocks will be cut progressively
   staged-cut-min-blocks: 256
 
   # Height (in blocks) of a slice destroyed per step.
-  # Example: 1 → 1 Y level cut per pass
+  # Example: 1 -> 1 Y level cut per pass
   staged-cut-slice-height: 1
 
   # Delay between each slice (in server ticks, 20 ticks = 1 second).
-  # Example: 5 → 1 slice every 5 ticks (4 per second)
+  # Example: 5 -> 1 slice every 5 ticks (4 per second)
   staged-cut-interval-ticks: 5
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -352,19 +352,19 @@ fallback:
   max-blocks: 2048
 
   # Horizontal radius to search for columns of the main trunk.
-  # Example: 1 → columns immediately adjacent to the struck trunk
+  # Example: 1 -> columns immediately adjacent to the struck trunk
   trunk-core-radius: 1
 
   # Minimum number of consecutive vertical logs to consider a column as a trunk.
   trunk-min-height: 3
 
   # Maximum horizontal radius for the tree in fallback mode.
-  # Example: 8 → cylinder of radius 8 around the trunk
+  # Example: 8 -> cylinder of radius 8 around the trunk
   max-radius: 8
 
   # Minimum density (0.0 to 1.0) to include a ring in the tree.
   # If a ring's density falls below this threshold, expansion stops.
-  # Example: 0.10 → minimum 10% of tree blocks
+  # Example: 0.10 -> minimum 10% of tree blocks
   min-density: 0.10
 
   # Width of distance rings (in blocks).

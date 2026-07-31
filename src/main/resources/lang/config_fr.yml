@@ -13,21 +13,21 @@
 #
 # 2. MODULE 6WAY (BFS 6-way) :
 #    Si la détection principale (26-way) englobe un cluster trop géant dépassant les
-#    limites (tree_too_large), le plugin relance immédiatement le scan en 6-way strict.
-#    Cela sépare automatiquement les arbres qui ne se touchent que par les coins.
+#    limites autorisées (tree_too_large), le plugin relance immédiatement une détection
+#    stricte en 6-way. Cela sépare les arbres qui se touchent uniquement par les coins.
 #
-# 3. MODULE FALLBACK (Secours Cylindrique) :
-#    Si la séparation par goulots échoue (arbres trop imbriqués), le plugin découpe
-#    une portion cylindrique autour du tronc basée sur la densité locale de bûches.
+# 3. MODULE SECOURS (Secours Cylindrique) :
+#    Si la séparation par goulots échoue (arbres trop entrelacés), le plugin coupe
+#    une portion cylindrique autour du tronc frappé selon la densité locale.
 # ─────────────────────────────────────────────────────────────────────────────
 
 plugin:
   enabled: true          # true = plugin actif | false = désactivé globalement
-  # Code de langue du plugin (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
+  # Code de langue du plugin (fr, en, de, es, pt_BR, nl, pl, ru, zh_CN, it)
   language: "en"
-  # Mettre à true pour voir les logs de debug dans la console
-  debug: false           # Exemple : debug: true → affiche les scans en console
-  # Mettre à true pour activer les logs détaillés de drops de feuilles (très spammants !)
+  # Mettre à true pour afficher les logs de debug dans la console
+  debug: false           # Exemple : debug: true -> affiche les scans dans la console
+  # Mettre à true pour activer les logs détaillés des drops de feuilles
   verbose-debug: false
 
 worlds:
@@ -37,21 +37,21 @@ worlds:
     - "ignored_world_example"
 
 health:
-  # Coefficient multiplicateur global des PV de l'arbre.
-  # PV_total = somme des poids des bûches × base-coefficient
+  # Coefficient multiplicateur global des PV des arbres.
+  # PV total = somme des poids des bûches * base-coefficient
   # Exemple : 1.0 = normal | 2.0 = arbre deux fois plus résistant
   base-coefficient: 1.0
 
-  # Délai d'inactivité (en secondes) avant que la régénération commence.
-  # Exemple : 180 = 3 minutes d'inactivité → régénération démarre
+  # Délai d'inactivité (en secondes) avant le début de la régénération.
+  # Exemple : 180 = 3 minutes d'inactivité -> régénération démarre
   inactivity-delay-seconds: 180
 
   regen:
     # true = les PV se régénèrent si l'arbre n'est pas frappé depuis inactivity-delay-seconds
-    enabled: true        # Exemple : false → l'arbre garde ses dégâts indéfiniment
+    enabled: true        # Exemple : false -> l'arbre conserve ses dégâts indéfiniment
 
     # Pourcentage des PV max récupérés à chaque tick de régénération.
-    # Exemple : 10.0 = 10% par palier → récupération complète en 10 paliers
+    # Exemple : 10.0 = 10% par palier -> récupération complète en 10 paliers
     percent-per-step: 10.0
 
     # Intervalle entre chaque tick de régénération, en secondes.
@@ -65,21 +65,21 @@ trigger:
   # Mode de déclenchement. Actuellement seul RIGHT_CLICK_AXE est supporté.
   mode: "RIGHT_CLICK_AXE"
 
-  # true = envoyer un message au joueur qui casse une bûche sans engager l'arbre
-  send-hint-message: true   # Exemple : false → pas de message d'aide
+  # true = envoie un message d'aide au joueur qui casse une bûche sans engager l'arbre
+  send-hint-message: true   # Exemple : false -> pas de message d'aide
 
   # Délai (en secondes) entre deux messages d'aide pour le même joueur.
-  # Exemple : 60 = un seul message d'aide par minute par joueur
+  # Exemple : 60 = un conseil par minute par joueur
   hint-cooldown-seconds: 60
 
   # Délai minimum entre deux clics comptabilisés (en millisecondes)
-  # Exemple : 350 → un clic toutes les 350ms maximum
+  # Exemple : 350 -> un clic toutes les 350ms maximum
   click-cooldown-ms: 350
 
 durability:
   # Dégâts de base infligés à l'arbre par clic selon l'outil utilisé.
-  # Clé spéciale AIR (ou HAND) = main vide.
-  # Exemple : DIAMOND_AXE: 5.0 → hache en diamant inflige 5 PV par clic
+  # Clé spéciale AIR (ou HAND) = main nue.
+  # Exemple : DIAMOND_AXE: 5.0 -> la hache en diamant inflige 5 PV par clic
   multipliers:
     WOODEN_AXE: 1.0       # Hache en bois
     STONE_AXE: 1.5        # Hache en pierre
@@ -87,90 +87,90 @@ durability:
     GOLDEN_AXE: 2.5       # Hache en or
     DIAMOND_AXE: 3.5      # Hache en diamant
     NETHERITE_AXE: 5.0    # Hache en netherite
-    AIR: 0.5              # Main vide (HAND → utilise AIR en interne)
+    AIR: 0.5              # Main nue (HAND -> utilise AIR en interne)
 
   # Dégâts supplémentaires ajoutés par niveau d'enchantement.
   enchantments:
-    # Dégâts bonus par niveau d'Efficacité (Efficiency).
-    # Exemple : 0.5 → Efficacité III ajoute 3 × 0.5 = 1.5 PV supplémentaires
+    # Dégâts bonus par niveau d'Efficacité.
+    # Exemple : 0.5 -> Efficacité III ajoute 3 * 0.5 = 1.5 PV bonus
     efficiency: 0.5
 
-    # Dégâts bonus par niveau de Tranchant (Sharpness).
-    # Exemple : 0.3 → Tranchant V ajoute 5 × 0.3 = 1.5 PV supplémentaires
+    # Dégâts bonus par niveau de Tranchant.
+    # Exemple : 0.3 -> Tranchant V ajoute 5 * 0.3 = 1.5 PV bonus
     sharpness: 0.3
 
-  # Multiplicateur interne d'efficacité (réservé à l'avenir).
+  # Multiplicateur d'efficacité interne (réservé pour usage futur).
   efficiency-level-multiplier: 0.2
 
   extra-loss:
     # true = l'outil perd de la durabilité supplémentaire lors de l'abattage
-    enabled: true          # Exemple : false → pas d'usure supplémentaire
+    enabled: true          # Exemple : false -> pas d'usure extra
 
-    # Points de durabilité perdus en supplément par frappe.
-    # Exemple : 1 = 1 point de durabilité supplémentaire par clic
+    # Points de durabilité supplémentaires perdus par coup.
+    # Exemple : 1 = 1 point de durabilité extra perdu par clic
     points-per-interval: 1
 
-    # Pourcentage de chance (0-100) de perdre la durabilité extra par frappe.
-    # Exemple : 50 = 50% de chance de perdre des points de durabilité
+    # Pourcentage de chance (0-100) de perdre de la durabilité extra par coup.
+    # Exemple : 50 = 50% de chance de perdre des points d'usure
     chance-percent: 100
 
 limits:
-  # Preset de détection des arbres :
-  # - CUSTOM  : Utilise toutes les règles et limites définies ci-dessous. (Recommandé)
-  # - VANILLA : Ignore les limites et utilise les presets vanilla de Minecraft
+  # Preset de détection d'arbre :
+  # - CUSTOM  : Utilise toutes les règles, limites et critères ci-dessous. (Recommandé)
+  # - VANILLA : Ignore les limites ci-dessous et utilise les règles vanilla standard
   preset: "CUSTOM"
 
-  # Détermine si les blocs blacklistés (constructions) empêchent l'abattage.
-  # true (par défaut) : protège les constructions des joueurs.
-  # false : ignore la blacklist lors de l'abattage.
+  # Détermine si les blocs en blacklist (constructions) empêchent l'abattage.
+  # true (défaut) : protège les constructions des joueurs.
+  # false : ignore la liste noire de construction lors de l'abattage.
   blacklist-enabled: true
 
-  # true = l'arbre doit obligatoirement être en contact avec le sol pour être abattu.
+  # true = l'arbre doit être en contact avec le sol (enraciné) pour être abattu.
   # false = les arbres flottants ou non enracinés sont acceptés.
   tree-contact-required: true
 
-  # Nombre maximum de bûches avant de considérer l'arbre comme trop grand.
-  # Exemple : 1024 → refuse de gérer un arbre avec plus de 1024 bûches
+  # Nombre maximal de bûches dans un arbre avant d'être considéré comme trop grand.
+  # Exemple : 1024 -> refuse de traiter un arbre ayant plus de 1024 bûches
   max-logs: 1024
 
-  # Nombre maximum total de blocs (bûches + feuilles) dans un arbre.
-  # Exemple : 4096 → limite globale de 4096 blocs par arbre
+  # Nombre total maximal de blocs (bûches + feuilles) dans un arbre.
+  # Exemple : 4096 -> limite globale de 4096 blocs par arbre
   max-blocks: 4096
 
-  # Rayon maximum horizontal (XZ, en blocs) du scan de détection depuis le tronc.
-  # Exemple : 16 → cherche des bûches jusqu'à 16 blocs de distance horizontale
+  # Rayon horizontal maximal (XZ, en blocs) du scan à partir du tronc.
+  # Exemple : 16 -> cherche des bûches jusqu'à 16 blocs de distance horizontale
   max-radius-xz: 16
 
-  # Hauteur maximum verticale (Y, en blocs) du scan de détection depuis le bloc cliqué.
-  # Doit généralement être plus grand que max-radius-xz car les arbres sont plus hauts que larges.
-  # Exemple : 64 → cherche des bûches jusqu'à 64 blocs de hauteur
+  # Hauteur verticale maximale (Y, en blocs) du scan à partir du bloc cliqué.
+  # Doit généralement être plus grand que max-radius-xz.
+  # Exemple : 64 -> cherche des bûches jusqu'à 64 blocs de hauteur
   max-height-y: 64
 
-  # Nombre maximum de blocs non-arbre connectés tolérés (non utilisé actuellement).
+  # Nombre maximal de blocs non-arbre connectés tolérés.
   max-connected-non-tree-blocks: 50
 
   # Distance maximale de propagation BFS pour la détection et le decay des feuilles.
-  # - leaf-decay-range-xz : distance maximale horizontale (XZ) du scan de feuilles depuis le tronc.
-  # - leaf-decay-range-y  : distance maximale verticale (Y) du scan de feuilles depuis le tronc.
-  # Exemple : xz: 6, y: 8 → cherche les feuilles jusqu'à 6 blocs horizontalement et 8 verticalement.
+  # - leaf-decay-range-xz : distance horizontale maximale (XZ) du scan de feuilles.
+  # - leaf-decay-range-y  : distance verticale maximale (Y) du scan de feuilles.
+  # Exemple : xz: 6, y: 8 -> cherche les feuilles jusqu'à 6 blocs horiz. et 8 vert.
   leaf-decay-range-xz: 6
   leaf-decay-range-y: 8
 
-  # Permet la détection en diagonale (26 directions au lieu de 6 faces orthogonales)
-  # - allow-diagonal-logs : permet de connecter les bûches en diagonale (branches fines)
-  # - allow-diagonal-leaves : permet de connecter les feuilles en diagonale (canopées espacées)
+  # Autorise la détection en diagonale (26 directions au lieu de 6 faces orthogonales)
+  # - allow-diagonal-logs : connecte les bûches en diagonale (branches fines)
+  # - allow-diagonal-leaves : connecte les feuilles en diagonale
   allow-diagonal-logs: true
   allow-diagonal-leaves: true
 
-  # Facteurs d'augmentation dynamique du rayon de decay pour les grands arbres :
-  # Tous les X logs coupés (leaf-decay-scaling-logs), on ajoute +Y en rayon XZ et +Z en rayon Y.
-  # Définir leaf-decay-scaling-logs à 0 ou négatif pour désactiver cette augmentation dynamique.
+  # Facteurs d'augmentation dynamique du rayon pour les grands arbres :
+  # Toutes les X bûches coupées, ajoute +Y au rayon XZ et +Z au rayon Y.
+  # Mettre à 0 ou négatif pour désactiver cette augmentation dynamique.
   leaf-decay-scaling-logs: 100
   leaf-decay-scaling-xz-bonus: 1
   leaf-decay-scaling-y-bonus: 2
 
-  # Blocs considérés comme accessoires/flottants à nettoyer post-abattage s'ils n'ont plus de support.
-  # Exemple : SNOW, HONEYCOMB_BLOCK, HONEY_BLOCK, DARK_OAK_FENCE, DARK_OAK_FENCE_GATE
+  # Blocs considérés comme accessoires/flottants à nettoyer après l'abattage.
+  # Exemple : SNOW, HONEYCOMB_BLOCK, HONEY_BLOCK, DARK_OAK_FENCE...
   cleanup-floating-blocks:
     - "SNOW"
     - "HONEYCOMB_BLOCK"
@@ -179,35 +179,35 @@ limits:
     - "DARK_OAK_FENCE_GATE"
 
   # Multiplicateur de rendement des bûches lors de l'abattage.
-  # Bûches droppées = ceil(nombre_de_buches × log-yield-multiplier)
-  # Exemple : 0.75 → un arbre de 100 bûches donne 75 bûches | 1.0 = rendement total
+  # Bûches dropées = ceil(bûches_totales * log-yield-multiplier)
+  # Exemple : 0.75 -> un arbre de 100 bûches donne 75 bûches | 1.0 = rendement total
   log-yield-multiplier: 0.75
 
   # Nombre d'itérations de recherche de branches dans la canopée.
-  # Le plugin cherche itérativement des bûches adjacentes aux feuilles détectées non enracinées.
-  # Augmenter si des bûches restent après abattage sur des arbres custom très ramifiés.
-  # Exemple : 5 → 5 passes de détection de branches (défaut recommandé)
-  #           10 → plus précis pour arbres très complexes, légèrement plus lent
+  # Le plugin cherche itérativement les bûches adjacentes aux feuilles non enracinées.
+  # Augmenter si des bûches restent après l'abattage sur de gros arbres custom.
+  # Exemple : 5 -> 5 passes de détection de branches (défaut recommandé)
+  #          10 -> plus précis pour les arbres très complexes
   max-branch-discovery-iterations: 5
 
-  # Taille maximale (en blocs) d'un cluster orphelin complètement isolé à absorber.
-  # Un cluster orphelin est un amas de bûches/feuilles qui ne touche ni le sol ni l'arbre.
-  # S'il est assez petit, il fait partie de l'arbre (brindille isolée).
-  # Exemple : 10 → absorbe les fragments ≤ 10 blocs | 0 = désactiver
+  # Taille maximale (en blocs) d'un cluster orphelin isolé à absorber.
+  # Un cluster orphelin est un groupe de bûches/feuilles ne touchant ni sol ni arbre.
+  # Si suffisamment petit, il est considéré comme faisant partie de l'arbre.
+  # Exemple : 10 -> absorbe les fragments <= 10 blocs | 0 = désactiver
   max-orphan-cluster-size: 10
 
-  # Règle pour les bûches isolées dans la canopée (sans connexion directe mais entourées de feuilles).
-  # true = considère ces bûches comme partie de l'arbre si elles touchent des feuilles connectées.
+  # Règle pour les bûches isolées dans la canopée.
+  # true = considère ces bûches comme faisant partie de l'arbre principal.
   isolated-logs-rule: true
 
-  # Options de nettoyage des feuilles solitaires/orphelines autour de l'arbre après abattage.
+  # Options pour nettoyer les feuilles solitaires/orphelines autour de l'arbre.
   orphan-leaves-cleanup:
-    # true = nettoie automatiquement les feuilles sans bûche à proximité (évite les feuilles flottantes)
+    # true = nettoie automatiquement les feuilles sans bûche proche
     enabled: true
     # Rayon de scan autour de l'arbre abattu pour chercher les feuilles solitaires
     radius: 5
 
-  # Options de remplacement des racines sous terre (remplace les bûches souterraines par de la terre)
+  # Options pour remplacer les racines sous terre (remplace par de la terre au lieu d'air)
   root-replacement:
     # true = active le remplacement des racines sous terre par un bloc solide
     enabled: true
@@ -215,72 +215,72 @@ limits:
     # Exemple : DIRT, COARSE_DIRT, NETHERRACK...
     material: "DIRT"
 
-  # Rayon (en blocs) autour du volume de l'arbre pour chercher des bûches orphelines après abattage.
+  # Rayon (en blocs) autour du volume de l'arbre pour chercher les bûches orphelines.
   isolated-logs-radius: 6
 
-  # Nombre maximal de bûches connectées dans un groupe pour qu'il soit considéré comme orphelin.
+  # Nombre maximal de bûches connectées dans un groupe pour être considéré orphelin.
   isolated-log-max: 4
 
-  # true = autoriser le joueur à démarrer le scan sur une bûche non enracinée (ex: branche haute).
-  # Le plugin descendra verticalement pour trouver le tronc réel.
+  # true = autorise le joueur à démarrer le scan sur une bûche non enracinée.
+  # Le plugin descendra verticalement pour trouver le vrai tronc.
   allow-non-rooted-start: false
 
-  # Profondeur maximale de recherche vers le bas pour trouver un tronc enraciné depuis un départ non enraciné.
+  # Profondeur maximale vers le bas pour trouver un tronc enraciné.
   max-root-search-depth: 16
 
-  # Budget max pour le BFS 6-way restreint (indépendant de max-logs)
-  # Permet de couper des arbres géants sans scanner tout leur volume global
+  # Budget max pour le BFS restreint en 6-way (indépendant de max-logs)
+  # Permet de couper les arbres géants sans scanner tout leur volume global
   6way-max-logs: 2048
 
-  # Activer la phase de nettoyage canopée post-coupe (recommandé pour grands arbres IRIS)
+  # Active la phase de nettoyage de la canopée après l'abattage
   canopy-cleanup-enabled: true
 
-  # Padding (blocs) autour de la bounding box de l'arbre pour scanner les feuilles orphelines
+  # Marge (blocs) autour de l'arbre pour scanner les feuilles orphelines
   canopy-cleanup-padding: 12
 
-  # Nombre de feuilles traitées par tick pour la mise à jour de la persistance (défaut : 64)
+  # Nombre de feuilles traitées par tick pour les mises à jour de persistance (défaut : 64)
   leaves-persistence-batch-size: 64
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Anti-triche
+# Anti-cheat
 # ─────────────────────────────────────────────────────────────────────────────
 anti-cheat:
-  # true = active la détection anti-triche
+  # true = active la détection anti-cheat
   enabled: true
-  # Cooldown minimum entre deux clics (en millisecondes) pour interagir avec un arbre
+  # Délai minimum entre deux clics (en ms) pour casser/interagir avec un arbre
   min-click-interval-ms: 100
-  # Changement de vue minimum requis (yaw ou pitch cumulés en degrés) entre clics
+  # Changement de vue minimum requis (yaw ou pitch cumulé en degrés) entre les clics
   min-look-change-degrees: 0.1
-  # Nombre maximal de clics consécutifs avec un intervalle trop régulier (variance quasi nulle)
+  # Nombre maximum de clics consécutifs avec un intervalle trop régulier
   max-regular-clicks: 8
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Partition multi-source (séparation des arbres collés)
+# Partitionnement multi-sources (séparation des arbres adjacents)
 # ─────────────────────────────────────────────────────────────────────────────
 trees:
-  # Nombre minimum de bûches connectées au sol pour considérer un tronc valide.
-  # Exemple : 4 → un tronc doit avoir au moins 4 bûches avant d'être reconnu
+  # Nombre minimum de bûches connectées au sol pour valider un tronc.
+  # Exemple : 4 -> un tronc doit avoir au moins 4 bûches pour être reconnu
   min-logs-rooted: 4
 
-  # Nombre minimum de bûches isolées (non au sol) pour créer un tronc virtuel.
+  # Nombre minimum de bûches isolées (hors sol) pour créer un tronc virtuel.
   # Permet de traiter les petits groupes flottants comme des mini-arbres.
-  # Exemple : 3 → un amas de 3+ bûches en l'air est traité comme un arbre
+  # Exemple : 3 -> un groupe de 3+ bûches flottantes est traité comme un arbre
   min-logs-isolated: 3
 
   # Épaisseur maximale (en bûches) d'un goulot entre deux sous-arbres.
-  # Si une section de jonction a plus de bûches que cette valeur, on ne sépare pas.
-  # Exemple : 4 → une connexion de ≤ 4 bûches est considérée comme un goulot séparable
+  # Si une jonction a plus de bûches que cette valeur, les arbres ne sont pas séparés.
+  # Exemple : 4 -> une connexion de <= 4 bûches est considérée séparable
   max-bridge-section-size: 4
 
-  # Coût maximal (pondéré par hauteur) d'un goulot admissible.
+  # Coût maximal (pondéré par la hauteur) d'un goulot admissible.
   # Plus une jonction est haute et large, plus son coût est élevé.
   max-bridge-cost: 20.0
 
-  # Coefficient de pondération par hauteur pour les coupes.
-  # Exemple : 0.1 → léger avantage aux coupes en hauteur
+  # Coefficient de pondération de la hauteur pour les coupes.
+  # Exemple : 0.1 -> léger avantage aux coupes hautes
   height-weight-alpha: 0.1
 
-  # Rayon maximum autour du tronc ciblé pour chercher des jonctions entre arbres.
+  # Rayon maximal autour du tronc ciblé pour chercher les jonctions.
   bridge-search-radius: 16
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -290,91 +290,91 @@ performance:
   # true = active la coupe en plusieurs tranches pour les gros arbres
   staged-cut-enabled: true
 
-  # Au-delà de ce nombre total de blocs (logs + feuilles), on coupe en plusieurs passes.
-  # Exemple : 256 → les arbres de plus de 256 blocs seront coupés progressivement
+  # Au-delà de ce nombre total de blocs (bûches + feuilles), on coupe en plusieurs passes.
+  # Exemple : 256 -> les arbres de plus de 256 blocs seront coupés progressivement
   staged-cut-min-blocks: 256
 
   # Hauteur (en blocs) d'une tranche détruite par étape.
-  # Exemple : 1 → 1 niveau Y coupé par passe
+  # Exemple : 1 -> 1 niveau Y coupé par passe
   staged-cut-slice-height: 1
 
   # Délai entre chaque tranche (en ticks serveur, 20 ticks = 1 seconde).
-  # Exemple : 5 → 1 tranche toutes les 5 ticks (4 par seconde)
+  # Exemple : 5 -> 1 tranche toutes les 5 ticks (4 par seconde)
   staged-cut-interval-ticks: 5
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Rebouchage des racines sous terre
 # ─────────────────────────────────────────────────────────────────────────────
 roots:
-  # true = remplace les bûches souterraines par un bloc solide au lieu de l'air.
+  # true = remplace les bûches sous terre par un bloc solide au lieu d'air.
   backfill-enabled: true
 
   # Bloc par défaut si aucun voisin solide n'est trouvé.
   backfill-block: "DIRT"
 
-  # Mode de rebouchage : HOLE_DETECTOR (recommandé), LEGACY (original), ou NONE
+  # Mode de rebouchage : HOLE_DETECTOR (recommandé), LEGACY, ou NONE
   fill-mode: "HOLE_DETECTOR"
 
   # Profondeur maximale de scan et rebouchage
   fill-depth: 16
 
-  # Nombre de blocs additionnels à inclure horizontalement autour de la bounding box XZ
+  # Nombre de blocs supplémentaires à inclure horizontalement autour du tronc
   fill-radius-extra: 0
 
-  # Facteur d'évasement naturel du sol au centre (Pied d'éléphant)
+  # Facteur d'évasement naturel du sol au centre (Pied d'Éléphant)
   elephant-factor: 1.5
 
-  # Pente max autorisée entre colonnes adjacentes lors du lissage (en blocs)
-  # Plus la valeur est faible, plus la surface sera plate
+  # Pente maximale autorisée entre colonnes adjacentes lors du lissage
+  # Valeur plus basse = surface plus plate
   max-slope: 2
 
   # Nombre de voisins utilisés pour l'interpolation IDW (recommandé : 8)
   idw-neighbors: 8
 
-  # [LEGACY] Profondeur maximale de rebouchage (en blocs sous la surface).
+  # [LEGACY] Profondeur maximale de rebouchage.
   max-backfill-depth: 6
 
-  # [LEGACY] Nombre de blocs XZ au-delà du tronc à inclure dans le flood fill de rebouchage
+  # [LEGACY] Marge de blocs XZ au-delà du tronc
   root-fill-padding: 2
 
-  # [LEGACY] Marge de profondeur supplémentaire sous le plus bas log coupé de la colonne
+  # [LEGACY] Marge de profondeur sous la bûche la plus basse
   root-fill-depth-padding: 2
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Algorithme de secours cylindrique (Module de secours / Fallback de détection)
+# Algorithme de secours cylindrique (Module de détection Fallback)
 # ─────────────────────────────────────────────────────────────────────────────
 fallback:
-  # true = active l'algorithme de secours cylindrique quand la méthode principale échoue
+  # true = active l'algorithme de secours cylindrique en cas d'échec de la méthode principale
   enabled: true
 
-  # Nombre maximum de blocs pour lesquels le fallback peut s'appliquer.
-  # Au-delà, la coupe massive est refusée.
+  # Nombre maximal de blocs pour lesquels le secours s'applique.
+  # Au-delà, l'abattage massif est refusé.
   max-blocks: 2048
 
   # Rayon horizontal pour chercher les colonnes du tronc principal.
-  # Exemple : 1 → colonnes immédiatement adjacentes au tronc frappé
+  # Exemple : 1 -> colonnes immédiatement adjacentes au tronc frappé
   trunk-core-radius: 1
 
-  # Nombre minimal de bûches verticales consécutives pour considérer une colonne comme tronc.
+  # Nombre minimum de bûches verticales consécutives pour valider un tronc.
   trunk-min-height: 3
 
   # Rayon horizontal maximal pour l'arbre en mode secours.
-  # Exemple : 8 → cylindre de rayon 8 autour du tronc
+  # Exemple : 8 -> cylindre de rayon 8 autour du tronc
   max-radius: 8
 
   # Densité minimale (0.0 à 1.0) pour inclure un anneau dans l'arbre.
-  # Si la densité d'un anneau tombe sous ce seuil, on arrête l'expansion.
-  # Exemple : 0.10 → 10% de blocs d'arbre minimum
+  # Si la densité chute sous ce seuil, l'expansion s'arrête.
+  # Exemple : 0.10 -> minimum 10% de blocs d'arbre
   min-density: 0.10
 
   # Largeur des anneaux de distance (en blocs).
   ring-step: 1
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Drops des feuilles supprimées
+# Drops des feuilles retirées
 # ─────────────────────────────────────────────────────────────────────────────
 leaf-drops:
   enabled: true          # activer/désactiver les drops de feuilles
   sapling-chance: 0.05   # 5% par feuille (NE PAS MODIFIER)
   stick-chance: 0.02     # 2% par feuille (NE PAS MODIFIER)
-  apple-chance: 0.005    # 0.5% (chêne + forêt sombre uniquement) (NE PAS MODIFIER)
+  apple-chance: 0.005    # 0.5% (chêne + forêt noire uniquement) (NE PAS MODIFIER)

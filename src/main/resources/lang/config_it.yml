@@ -1,176 +1,176 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# config.yml — Configurazione Principale di WildTimber
+# config.yml — Configuración Principal de WildTimber
 # ─────────────────────────────────────────────────────────────────────────────
 #
-# PANORAMICA DEI MODULI DI RILEVAMENTO:
-# WildTimber usa 3 moduli complementari per gestire gli alberi:
+# RESUMEN DE MÓDULOS DE DETECCIÓN:
+# WildTimber utiliza 3 módulos de detección complementarios para gestionar árboles:
 #
-# 1. MODULO PRINCIPALE (BFS 26-vie + Colli di bottiglia):
-#    Analizza tronco e chioma in 26 vie (diagonali incluse, ideale per alberi
-#    personalizzati con rami diagonali). Se rileva più tronchi, tenta di separare
-#    alberi fusi tagliando giunzioni sottili (colli di bottiglia) secondo
-#    i criteri di dimensione e costo configurati sotto trees.*.
+# 1. MÓDULO PRINCIPAL (BFS 26 vías + Cuellos de botella):
+#    Analiza tronco y copa en 26 vías (diagonales incluidas, ideal para árboles
+#    personalizados con ramas diagonales). Si detecta múltiples troncos, intenta
+#    separar árboles fusionados cortando uniones delgadas (cuellos de botella)
+#    según los criterios de tamaño y costo configurados en trees.*.
 #
-# 2. MODULO 6-VIE (BFS 6-way):
-#    Se la rilevazione principale (26-vie) abbraccia un cluster troppo grande, il plugin
-#    riavvia immediatamente in connettività stretta a 6 vie. Questo separa
-#    automaticamente alberi che si toccano solo negli angoli.
+# 2. MÓDULO 6 VÍAS (BFS 6-way):
+#    Si la detección principal (26 vías) abarca un clúster demasiado grande,
+#    el plugin reinicia inmediatamente con conectividad estricta de 6 vías.
+#    Esto separa árboles que solo se tocan por las esquinas.
 #
-# 3. MODULO FALLBACK (Cilindrico di Riserva):
-#    Se la separazione per colli di bottiglia fallisce, il plugin taglia una porzione
-#    cilindrica intorno al tronco colpito basandosi sulla densità locale.
+# 3. MÓDULO DE RESPALDO (Respaldo Cilíndrico):
+#    Si la separación de cuellos de botella falla, el plugin corta una porción
+#    cilíndrica alrededor del tronco golpeado basada en la densidad local.
 # ─────────────────────────────────────────────────────────────────────────────
 
 plugin:
-  enabled: true          # true = plugin attivo | false = disabilitato globalmente
-  # Codice lingua del plugin (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
+  enabled: true          # true = plugin activo | false = desactivado globalmente
+  # Código de idioma del plugin (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
   language: "en"
-  # Impostare a true per vedere i log di debug nella console
-  debug: false           # Esempio: debug: true → mostra le scansioni nella console
-  # Impostare a true per log dettagliati dei drop di foglie (molto spam!)
+  # Establecer en true para ver registros de depuración en la consola
+  debug: false           # Ejemplo: debug: true -> muestra escaneos en consola
+  # Establecer en true para activar registros detallados de caída de hojas
   verbose-debug: false
 
 worlds:
-  # Elenco dei mondi in cui WildTimber è disabilitato.
-  # Se vuoto, il plugin è attivo in tutti i mondi di default.
+  # Lista de mundos donde WildTimber está desactivado.
+  # Si está vacía, el plugin está activo en todos los mundos por defecto.
   disabled:
     - "ignored_world_example"
 
 health:
-  # Global HP coefficient multiplier for trees.
-  # Total HP = sum of log weights × base-coefficient
-  # Example: 1.0 = normal | 2.0 = tree twice as resistant
+  # Coeficiente multiplicador global de HP para árboles.
+  # HP Total = suma de pesos de troncos * base-coefficient
+  # Ejemplo: 1.0 = normal | 2.0 = árbol el doble de resistente
   base-coefficient: 1.0
 
-  # Inactivity delay (in seconds) before regeneration begins.
-  # Example: 180 = 3 minutes of inactivity → regeneration starts
+  # Tiempo de inactividad (en segundos) antes de comenzar la regeneración.
+  # Ejemplo: 180 = 3 minutos de inactividad -> regeneración comienza
   inactivity-delay-seconds: 180
 
   regen:
-    # true = HP regenerates if the tree hasn't been hit for inactivity-delay-seconds
-    enabled: true        # Example: false → tree keeps its damage indefinitely
+    # true = HP se regenera si el árbol no ha sido golpeado en inactivity-delay-seconds
+    enabled: true        # Ejemplo: false -> el árbol conserva su daño indefinidamente
 
-    # Percentage of max HP recovered per regeneration tick.
-    # Example: 10.0 = 10% per step → full recovery in 10 steps
+    # Porcentaje de HP máx recuperado por tick de regeneración.
+    # Ejemplo: 10.0 = 10% por paso -> recuperación completa en 10 pasos
     percent-per-step: 10.0
 
-    # Interval between each regeneration tick, in seconds.
-    # Example: 60 = 1 regeneration step every 60 seconds
+    # Intervalo entre ticks de regeneración, en segundos.
+    # Ejemplo: 60 = 1 paso de regeneración cada 60 segundos
     step-seconds: 60
 
-  # Enable visual display of damage progression on the targeted log (crack stages)
+  # Activar visualización del progreso de daño en el tronco (grietas)
   visual-tree-health-enabled: true
 
 trigger:
-  # Trigger mode. Currently only RIGHT_CLICK_AXE is supported.
+  # Modo de activación. Actualmente solo se admite RIGHT_CLICK_AXE.
   mode: "RIGHT_CLICK_AXE"
 
-  # true = send a hint message to the player who breaks a log without engaging the tree
-  send-hint-message: true   # Example: false → no help message
+  # true = enviar aviso al jugador que rompe un tronco sin enganchar el árbol
+  send-hint-message: true   # Ejemplo: false -> sin mensajes de ayuda
 
-  # Delay (in seconds) between two hint messages for the same player.
-  # Example: 60 = one hint per minute per player
+  # Tiempo (en segundos) entre dos avisos para el mismo jugador.
+  # Ejemplo: 60 = un aviso por minuto por jugador
   hint-cooldown-seconds: 60
 
-  # Minimum delay between two counted clicks (in milliseconds)
-  # Example: 350 → one click every 350ms maximum
+  # Tiempo mínimo entre dos clics contabilizados (en milisegundos)
+  # Ejemplo: 350 -> un clic cada 350ms máximo
   click-cooldown-ms: 350
 
 durability:
-  # Base damage dealt to the tree per click based on the tool used.
-  # Special key AIR (or HAND) = empty hand.
-  # Example: DIAMOND_AXE: 5.0 → diamond axe deals 5 HP per click
+  # Daño base infligido al árbol por clic según la herramienta usada.
+  # Clave especial AIR (o HAND) = mano vacía.
+  # Ejemplo: DIAMOND_AXE: 5.0 -> hacha de diamante inflige 5 HP por clic
   multipliers:
-    WOODEN_AXE: 1.0       # Wooden axe
-    STONE_AXE: 1.5        # Stone axe
-    IRON_AXE: 2.0         # Iron axe
-    GOLDEN_AXE: 2.5       # Golden axe
-    DIAMOND_AXE: 3.5      # Diamond axe
-    NETHERITE_AXE: 5.0    # Netherite axe
-    AIR: 0.5              # Empty hand (HAND → uses AIR internally)
+    WOODEN_AXE: 1.0       # Hacha de madera
+    STONE_AXE: 1.5        # Hacha de piedra
+    IRON_AXE: 2.0         # Hacha de hierro
+    GOLDEN_AXE: 2.5       # Hacha de oro
+    DIAMOND_AXE: 3.5      # Hacha de diamante
+    NETHERITE_AXE: 5.0    # Hacha de netherita
+    AIR: 0.5              # Mano vacía (HAND -> usa AIR internamente)
 
-  # Additional damage added per enchantment level.
+  # Daño adicional añadido por nivel de encantamiento.
   enchantments:
-    # Bonus damage per Efficiency level.
-    # Example: 0.5 → Efficiency III adds 3 × 0.5 = 1.5 extra HP
+    # Daño bonus por nivel de Eficiencia.
+    # Ejemplo: 0.5 -> Eficiencia III añade 3 * 0.5 = 1.5 HP extra
     efficiency: 0.5
 
-    # Bonus damage per Sharpness level.
-    # Example: 0.3 → Sharpness V adds 5 × 0.3 = 1.5 extra HP
+    # Daño bonus por nivel de Afilado.
+    # Ejemplo: 0.3 -> Afilado V añade 5 * 0.3 = 1.5 HP extra
     sharpness: 0.3
 
-  # Internal efficiency multiplier (reserved for future use).
+  # Multiplicador de eficiencia interno.
   efficiency-level-multiplier: 0.2
 
   extra-loss:
-    # true = the tool loses extra durability during felling
-    enabled: true          # Example: false → no extra wear
+    # true = la herramienta pierde durabilidad extra al talar
+    enabled: true          # Ejemplo: false -> sin desgaste extra
 
-    # Extra durability points lost per hit.
-    # Example: 1 = 1 extra durability point per click
+    # Puntos de durabilidad extra perdidos por golpe.
+    # Ejemplo: 1 = 1 punto extra de durabilidad perdido por clic
     points-per-interval: 1
 
-    # Chance percentage (0-100) to lose extra durability per hit.
-    # Example: 50 = 50% chance to lose durability points
+    # Porcentaje de probabilidad (0-100) de perder durabilidad extra.
+    # Ejemplo: 50 = 50% de probabilidad de desgaste extra
     chance-percent: 100
 
 limits:
-  # Tree detection preset:
-  # - CUSTOM  : Uses all rules, limits and criteria defined below. (Recommended)
-  # - VANILLA : Ignores limits below and uses standard Minecraft vanilla tree presets
+  # Preajuste de detección de árboles:
+  # - CUSTOM  : Utiliza todas las reglas definidos abajo. (Recomendado)
+  # - VANILLA : Ignora límites inferiores y usa reglas estándar de Minecraft
   preset: "CUSTOM"
 
-  # Whether blacklist blocks (construction materials) prevent tree felling.
-  # true (default): protects player constructions.
-  # false: ignores the construction blacklist during felling.
+  # Determina si los bloques en lista negra (construcciones) evitan la tala.
+  # true (por defecto): protege construcciones de jugadores.
+  # false: ignora la lista negra de construcciones al talar.
   blacklist-enabled: true
 
-  # true = the tree must be in contact with the ground (rooted) to be felled.
-  # false = floating or non-rooted trees are accepted.
+  # true = el árbol debe estar en contacto con el suelo para ser talado.
+  # false = se aceptan árboles flotantes o no enraizados.
   tree-contact-required: true
 
-  # Maximum number of logs in a tree before it is considered too large.
-  # Example: 1024 → refuses to process a tree with more than 1024 logs
+  # Número máximo de troncos en un árbol antes de considerarlo demasiado grande.
+  # Ejemplo: 1024 -> rechaza procesar árboles con más de 1024 troncos
   max-logs: 1024
 
-  # Maximum total block count (logs + leaves) in a tree.
-  # Example: 4096 → global limit of 4096 blocks per tree
+  # Número total máximo de bloques (troncos + hojas) en un árbol.
+  # Ejemplo: 4096 -> límite global de 4096 bloques por árbol
   max-blocks: 4096
 
-  # Maximum horizontal radius (XZ, in blocks) of the detection scan from the trunk.
-  # Example: 16 → searches for logs up to 16 blocks of horizontal distance
+  # Radio horizontal máximo (XZ, en bloques) del escaneo desde el tronco.
+  # Ejemplo: 16 -> busca troncos hasta 16 bloques de distancia horizontal
   max-radius-xz: 16
 
-  # Maximum vertical height (Y, in blocks) of the detection scan from the clicked block.
-  # Should generally be larger than max-radius-xz since trees are taller than wide.
-  # Example: 64 → searches for logs up to 64 blocks in height
+  # Altura vertical máxima (Y, en bloques) del escaneo desde el bloque golpeado.
+  # Generalmente debe ser mayor que max-radius-xz.
+  # Ejemplo: 64 -> busca troncos hasta 64 bloques de altura
   max-height-y: 64
 
-  # Maximum number of connected non-tree blocks tolerated (not currently used).
+  # Número máximo de bloques no-árbol conectados tolerados.
   max-connected-non-tree-blocks: 50
 
-  # Maximum BFS propagation distance for leaf detection and decay.
-  # - leaf-decay-range-xz: maximum horizontal distance (XZ) of leaf scan from trunk.
-  # - leaf-decay-range-y : maximum vertical distance (Y) of leaf scan from trunk.
-  # Example: xz: 6, y: 8 → searches leaves up to 6 blocks horizontally and 8 vertically.
+  # Distancia máxima de propagación BFS para detección y caída de hojas.
+  # - leaf-decay-range-xz: radio horizontal máximo (XZ) de escaneo de hojas.
+  # - leaf-decay-range-y : radio vertical máximo (Y) de escaneo de hojas.
+  # Ejemplo: xz: 6, y: 8 -> busca hojas hasta 6 bloques horiz. y 8 vert.
   leaf-decay-range-xz: 6
   leaf-decay-range-y: 8
 
-  # Allow diagonal detection (26 directions instead of 6 orthogonal faces)
-  # - allow-diagonal-logs: connects logs diagonally (thin branches)
-  # - allow-diagonal-leaves: connects leaves diagonally (spaced canopies)
+  # Permitir detección diagonal (26 direcciones en vez de 6)
+  # - allow-diagonal-logs: conecta troncos en diagonal
+  # - allow-diagonal-leaves: conecta hojas en diagonal
   allow-diagonal-logs: true
   allow-diagonal-leaves: true
 
-  # Dynamic radius increase factors for large trees:
-  # Every X logs cut (leaf-decay-scaling-logs), add +Y to XZ radius and +Z to Y radius.
-  # Set leaf-decay-scaling-logs to 0 or negative to disable this dynamic increase.
+  # Factores de incremento dinámico del radio para árboles grandes:
+  # Cada X troncos cortados, añade +Y al radio XZ y +Z al radio Y.
+  # Establecer en 0 para desactivar.
   leaf-decay-scaling-logs: 100
   leaf-decay-scaling-xz-bonus: 1
   leaf-decay-scaling-y-bonus: 2
 
-  # Blocks considered as accessories/floating to clean up after felling if they lose support.
-  # Example: SNOW, HONEYCOMB_BLOCK, HONEY_BLOCK, DARK_OAK_FENCE, DARK_OAK_FENCE_GATE
+  # Bloques considerados accesorios/flotantes a limpiar tras la tala.
+  # Ejemplo: SNOW, HONEYCOMB_BLOCK, HONEY_BLOCK...
   cleanup-floating-blocks:
     - "SNOW"
     - "HONEYCOMB_BLOCK"
@@ -178,203 +178,203 @@ limits:
     - "DARK_OAK_FENCE"
     - "DARK_OAK_FENCE_GATE"
 
-  # Log yield multiplier during felling.
-  # Dropped logs = ceil(log_count × log-yield-multiplier)
-  # Example: 0.75 → a 100-log tree yields 75 logs | 1.0 = full yield
+  # Multiplicador de rendimiento de troncos al talar.
+  # Troncos soltados = ceil(troncos_totales * log-yield-multiplier)
+  # Ejemplo: 0.75 -> un árbol de 100 troncos da 75 troncos
   log-yield-multiplier: 0.75
 
-  # Number of branch search iterations in the canopy.
-  # The plugin iteratively searches logs adjacent to detected leaves not rooted to ground.
-  # Increase if logs remain after felling on very branchy custom trees.
-  # Example: 5 → 5 branch detection passes (recommended default)
-  #          10 → more precise for very complex trees, slightly slower
+  # Número de iteraciones de búsqueda de ramas en la copa.
+  # Busca iterativamente troncos adyacentes a hojas.
+  # Aumentar si quedan troncos en árboles grandes personalizados.
+  # Ejemplo: 5 -> 5 pasadas de detección (predeterminado recomendado)
+  #          10 -> más preciso para árboles muy complejos
   max-branch-discovery-iterations: 5
 
-  # Maximum size (in blocks) of a completely isolated orphan cluster to absorb.
-  # An orphan cluster is a group of logs/leaves touching neither ground nor tree.
-  # If small enough, it's considered part of the tree (isolated twig).
-  # Example: 10 → absorbs fragments ≤ 10 blocks | 0 = disable
+  # Tamaño máximo de un cúmulo huérfano aislado a absorber.
+  # Un cúmulo huérfano no toca ni el suelo ni el árbol principal.
+  # Si es lo suficientemente pequeño, se considera parte del árbol.
+  # Ejemplo: 10 -> absorbe fragmentos <= 10 bloques
   max-orphan-cluster-size: 10
 
-  # Rule for isolated logs in the canopy (no direct trunk connection but surrounded by leaves).
-  # true = considers these logs as part of the main tree if they touch connected leaves.
+  # Regla para troncos aislados en la copa.
+  # true = considera estos troncos como parte del árbol principal.
   isolated-logs-rule: true
 
-  # Options for cleaning up solitary/orphan leaves around the tree after felling.
+  # Opciones para limpiar hojas solitarias tras la tala.
   orphan-leaves-cleanup:
-    # true = automatically cleans leaves with no nearby log (avoids floating leaves)
+    # true = limpia automáticamente hojas sin tronco cercano
     enabled: true
-    # Scan radius around the felled tree to search for solitary leaves
+    # Radio de escaneo alrededor del árbol talado
     radius: 5
 
-  # Options for replacing underground roots (replaces underground logs with dirt instead of air)
+  # Opciones para reemplazar raíces subterráneas (tierra en vez de aire)
   root-replacement:
-    # true = enables replacement of underground roots with a solid block
+    # true = activa reemplazo de raíces subterráneas por bloques sólidos
     enabled: true
-    # Replacement material (Bukkit Material name)
-    # Example: DIRT, COARSE_DIRT, NETHERRACK...
+    # Material de reemplazo (nombre Bukkit Material)
+    # Ejemplo: DIRT, COARSE_DIRT, NETHERRACK...
     material: "DIRT"
 
-  # Radius (in blocks) around the tree volume to search for orphan logs after felling.
+  # Radio alrededor del árbol para buscar troncos huérfanos.
   isolated-logs-radius: 6
 
-  # Maximum number of connected logs in a group to be considered orphan.
+  # Número máximo de troncos conectados para grupos huérfanos.
   isolated-log-max: 4
 
-  # true = allow the player to start the scan on a non-rooted log (e.g. high branch).
-  # The plugin will descend vertically to find the real trunk.
+  # true = permite iniciar el escaneo en un tronco no enraizado.
+  # El plugin bajará verticalmente para encontrar el tronco real.
   allow-non-rooted-start: false
 
-  # Maximum search depth downward to find a rooted trunk when starting on a non-rooted log.
+  # Profundidad máxima hacia abajo para encontrar un tronco enraizado.
   max-root-search-depth: 16
 
-  # Max budget for the restricted 6-way BFS (independent of max-logs)
-  # Allows cutting giant trees without scanning their entire global volume
+  # Presupuesto máximo para el BFS restringido de 6 vías
+  # Permite cortar árboles gigantes sin escanear todo su volumen
   6way-max-logs: 2048
 
-  # Enable canopy cleanup phase after felling (recommended for large IRIS trees)
+  # Activar fase de limpieza de copa tras la tala
   canopy-cleanup-enabled: true
 
-  # Padding (blocks) around the tree bounding box to scan for orphan leaves after felling
+  # Margen de bloques alrededor del árbol para escanear hojas huérfanas
   canopy-cleanup-padding: 12
 
-  # Number of leaves processed per tick for persistence updates (default: 64)
+  # Cantidad de hojas procesadas por tick (predeterminado: 64)
   leaves-persistence-batch-size: 64
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Anti-cheat
 # ─────────────────────────────────────────────────────────────────────────────
 anti-cheat:
-  # true = enable anti-cheat detection
+  # true = activar detección anti-cheat
   enabled: true
-  # Minimum cooldown between two clicks (in milliseconds) to break/interact with a tree
+  # Tiempo mínimo entre dos clics (en ms)
   min-click-interval-ms: 100
-  # Minimum view change required (cumulative yaw or pitch in degrees) between clicks
+  # Cambio de ángulo de visión mínimo requerido (en grados)
   min-look-change-degrees: 0.1
-  # Maximum number of consecutive clicks with a too-regular interval (near-zero variance)
+  # Número máximo de clics consecutivos con intervalo demasiado regular
   max-regular-clicks: 8
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Partizionamento multi-sorgente (separazione di alberi adiacenti)
+# Particionado de múltiples fuentes (separación de árboles adyacentes)
 # ─────────────────────────────────────────────────────────────────────────────
 trees:
-  # Minimum number of logs connected to the ground to consider a trunk valid.
-  # Example: 4 → a trunk must have at least 4 logs before being recognized
+  # Número mínimo de troncos conectados al suelo para validar un tronco.
+  # Ejemplo: 4 -> un tronco debe tener al menos 4 bloques
   min-logs-rooted: 4
 
-  # Minimum number of isolated logs (not on ground) to create a virtual trunk.
+  # Número mínimo de troncos aislados para tronco virtual.
   # Allows treating small floating groups as mini-trees.
-  # Example: 3 → a cluster of 3+ floating logs is treated as a tree
+  # Ejemplo: 3 -> grupo de 3+ troncos flotantes se trata como árbol
   min-logs-isolated: 3
 
-  # Maximum thickness (in logs) of a bottleneck between two sub-trees.
-  # If a junction has more logs than this value, trees are not separated.
-  # Example: 4 → a connection of ≤ 4 logs is considered a separable bottleneck
+  # Grosor máximo (en troncos) de un cuello de botella entre árboles.
+  # Si una unión tiene más troncos, los árboles no se separan.
+  # Ejemplo: 4 -> conexión de <= 4 troncos es un cuello separable
   max-bridge-section-size: 4
 
-  # Maximum cost (weighted by height) of an admissible bottleneck.
-  # The higher and wider a junction, the higher its cost.
+  # Costo máximo de un cuello de botella admisible.
+  # Cuanto más alta y ancha es una unión, mayor es su costo.
   max-bridge-cost: 20.0
 
-  # Height weighting coefficient for cuts.
-  # Example: 0.1 → slight advantage to high cuts
+  # Coeficiente de ponderación de altura para cortes.
+  # Ejemplo: 0.1 -> ligera ventaja a cortes altos
   height-weight-alpha: 0.1
 
-  # Maximum radius around the targeted trunk to search for junctions between trees.
+  # Radio máximo alrededor del tronco para buscar uniones.
   bridge-search-radius: 16
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Prestazioni (taglio progressivo per alberi molto grandi)
+# Rendimiento (corte progresivo para árboles muy grandes)
 # ─────────────────────────────────────────────────────────────────────────────
 performance:
-  # true = abilitare il taglio a stadi per alberi grandi
+  # true = activar corte progresivo para árboles grandes
   staged-cut-enabled: true
 
-  # Oltre questo numero totale di blocchi, tagliare in più passate.
-  # Esempio: 256 → alberi più grandi di 256 blocchi verranno tagliati progressivamente
+  # A partir de este total de bloques, se tala en múltiples pasadas.
+  # Ejemplo: 256 -> árboles de más de 256 bloques se cortan progresivamente
   staged-cut-min-blocks: 256
 
-  # Altezza (in blocchi) di una fetta distrutta per step.
-  # Esempio: 1 → 1 livello Y tagliato per passata
+  # Altura (en bloques) de una capa destruida por paso.
+  # Ejemplo: 1 -> 1 nivel Y cortado por pasada
   staged-cut-slice-height: 1
 
-  # Ritardo tra ogni fetta (in tick del server, 20 tick = 1 secondo).
-  # Esempio: 5 → 1 fetta ogni 5 tick
+  # Tiempo entre capas (en ticks del servidor, 20 ticks = 1 segundo).
+  # Ejemplo: 5 -> 1 capa cada 5 ticks (4 por segundo)
   staged-cut-interval-ticks: 5
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Riempimento delle radici sotterranee
+# Relleno subterráneo de raíces
 # ─────────────────────────────────────────────────────────────────────────────
 roots:
-  # true = replaces underground logs with a solid block instead of air.
+  # true = reemplaza troncos subterráneos por bloques sólidos en vez de aire.
   backfill-enabled: true
 
-  # Default block if no solid neighbor is found.
+  # Bloque por defecto si no se encuentra un vecino sólido.
   backfill-block: "DIRT"
 
-  # Backfill mode: HOLE_DETECTOR (recommended), LEGACY (original), or NONE
+  # Modo de relleno: HOLE_DETECTOR (recomendado), LEGACY o NONE
   fill-mode: "HOLE_DETECTOR"
 
-  # Maximum scan and backfill depth
+  # Profundidad máxima de escaneo y relleno
   fill-depth: 16
 
-  # Number of additional blocks to include horizontally around the XZ bounding box
+  # Bloques adicionales horizontales alrededor del tronco
   fill-radius-extra: 0
 
-  # Natural ground flare factor at the center (Elephant Foot)
+  # Factor de ensanchamiento natural en el centro (Pata de Elefante)
   elephant-factor: 1.5
 
-  # Maximum allowed slope between adjacent columns during smoothing (in blocks)
-  # Lower value = flatter surface
+  # Pendiente máxima permitida entre columnas adyacentes
+  # Valor más bajo = superficie más plana
   max-slope: 2
 
-  # Number of neighbors used for IDW interpolation (recommended: 8)
+  # Número de vecinos usados para interpolación IDW (recomendado: 8)
   idw-neighbors: 8
 
-  # [LEGACY] Maximum backfill depth (in blocks below the surface).
+  # [LEGACY] Profundidad máxima de relleno.
   max-backfill-depth: 6
 
-  # [LEGACY] Number of XZ blocks beyond the trunk to include in the backfill flood fill
+  # [LEGACY] Margen de bloques XZ más allá del tronco
   root-fill-padding: 2
 
-  # [LEGACY] Additional depth margin below the lowest cut log in the column
+  # [LEGACY] Margen de profundidad bajo el tronco más bajo
   root-fill-depth-padding: 2
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Algoritmo di fallback cilindrico
+# Algoritmo de respaldo cilíndrico (Módulo de respaldo)
 # ─────────────────────────────────────────────────────────────────────────────
 fallback:
-  # true = enable the cylindrical fallback algorithm when the main method fails
+  # true = activar escaneo cilíndrico de respaldo si falla el método principal
   enabled: true
 
-  # Maximum number of blocks for which the fallback can apply.
-  # Beyond this, massive felling is refused.
+  # Número máximo de bloques para aplicar el respaldo.
+  # Más allá de esto, se rechaza la tala masiva.
   max-blocks: 2048
 
-  # Horizontal radius to search for columns of the main trunk.
-  # Example: 1 → columns immediately adjacent to the struck trunk
+  # Radio horizontal para buscar columnas del tronco principal.
+  # Ejemplo: 1 -> columnas inmediatamente adyacentes al tronco
   trunk-core-radius: 1
 
-  # Minimum number of consecutive vertical logs to consider a column as a trunk.
+  # Número mínimo de troncos verticales consecutivos.
   trunk-min-height: 3
 
-  # Maximum horizontal radius for the tree in fallback mode.
-  # Example: 8 → cylinder of radius 8 around the trunk
+  # Radio horizontal máximo en modo respaldo.
+  # Ejemplo: 8 -> cilindro de radio 8 alrededor del tronco
   max-radius: 8
 
-  # Minimum density (0.0 to 1.0) to include a ring in the tree.
-  # If a ring's density falls below this threshold, expansion stops.
-  # Example: 0.10 → minimum 10% of tree blocks
+  # Densidad mínima (0.0 a 1.0) para incluir un anillo.
+  # Si la densidad cae por debajo de este umbral, la expansión se detiene.
+  # Ejemplo: 0.10 -> mínimo 10% de bloques de árbol
   min-density: 0.10
 
-  # Width of distance rings (in blocks).
+  # Ancho de los anillos de distancia (en bloques).
   ring-step: 1
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Drop dalle foglie rimosse
+# Gotas de hojas eliminadas
 # ─────────────────────────────────────────────────────────────────────────────
 leaf-drops:
-  enabled: true          # abilitare/disabilitare i drop di foglie
-  sapling-chance: 0.05   # 5% per foglia (NON MODIFICARE)
-  stick-chance: 0.02     # 2% per foglia (NON MODIFICARE)
-  apple-chance: 0.005    # 0.5% (solo quercia + foresta oscura) (NON MODIFICARE)
+  enabled: true          # activar/desactivar caídas de hojas
+  sapling-chance: 0.05   # 5% por hoja (NO MODIFICAR)
+  stick-chance: 0.02     # 2% por hoja (NO MODIFICAR)
+  apple-chance: 0.005    # 0.5% (solo roble + roble oscuro) (NO MODIFICAR)

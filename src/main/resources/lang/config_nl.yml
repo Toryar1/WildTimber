@@ -1,176 +1,176 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# config.yml — WildTimber Hoofdconfiguratie
+# config.yml — WildTimber Hauptkonfiguration
 # ─────────────────────────────────────────────────────────────────────────────
 #
-# OVERZICHT DETECTIEMODULES:
-# WildTimber gebruikt 3 complementaire detectiemodules voor boombeheer:
+# ÜBERSICHT DER ERKENNUNGSMODULE:
+# WildTimber verwendet 3 komplementäre Erkennungsmodule zur Baumverwaltung:
 #
-# 1. HOOFDMODULE (BFS 26-richtingen + Knelpunten):
-#    Analyseert stam en kroon in 26 richtingen (diagonalen inbegrepen, ideaal voor
-#    aangepaste bomen met diagonale takken). Bij meerdere stammen probeert het
-#    samengegroeide bomen te scheiden door dunne verbindingen (knelpunten) te snijden
-#    volgens de grootte- en kostencriteria geconfigureerd onder trees.*.
+# 1. HAUPTMODUL (BFS 26-Wege + Engpässe):
+#    Analysiert Stamm und Krone in 26-Wegen (Diagonalen eingeschlossen, ideal für
+#    benutzerdefinierte Bäume mit diagonalen Ästen). Bei mehreren Stämmen versucht
+#    es, zusammengewachsene Bäume durch Schneiden dünner Verbindungen (Engpässe)
+#    gemäß den Größen- und Kostenkriterien unter trees.* zu trennen.
 #
-# 2. 6-RICHTINGEN-MODULE (BFS 6-way):
-#    Als de hoofddetectie (26-richtingen) een te groot cluster omvat, herstart het
-#    plugin onmiddellijk in strikte 6-richtingen-connectiviteit. Dit scheidt
-#    automatisch bomen die alleen aan hoeken raken.
+# 2. 6-WEGE-MODUL (BFS 6-Wege):
+#    Falls die Haupterkennung (26-Wege) einen zu großen Cluster erfasst,
+#    startet das Plugin sofort neu mit strikter 6-Wege-Konnektivität.
+#    Dies trennt Bäume, die sich nur an den Ecken berühren.
 #
-# 3. FALLBACK-MODULE (Cilindrische Fallback):
-#    Als kneelpuntsscheiding mislukt, snijdt het plugin een cilindrisch gedeelte
-#    rond de getroffen stam op basis van lokale dichtheid.
+# 3. FALLBACK-MODUL (Zylinder-Fallback):
+#    Wenn die Trennung fehlschlägt, schneidet das Plugin einen zylindrischen
+#    Teil um den getroffenen Stamm basierend auf lokaler Dichte.
 # ─────────────────────────────────────────────────────────────────────────────
 
 plugin:
-  enabled: true          # true = plugin actief | false = globaal uitgeschakeld
-  # Plugin taalcode (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
+  enabled: true          # true = Plugin aktiv | false = global deaktiviert
+  # Sprachcode des Plugins (en, fr, de, es, pt_BR, nl, pl, ru, zh_CN, it)
   language: "en"
-  # Op true zetten om debug-logs in de console te zien
-  debug: false           # Voorbeeld: debug: true → toont scans in de console
-  # Op true zetten voor gedetailleerde bladdrop-logs (erg spam-intensief!)
+  # Auf true setzen für Debug-Logs in der Konsole
+  debug: false           # Beispiel: debug: true -> zeigt Scans in der Konsole an
+  # Auf true setzen für detaillierte Blatt-Drop-Logs
   verbose-debug: false
 
 worlds:
-  # Lijst van werelden waar WildTimber uitgeschakeld is.
-  # Als leeg, is de plugin standaard in alle werelden actief.
+  # Liste der Welten, in denen WildTimber deaktiviert ist.
+  # Wenn leer, ist das Plugin standardmäßig auf allen Welten aktiv.
   disabled:
     - "ignored_world_example"
 
 health:
-  # Global HP coefficient multiplier for trees.
-  # Total HP = sum of log weights × base-coefficient
-  # Example: 1.0 = normal | 2.0 = tree twice as resistant
+  # Globaler HP-Koeffizient für Bäume.
+  # Gesamt-HP = Summe der Stammgewichte * base-coefficient
+  # Beispiel: 1.0 = normal | 2.0 = Baum doppelt so widerstandsfähig
   base-coefficient: 1.0
 
-  # Inactivity delay (in seconds) before regeneration begins.
-  # Example: 180 = 3 minutes of inactivity → regeneration starts
+  # Inaktivitätsverzögerung (in Sekunden) bevor die Regeneration beginnt.
+  # Beispiel: 180 = 3 Minuten Inaktivität -> Regeneration startet
   inactivity-delay-seconds: 180
 
   regen:
-    # true = HP regenerates if the tree hasn't been hit for inactivity-delay-seconds
-    enabled: true        # Example: false → tree keeps its damage indefinitely
+    # true = HP regeneriert, wenn der Baum seit inactivity-delay-seconds nicht getroffen wurde
+    enabled: true        # Beispiel: false -> Baum behält seinen Schaden unbegrenzt
 
-    # Percentage of max HP recovered per regeneration tick.
-    # Example: 10.0 = 10% per step → full recovery in 10 steps
+    # Prozentsatz der maximalen HP, der pro Regenerationstick wiederhergestellt wird.
+    # Beispiel: 10.0 = 10% pro Schritt -> vollständige Erholung in 10 Schritten
     percent-per-step: 10.0
 
-    # Interval between each regeneration tick, in seconds.
-    # Example: 60 = 1 regeneration step every 60 seconds
+    # Intervall zwischen Regenerationsticks, in Sekunden.
+    # Beispiel: 60 = 1 Regenerationsschritt alle 60 Sekunden
     step-seconds: 60
 
-  # Enable visual display of damage progression on the targeted log (crack stages)
+  # Visuelle Anzeige des Schadensfortschritts am Zielstamm aktivieren (Rissstufen)
   visual-tree-health-enabled: true
 
 trigger:
-  # Trigger mode. Currently only RIGHT_CLICK_AXE is supported.
+  # Auslösemodus. Derzeit wird nur RIGHT_CLICK_AXE unterstützt.
   mode: "RIGHT_CLICK_AXE"
 
-  # true = send a hint message to the player who breaks a log without engaging the tree
-  send-hint-message: true   # Example: false → no help message
+  # true = Hinweisnachricht an Spieler senden, die einen Stamm ohne Erfassung schlagen
+  send-hint-message: true   # Beispiel: false -> keine Hinweistexte
 
-  # Delay (in seconds) between two hint messages for the same player.
-  # Example: 60 = one hint per minute per player
+  # Verzögerung (in Sekunden) zwischen zwei Hinweistexten für denselben Spieler.
+  # Beispiel: 60 = ein Hinweis pro Minute pro Spieler
   hint-cooldown-seconds: 60
 
-  # Minimum delay between two counted clicks (in milliseconds)
-  # Example: 350 → one click every 350ms maximum
+  # Mindestverzögerung zwischen zwei gezählten Klicks (in Millisekunden)
+  # Beispiel: 350 -> maximal ein Klick alle 350ms
   click-cooldown-ms: 350
 
 durability:
-  # Base damage dealt to the tree per click based on the tool used.
-  # Special key AIR (or HAND) = empty hand.
-  # Example: DIAMOND_AXE: 5.0 → diamond axe deals 5 HP per click
+  # Grundschaden am Baum pro Klick je nach verwendetem Werkzeug.
+  # Spezialschlüssel AIR (oder HAND) = leere Hand.
+  # Beispiel: DIAMOND_AXE: 5.0 -> Diamantaxt richtet 5 HP pro Klick an
   multipliers:
-    WOODEN_AXE: 1.0       # Wooden axe
-    STONE_AXE: 1.5        # Stone axe
-    IRON_AXE: 2.0         # Iron axe
-    GOLDEN_AXE: 2.5       # Golden axe
-    DIAMOND_AXE: 3.5      # Diamond axe
-    NETHERITE_AXE: 5.0    # Netherite axe
-    AIR: 0.5              # Empty hand (HAND → uses AIR internally)
+    WOODEN_AXE: 1.0       # Holzaxt
+    STONE_AXE: 1.5        # Steinaxt
+    IRON_AXE: 2.0         # Eisenaxt
+    GOLDEN_AXE: 2.5       # Goldaxt
+    DIAMOND_AXE: 3.5      # Diamantaxt
+    NETHERITE_AXE: 5.0    # Netheritaxt
+    AIR: 0.5              # Leere Hand (HAND -> nutzt intern AIR)
 
-  # Additional damage added per enchantment level.
+  # Zusätzlicher Schaden pro Verzauberungsstufe.
   enchantments:
-    # Bonus damage per Efficiency level.
-    # Example: 0.5 → Efficiency III adds 3 × 0.5 = 1.5 extra HP
+    # Bonus-Schaden pro Effizienz-Stufe.
+    # Beispiel: 0.5 -> Effizienz III fügt 3 * 0.5 = 1.5 extra HP hinzu
     efficiency: 0.5
 
-    # Bonus damage per Sharpness level.
-    # Example: 0.3 → Sharpness V adds 5 × 0.3 = 1.5 extra HP
+    # Bonus-Schaden pro Schärfe-Stufe.
+    # Beispiel: 0.3 -> Schärfe V fügt 5 * 0.3 = 1.5 extra HP hinzu
     sharpness: 0.3
 
-  # Internal efficiency multiplier (reserved for future use).
+  # Interner Effizienzmultiplikator.
   efficiency-level-multiplier: 0.2
 
   extra-loss:
-    # true = the tool loses extra durability during felling
-    enabled: true          # Example: false → no extra wear
+    # true = Werkzeug verliert beim Fällen zusätzliche Haltbarkeit
+    enabled: true          # Beispiel: false -> keine zusätzliche Abnutzung
 
-    # Extra durability points lost per hit.
-    # Example: 1 = 1 extra durability point per click
+    # Zusätzliche Haltbarkeitspunkte, die pro Schlag verloren gehen.
+    # Beispiel: 1 = 1 zusätzlicher Haltbarkeitspunkt pro Klick
     points-per-interval: 1
 
-    # Chance percentage (0-100) to lose extra durability per hit.
-    # Example: 50 = 50% chance to lose durability points
+    # Wahrscheinlichkeit (0-100) für zusätzlichen Haltbarkeitsverlust.
+    # Beispiel: 50 = 50% Chance auf Haltbarkeitsverlust
     chance-percent: 100
 
 limits:
-  # Tree detection preset:
-  # - CUSTOM  : Uses all rules, limits and criteria defined below. (Recommended)
-  # - VANILLA : Ignores limits below and uses standard Minecraft vanilla tree presets
+  # Baumerkennungs-Voreinstellung:
+  # - CUSTOM  : Verwendet alle unten definierten Regeln. (Empfohlen)
+  # - VANILLA : Ignoriert untenstehende Grenzen und nutzt Vanilla-Standards
   preset: "CUSTOM"
 
-  # Whether blacklist blocks (construction materials) prevent tree felling.
-  # true (default): protects player constructions.
-  # false: ignores the construction blacklist during felling.
+  # Ob Blacklist-Blöcke (Bauwerke) das Fällen verhindern.
+  # true (Standard): schützt Spielerbauten.
+  # false: ignoriert Bauschutz beim Fällen.
   blacklist-enabled: true
 
-  # true = the tree must be in contact with the ground (rooted) to be felled.
-  # false = floating or non-rooted trees are accepted.
+  # true = Baum muss Bodenkontakt haben (erfasst), um gefällt zu werden.
+  # false = schwimmende Bäume werden akzeptiert.
   tree-contact-required: true
 
-  # Maximum number of logs in a tree before it is considered too large.
-  # Example: 1024 → refuses to process a tree with more than 1024 logs
+  # Maximale Anzahl an Stämmen pro Baum.
+  # Beispiel: 1024 -> verweigert Bäume mit mehr als 1024 Stämmen
   max-logs: 1024
 
-  # Maximum total block count (logs + leaves) in a tree.
-  # Example: 4096 → global limit of 4096 blocks per tree
+  # Maximale Gesamtzahl an Blöcken (Stämme + Blätter).
+  # Beispiel: 4096 -> globales Limit von 4096 Blöcken pro Baum
   max-blocks: 4096
 
-  # Maximum horizontal radius (XZ, in blocks) of the detection scan from the trunk.
-  # Example: 16 → searches for logs up to 16 blocks of horizontal distance
+  # Maximaler horizontaler Radius (XZ) des Scans vom Stamm.
+  # Beispiel: 16 -> sucht Stämme bis 16 Blöcke horizontale Distanz
   max-radius-xz: 16
 
-  # Maximum vertical height (Y, in blocks) of the detection scan from the clicked block.
-  # Should generally be larger than max-radius-xz since trees are taller than wide.
-  # Example: 64 → searches for logs up to 64 blocks in height
+  # Maximale vertikale Höhe (Y) des Scans vom geklickten Block.
+  # Sollte generell größer als max-radius-xz sein.
+  # Beispiel: 64 -> sucht Stämme bis 64 Blöcke Höhe
   max-height-y: 64
 
-  # Maximum number of connected non-tree blocks tolerated (not currently used).
+  # Maximale Anzahl verbundener Nicht-Baumblöcke.
   max-connected-non-tree-blocks: 50
 
-  # Maximum BFS propagation distance for leaf detection and decay.
-  # - leaf-decay-range-xz: maximum horizontal distance (XZ) of leaf scan from trunk.
-  # - leaf-decay-range-y : maximum vertical distance (Y) of leaf scan from trunk.
-  # Example: xz: 6, y: 8 → searches leaves up to 6 blocks horizontally and 8 vertically.
+  # Maximale BFS-Reichweite für Blatterkennung und Zerfall.
+  # - leaf-decay-range-xz: maximaler horizontaler Radius des Blattscans.
+  # - leaf-decay-range-y : maximaler vertikaler Radius des Blattscans.
+  # Beispiel: xz: 6, y: 8 -> sucht Blätter bis 6 Blöcke horiz. und 8 vert.
   leaf-decay-range-xz: 6
   leaf-decay-range-y: 8
 
-  # Allow diagonal detection (26 directions instead of 6 orthogonal faces)
-  # - allow-diagonal-logs: connects logs diagonally (thin branches)
-  # - allow-diagonal-leaves: connects leaves diagonally (spaced canopies)
+  # Diagonale Erkennung erlauben (26 Richtungen statt 6)
+  # - allow-diagonal-logs: verbindet Stämme diagonal
+  # - allow-diagonal-leaves: verbindet Blätter diagonal
   allow-diagonal-logs: true
   allow-diagonal-leaves: true
 
-  # Dynamic radius increase factors for large trees:
-  # Every X logs cut (leaf-decay-scaling-logs), add +Y to XZ radius and +Z to Y radius.
-  # Set leaf-decay-scaling-logs to 0 or negative to disable this dynamic increase.
+  # Faktoren für dynamische Radiuserhöhung bei großen Bäumen:
+  # Alle X gefällten Stämme +Y zum XZ-Radius und +Z zum Y-Radius hinzufügen.
+  # Auf 0 setzen zum Deaktivieren.
   leaf-decay-scaling-logs: 100
   leaf-decay-scaling-xz-bonus: 1
   leaf-decay-scaling-y-bonus: 2
 
-  # Blocks considered as accessories/floating to clean up after felling if they lose support.
-  # Example: SNOW, HONEYCOMB_BLOCK, HONEY_BLOCK, DARK_OAK_FENCE, DARK_OAK_FENCE_GATE
+  # Blöcke, die nach dem Fällen aufgeräumt werden.
+  # Beispiel: SNOW, HONEYCOMB_BLOCK, HONEY_BLOCK...
   cleanup-floating-blocks:
     - "SNOW"
     - "HONEYCOMB_BLOCK"
@@ -178,203 +178,203 @@ limits:
     - "DARK_OAK_FENCE"
     - "DARK_OAK_FENCE_GATE"
 
-  # Log yield multiplier during felling.
-  # Dropped logs = ceil(log_count × log-yield-multiplier)
-  # Example: 0.75 → a 100-log tree yields 75 logs | 1.0 = full yield
+  # Ertragsmultiplikator für Stämme beim Fällen.
+  # Gedroppte Stämme = ceil(Stämme_gesamt * log-yield-multiplier)
+  # Beispiel: 0.75 -> ein 100-Stamm-Baum ergibt 75 Stämme
   log-yield-multiplier: 0.75
 
-  # Number of branch search iterations in the canopy.
-  # The plugin iteratively searches logs adjacent to detected leaves not rooted to ground.
-  # Increase if logs remain after felling on very branchy custom trees.
-  # Example: 5 → 5 branch detection passes (recommended default)
-  #          10 → more precise for very complex trees, slightly slower
+  # Anzahl der Astsuch-Iterationen im Blätterdach.
+  # Sucht iterativ nach Stämmen neben Blättern.
+  # Erhöhen, wenn Stämme bei großen Bäumen übrig bleiben.
+  # Beispiel: 5 -> 5 Durchgänge (empfohlener Standard)
+  #          10 -> präziser für sehr komplexe Bäume
   max-branch-discovery-iterations: 5
 
-  # Maximum size (in blocks) of a completely isolated orphan cluster to absorb.
-  # An orphan cluster is a group of logs/leaves touching neither ground nor tree.
-  # If small enough, it's considered part of the tree (isolated twig).
-  # Example: 10 → absorbs fragments ≤ 10 blocks | 0 = disable
+  # Maximale Größe eines isolierten verwaisten Clusters.
+  # Ein verwaister Cluster berührt weder Boden noch Hauptbaum.
+  # Wenn klein genug, wird er als Teil des Baumes betrachtet.
+  # Beispiel: 10 -> absorbiert Fragmente <= 10 Blöcke
   max-orphan-cluster-size: 10
 
-  # Rule for isolated logs in the canopy (no direct trunk connection but surrounded by leaves).
-  # true = considers these logs as part of the main tree if they touch connected leaves.
+  # Regel für isolierte Stämme im Blätterdach.
+  # true = betrachtet diese Stämme als Teil des Hauptbaumes.
   isolated-logs-rule: true
 
-  # Options for cleaning up solitary/orphan leaves around the tree after felling.
+  # Optionen zum Aufräumen einzelner Blätter nach dem Fällen.
   orphan-leaves-cleanup:
-    # true = automatically cleans leaves with no nearby log (avoids floating leaves)
+    # true = räumt Blätter ohne Stamm in der Nähe automatisch auf
     enabled: true
-    # Scan radius around the felled tree to search for solitary leaves
+    # Scanradius um den gefällten Baum
     radius: 5
 
-  # Options for replacing underground roots (replaces underground logs with dirt instead of air)
+  # Optionen zum Ersetzen unterirdischer Wurzeln (Erde statt Luft)
   root-replacement:
-    # true = enables replacement of underground roots with a solid block
+    # true = aktiviert Ersatz unterirdischer Wurzeln durch feste Blöcke
     enabled: true
-    # Replacement material (Bukkit Material name)
-    # Example: DIRT, COARSE_DIRT, NETHERRACK...
+    # Ersatzmaterial (Bukkit Materialname)
+    # Beispiel: DIRT, COARSE_DIRT, NETHERRACK...
     material: "DIRT"
 
-  # Radius (in blocks) around the tree volume to search for orphan logs after felling.
+  # Radius um das Baumvolumen zur Suche verwaister Stämme.
   isolated-logs-radius: 6
 
-  # Maximum number of connected logs in a group to be considered orphan.
+  # Maximale Anzahl verbundener Stämme für verwaiste Gruppen.
   isolated-log-max: 4
 
-  # true = allow the player to start the scan on a non-rooted log (e.g. high branch).
-  # The plugin will descend vertically to find the real trunk.
+  # true = erlaubt Scan-Start an nicht verwurzelten Stämmen.
+  # Das Plugin steigt vertikal ab, um den echten Stamm zu finden.
   allow-non-rooted-start: false
 
-  # Maximum search depth downward to find a rooted trunk when starting on a non-rooted log.
+  # Maximale Suchtiefe nach unten für verwurzelte Stämme.
   max-root-search-depth: 16
 
-  # Max budget for the restricted 6-way BFS (independent of max-logs)
-  # Allows cutting giant trees without scanning their entire global volume
+  # Maximales Budget für den eingeschränkten 6-Wege-BFS
+  # Ermöglicht das Fällen riesiger Bäume ohne vollen Scan
   6way-max-logs: 2048
 
-  # Enable canopy cleanup phase after felling (recommended for large IRIS trees)
+  # Blätterdach-Aufräumphase nach dem Fällen aktivieren
   canopy-cleanup-enabled: true
 
-  # Padding (blocks) around the tree bounding box to scan for orphan leaves after felling
+  # Randabstand um den Baum zum Scannen verwaister Blätter
   canopy-cleanup-padding: 12
 
-  # Number of leaves processed per tick for persistence updates (default: 64)
+  # Anzahl verarbeiteter Blätter pro Tick (Standard: 64)
   leaves-persistence-batch-size: 64
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Anti-cheat
+# Anti-Cheat
 # ─────────────────────────────────────────────────────────────────────────────
 anti-cheat:
-  # true = enable anti-cheat detection
+  # true = Anti-Cheat-Erkennung aktivieren
   enabled: true
-  # Minimum cooldown between two clicks (in milliseconds) to break/interact with a tree
+  # Mindestabklingzeit zwischen zwei Klicks (in ms)
   min-click-interval-ms: 100
-  # Minimum view change required (cumulative yaw or pitch in degrees) between clicks
+  # Erforderliche Mindeständerung des Blickwinkels (in Grad)
   min-look-change-degrees: 0.1
-  # Maximum number of consecutive clicks with a too-regular interval (near-zero variance)
+  # Maximale Anzahl aufeinanderfolgender Klicks mit zu regelmäßigem Intervall
   max-regular-clicks: 8
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Meerbronpartitionering (scheiding van aangrenzende bomen)
+# Mehrfachstamm-Trennung (Trennung benachbarter Bäume)
 # ─────────────────────────────────────────────────────────────────────────────
 trees:
-  # Minimum number of logs connected to the ground to consider a trunk valid.
-  # Example: 4 → a trunk must have at least 4 logs before being recognized
+  # Mindestanzahl mit dem Boden verbundener Stämme für einen Stamm.
+  # Beispiel: 4 -> ein Stamm muss mindestens 4 Blöcke haben
   min-logs-rooted: 4
 
-  # Minimum number of isolated logs (not on ground) to create a virtual trunk.
+  # Mindestanzahl isolierter Stämme für virtuellen Stamm.
   # Allows treating small floating groups as mini-trees.
-  # Example: 3 → a cluster of 3+ floating logs is treated as a tree
+  # Beispiel: 3 -> Gruppe von 3+ schwimmenden Stämmen wird als Baum behandelt
   min-logs-isolated: 3
 
-  # Maximum thickness (in logs) of a bottleneck between two sub-trees.
-  # If a junction has more logs than this value, trees are not separated.
-  # Example: 4 → a connection of ≤ 4 logs is considered a separable bottleneck
+  # Maximale Dicke (in Stämmen) eines Engpasses zwischen Bäumen.
+  # Bei mehr Stämmen werden die Bäume nicht getrennt.
+  # Beispiel: 4 -> Verbindung von <= 4 Stämmen ist trennbarer Engpass
   max-bridge-section-size: 4
 
-  # Maximum cost (weighted by height) of an admissible bottleneck.
-  # The higher and wider a junction, the higher its cost.
+  # Maximale Kosten eines zulässigen Engpasses.
+  # Je höher und breiter eine Verbindung, desto höher die Kosten.
   max-bridge-cost: 20.0
 
-  # Height weighting coefficient for cuts.
-  # Example: 0.1 → slight advantage to high cuts
+  # Höhengewichtungskoeffizient für Schnitte.
+  # Beispiel: 0.1 -> leichter Vorteil für hohe Schnitte
   height-weight-alpha: 0.1
 
-  # Maximum radius around the targeted trunk to search for junctions between trees.
+  # Maximaler Radius um den Zielstamm zur Verbindungs-Suche.
   bridge-search-radius: 16
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Prestaties (progressief kappen voor zeer grote bomen)
+# Performance (schrittweiser Schnitt für sehr große Bäume)
 # ─────────────────────────────────────────────────────────────────────────────
 performance:
-  # true = gefaseerd kappen activeren voor grote bomen
+  # true = schrittweisen Schnitt für große Bäume aktivieren
   staged-cut-enabled: true
 
-  # Boven dit totale blokgetal (stammen + bladeren) in meerdere passes kappen.
-  # Voorbeeld: 256 → bomen groter dan 256 blokken worden progressief gekapt
+  # Ab dieser Gesamtblockanzahl wird in mehreren Durchgängen gefällt.
+  # Beispiel: 256 -> Bäume über 256 Blöcken werden schrittweise gefällt
   staged-cut-min-blocks: 256
 
-  # Hoogte (in blokken) van een per stap vernietigde schijf.
-  # Voorbeeld: 1 → 1 Y-niveau per doorgang gekapt
+  # Höhe (in Blöcken) einer zerstörten Scheibe pro Schritt.
+  # Beispiel: 1 -> 1 Y-Ebene pro Durchgang
   staged-cut-slice-height: 1
 
-  # Vertraging tussen elke schijf (in serverticks, 20 ticks = 1 seconde).
-  # Voorbeeld: 5 → 1 schijf elke 5 ticks
+  # Verzögerung zwischen Scheiben (in Server-Ticks, 20 Ticks = 1 Sekunde).
+  # Beispiel: 5 -> 1 Scheibe alle 5 Ticks (4 pro Sekunde)
   staged-cut-interval-ticks: 5
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Ondergrondse worteltoewijzing
+# Unterirdische Wurzelverfüllung
 # ─────────────────────────────────────────────────────────────────────────────
 roots:
-  # true = replaces underground logs with a solid block instead of air.
+  # true = ersetzt unterirdische Stämme durch feste Blöcke statt Luft.
   backfill-enabled: true
 
-  # Default block if no solid neighbor is found.
+  # Standardblock, wenn kein fester Nachbar gefunden wird.
   backfill-block: "DIRT"
 
-  # Backfill mode: HOLE_DETECTOR (recommended), LEGACY (original), or NONE
+  # Verfüllmodus: HOLE_DETECTOR (empfohlen), LEGACY oder NONE
   fill-mode: "HOLE_DETECTOR"
 
-  # Maximum scan and backfill depth
+  # Maximale Scan- und Verfülltiefe
   fill-depth: 16
 
-  # Number of additional blocks to include horizontally around the XZ bounding box
+  # Zusätzliche Blöcke horizontal um den Stamm
   fill-radius-extra: 0
 
-  # Natural ground flare factor at the center (Elephant Foot)
+  # Natürlicher Verfüllungs-Erweiterungsfaktor im Zentrum (Elefantenfuß)
   elephant-factor: 1.5
 
-  # Maximum allowed slope between adjacent columns during smoothing (in blocks)
-  # Lower value = flatter surface
+  # Maximal zulässige Steigung zwischen benachbarten Spalten
+  # Niedrigerer Wert = flachere Oberfläche
   max-slope: 2
 
-  # Number of neighbors used for IDW interpolation (recommended: 8)
+  # Anzahl der für IDW-Interpolation genutzten Nachbarn (empfohlen: 8)
   idw-neighbors: 8
 
-  # [LEGACY] Maximum backfill depth (in blocks below the surface).
+  # [LEGACY] Maximale Verfülltiefe.
   max-backfill-depth: 6
 
-  # [LEGACY] Number of XZ blocks beyond the trunk to include in the backfill flood fill
+  # [LEGACY] Randabstand an Blöcken über den Stamm hinaus
   root-fill-padding: 2
 
-  # [LEGACY] Additional depth margin below the lowest cut log in the column
+  # [LEGACY] Tiefenabstand unter dem untersten Stamm
   root-fill-depth-padding: 2
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Cilindrisch fallback-algoritme
+# Zylindrischer Fallback-Algorithmus (Fallback-Modul)
 # ─────────────────────────────────────────────────────────────────────────────
 fallback:
-  # true = enable the cylindrical fallback algorithm when the main method fails
+  # true = zylindrischen Fallback-Scan bei Fehlschlag aktivieren
   enabled: true
 
-  # Maximum number of blocks for which the fallback can apply.
-  # Beyond this, massive felling is refused.
+  # Maximale Blockanzahl, für die der Fallback gilt.
+  # Darüber hinaus wird massives Fällen abgelehnt.
   max-blocks: 2048
 
-  # Horizontal radius to search for columns of the main trunk.
-  # Example: 1 → columns immediately adjacent to the struck trunk
+  # Horizontaler Radius zur Suche nach Stammkernspalten.
+  # Beispiel: 1 -> Spalten direkt neben dem getroffenen Stamm
   trunk-core-radius: 1
 
-  # Minimum number of consecutive vertical logs to consider a column as a trunk.
+  # Mindestanzahl aufeinanderfolgender vertikaler Stämme.
   trunk-min-height: 3
 
-  # Maximum horizontal radius for the tree in fallback mode.
-  # Example: 8 → cylinder of radius 8 around the trunk
+  # Maximaler horizontaler Radius im Fallback-Modus.
+  # Beispiel: 8 -> Zylinder mit Radius 8 um den Stamm
   max-radius: 8
 
-  # Minimum density (0.0 to 1.0) to include a ring in the tree.
-  # If a ring's density falls below this threshold, expansion stops.
-  # Example: 0.10 → minimum 10% of tree blocks
+  # Mindestdichte (0.0 bis 1.0) zur Einbeziehung eines Rings.
+  # Fällt die Dichte darunter, stoppt die Erweiterung.
+  # Beispiel: 0.10 -> mindestens 10% Baumblöcke
   min-density: 0.10
 
-  # Width of distance rings (in blocks).
+  # Breite der Distanzringe (in Blöcken).
   ring-step: 1
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Drops van verwijderde bladeren
+# Drops von entfernten Blättern
 # ─────────────────────────────────────────────────────────────────────────────
 leaf-drops:
-  enabled: true          # bladdrop in-/uitschakelen
-  sapling-chance: 0.05   # 5% per blad (NIET WIJZIGEN)
-  stick-chance: 0.02     # 2% per blad (NIET WIJZIGEN)
-  apple-chance: 0.005    # 0.5% (alleen eiken + donker bos) (NIET WIJZIGEN)
+  enabled: true          # Blatt-Drops aktivieren/deaktivieren
+  sapling-chance: 0.05   # 5% pro Blatt (NICHT ÄNDERN)
+  stick-chance: 0.02     # 2% pro Blatt (NICHT ÄNDERN)
+  apple-chance: 0.005    # 0.5% (nur Eiche + Schwarzeiche) (NICHT ÄNDERN)
