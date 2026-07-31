@@ -5,8 +5,9 @@
 
 # 🌲 WildTimber
 
-[![Licence](https://img.shields.io/badge/Licence-Propriétaire-red?style=for-the-badge)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-1.0.0-brightgreen?style=for-the-badge)]()
+[![Licence](https://img.shields.io/badge/Licence-Propri%C3%A9taire-red?style=for-the-badge)](LICENSE)
+[![SpigotMC](https://img.shields.io/badge/SpigotMC-Ressource-orange?style=for-the-badge)](https://www.spigotmc.org/resources/wildtimber.137546/)
+[![Changelog](https://img.shields.io/badge/Changelog-v1.0.0-blueviolet?style=for-the-badge)](CHANGELOG.md)
 [![Paper](https://img.shields.io/badge/Paper-1.19%20%E2%86%92%2026.2-orange?style=for-the-badge)](https://papermc.io)
 [![Java](https://img.shields.io/badge/Java-21+-blue?style=for-the-badge)](https://adoptium.net)
 
