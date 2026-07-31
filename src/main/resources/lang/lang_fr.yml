@@ -1,500 +1,371 @@
-prefix: "&6[WildTimber]&r "
+prefix: "&2[&aWildTimber&2] &r"
 
 messages:
-  no_permission: "&cVous n'avez pas la permission d'utiliser cette commande."
-  plugin_disabled_world: "&cWildTimber est désactivé dans ce monde."
-  tree_felled_summary: "&aArbre abattu ! &7(Logs: &e{logs}&7, Feuilles: &e{leaves}&7, Biome: &e{biome}&7, Durée: &e{duration}ms&7)"
-  godmode_active: "&aAbattage instantané (Godmode) activé."
-  godmode_inactive: "&cAbattage instantané (Godmode) désactivé."
-  language_changed: "&aLangue changée vers : &6{lang}"
-  reload_success: "&aConfiguration de WildTimber rechargée avec succès !"
-  undo_success: "&aDernier abattage annulé ({count} blocs restaurés)."
-  undo_no_snapshot: "&cAucun abattage récent à annuler."
-  toggle_enabled: "&aWildTimber activé pour vous."
-  toggle_disabled: "&cWildTimber désactivé pour vous."
-  click_cooldown: "&cMerci d'attendre avant de réattaquer cet arbre."
-  cut_queued: "&7Coupe mise en file d'attente... (position {position})"
-  cut_already_running: "&7Une coupe est déjà en cours, patience..."
-  cut_partial_fail: "&cCoupe partiellement échouée ({processed}/{planned} blocs)"
-  state_enabled: "&aActivé"
-  state_disabled: "&cDésactivé"
-  state_on: "&aOui"
-  state_off: "&cNon"
-
-gui:
-  title:
-    main_menu: "§8WildTimber - Menu Principal"
-    quick_toggles: "§8WildTimber - Raccourcis"
-    global_config: "§8WildTimber - Config Globale"
-    config_general: "§8WildTimber - Général"
-    config_limits: "§8WildTimber - Limites"
-    config_decay: "§8WildTimber - Feuilles & Décomposition"
-    config_roots: "§8WildTimber - Racines"
-    config_fallback: "§8WildTimber - Détection Fallback"
-    biome_list: "§8WildTimber - Liste des Biomes"
-    biome_editor: "§8WildTimber - Éditeur : {biome}"
-    material_editor: "§8WildTimber - Matériaux : {biome} / {type}"
-    language_select: "§8WildTimber - Choisir la Langue"
-
-  button:
-    back: "§cRetour"
-    close: "§cFermer"
-
-  main_menu:
-    global_config:
-      name: "§6Configuration Globale"
-      lore:
-        - "§7Modifier la vitesse, les cooldowns"
-        - "§7et les options de régénération."
-        - ""
-        - "§e[Clic pour ouvrir]"
-    biome_config:
-      name: "§aBiomes & Matériaux"
-      lore:
-        - "§7Configurer les bûches, feuilles"
-        - "§7et règles spécifiques par biome."
-        - ""
-        - "§e[Clic pour ouvrir]"
-    quick_toggles:
-      name: "§bRaccourcis & Bascules"
-      lore:
-        - "§7Activer/désactiver rapidement"
-        - "§7le debug, godmode, etc."
-        - ""
-        - "§e[Clic pour ouvrir]"
-    language:
-      name: "§dChanger de Langue"
-      lore:
-        - "§7Changer la langue d'affichage"
-        - "§7du plugin et des menus."
-        - ""
-        - "§7Langue actuelle : §f{lang}"
-        - ""
-        - "§e[Clic gauche pour ouvrir]"
-    reload:
-      name: "§eRecharger la Config"
-      lore:
-        - "§7Recharger tous les fichiers de configuration"
-        - "§7sans redémarrer le serveur."
-        - ""
-        - "§c[Clic pour recharger]"
-    close:
-      name: "§cFermer"
-
-  quick_toggles:
-    debug:
-      name: "§eMode Debug"
-      lore:
-        - "§7Active les messages de débogage."
-        - ""
-        - "§7État : {state}"
-        - ""
-        - "§e[Clic pour basculer]"
-    blacklist:
-      name: "§eListe noire"
-      lore:
-        - "§7Active le filtrage par liste noire."
-        - ""
-        - "§7État : {state}"
-        - ""
-        - "§e[Clic pour basculer]"
-    treecontact:
-      name: "§eContact avec l'arbre"
-      lore:
-        - "§7Le joueur doit toucher l'arbre"
-        - "§7pour déclencher l'abattage."
-        - ""
-        - "§7État : {state}"
-        - ""
-        - "§e[Clic pour basculer]"
-    godmode:
-      name: "§6Mode Godmode"
-      lore:
-        - "§7Abattage instantané en un seul clic."
-        - ""
-        - "§7État : {state}"
-        - ""
-        - "§e[Clic pour basculer]"
-    cooldown_bypass:
-      name: "§eBypasser le Cooldown"
-      lore:
-        - "§7Ignorer le délai entre les coups."
-        - ""
-        - "§7État : {state}"
-
-  global_config:
-    general:
-      name: "§eGénéral"
-      lore:
-        - "§7Cooldowns, astuces, perte de durabilité."
-        - ""
-        - "§e[Clic]"
-    limits:
-      name: "§eLimites"
-      lore:
-        - "§7Nombre max de blocs, hauteur, rayon."
-        - ""
-        - "§e[Clic]"
-    decay:
-      name: "§eFeuilles & Décomposition"
-      lore:
-        - "§7Portée de décomposition et nettoyage."
-        - ""
-        - "§e[Clic]"
-    roots:
-      name: "§eRacines"
-      lore:
-        - "§7Remplacement des racines."
-        - ""
-        - "§e[Clic]"
-    fallback:
-      name: "§eDétection Fallback"
-      lore:
-        - "§7Détection alternative des arbres."
-        - ""
-        - "§e[Clic]"
-
-  general:
-    click_cooldown:
-      lore:
-        - "§7Délai minimum entre deux coups (ms)."
-        - ""
-        - "§7Valeur actuelle : §e{value}ms"
-        - ""
-        - "§e[Clic pour modifier]"
-    hint_cooldown:
-      lore:
-        - "§7Délai entre deux messages d'astuce (s)."
-        - ""
-        - "§7Valeur actuelle : §e{value}s"
-        - ""
-        - "§e[Clic pour modifier]"
-    send_hint:
-      lore:
-        - "§7Envoyer un message d'astuce au joueur."
-        - ""
-        - "§7État : §e{state}"
-        - ""
-        - "§e[Clic pour basculer]"
-    extra_loss_enabled:
-      lore:
-        - "§7Activer la perte supplémentaire de durabilité."
-        - ""
-        - "§7État : §e{state}"
-        - ""
-        - "§e[Clic pour basculer]"
-    extra_loss_points:
-      lore:
-        - "§7Points de durabilité perdus par abattage."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-
-  limits:
-    max_logs:
-      lore:
-        - "§7Nombre maximal de bûches par arbre."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    max_blocks:
-      lore:
-        - "§7Nombre maximal de blocs par arbre."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    max_radius:
-      lore:
-        - "§7Rayon horizontal maximal (XZ) de l'arbre."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    max_height:
-      lore:
-        - "§7Hauteur maximale de l'arbre (Y)."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    sixway_max_logs:
-      lore:
-        - "§7Bûches max en mode 6 directions."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-
-  decay:
-    decay_range_xz:
-      lore:
-        - "§7Portée horizontale de décomposition des feuilles."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    decay_range_y:
-      lore:
-        - "§7Portée verticale de décomposition des feuilles."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    allow_diagonal:
-      lore:
-        - "§7Autoriser les feuilles diagonales."
-        - ""
-        - "§7État : §e{state}"
-        - ""
-        - "§e[Clic pour basculer]"
-    canopy_cleanup:
-      lore:
-        - "§7Activer le nettoyage de la canopée."
-        - ""
-        - "§7État : §e{state}"
-        - ""
-        - "§e[Clic pour basculer]"
-    canopy_padding:
-      lore:
-        - "§7Marge de nettoyage de la canopée."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    leaves_batch:
-      lore:
-        - "§7Taille du lot de persistance des feuilles."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-
-  roots:
-    fill_padding:
-      lore:
-        - "§7Marge de remplissage des racines."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    depth_padding:
-      lore:
-        - "§7Marge de profondeur des racines."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    root_rep_enabled:
-      lore:
-        - "§7Activer le remplacement des racines."
-        - ""
-        - "§7État : §e{state}"
-        - ""
-        - "§e[Clic pour basculer]"
-    root_rep_material:
-      lore:
-        - "§7Matériau de remplacement des racines."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-
-  fallback:
-    enabled:
-      lore:
-        - "§7Activer la détection fallback."
-        - ""
-        - "§7État : §e{state}"
-        - ""
-        - "§e[Clic pour basculer]"
-    max_blocks:
-      lore:
-        - "§7Nombre max de blocs en mode fallback."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    trunk_core_radius:
-      lore:
-        - "§7Rayon du tronc central."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    trunk_min_height:
-      lore:
-        - "§7Hauteur minimale du tronc."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    max_radius:
-      lore:
-        - "§7Rayon maximal en fallback."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    min_density:
-      lore:
-        - "§7Densité minimale pour détecter un arbre."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-
-  biome_list:
-    entry:
-      lore:
-        - "§7État : {state}"
-        - "§7Bûches : §e{logs}"
-        - "§7Feuilles : §e{leaves}"
-        - ""
-        - "§e[Clic pour éditer]"
-    prev_page: "§7◀ Page précédente"
-    next_page: "§7Page suivante ▶"
-    create_from_current:
-      name: "§a+ Créer depuis le biome actuel"
-      lore:
-        - "§7Biome actuel : §e{biome}"
-        - ""
-        - "§e[Clic pour créer]"
-
-  biome_editor:
-    inherited: "§7(hérité)"
-    enabled:
-      name: "§aBiome Activé"
-      lore:
-        - "§7Activer WildTimber dans ce biome."
-        - ""
-        - "§7État : {state}"
-        - ""
-        - "§e[Clic pour basculer]"
-    min_logs:
-      lore:
-        - "§7Nombre minimum de bûches pour détecter un arbre."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    min_leaves:
-      lore:
-        - "§7Nombre minimum de feuilles pour détecter un arbre."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    max_logs:
-      lore:
-        - "§7Limite de bûches pour ce biome."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    max_blocks:
-      lore:
-        - "§7Limite de blocs pour ce biome."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    max_radius_xz:
-      lore:
-        - "§7Rayon horizontal max pour ce biome."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    max_height_y:
-      lore:
-        - "§7Hauteur max pour ce biome."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    belt_radius:
-      lore:
-        - "§7Rayon du ceinturon de protection."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    canopy_padding:
-      lore:
-        - "§7Marge de nettoyage de canopée."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    root_rep_enabled:
-      name: "§eRemplacement Racines"
-      lore:
-        - "§7Activer le remplacement des racines."
-        - ""
-        - "§7État : {state}"
-        - ""
-        - "§e[Clic pour basculer]"
-    root_rep_material:
-      name: "§eMatériau des Racines"
-      lore:
-        - "§7Matériau de remplacement."
-        - ""
-        - "§7Valeur actuelle : §e{value}"
-        - ""
-        - "§e[Clic pour modifier]"
-    logs_list:
-      name: "§eListe des Bûches"
-      lore:
-        - "§7Gérer les matériaux reconnus"
-        - "§7comme bûches dans ce biome."
-        - ""
-        - "§e[Clic pour ouvrir]"
-    leaves_list:
-      name: "§eListe des Feuilles"
-      lore:
-        - "§7Gérer les matériaux reconnus"
-        - "§7comme feuilles dans ce biome."
-        - ""
-        - "§e[Clic pour ouvrir]"
-    attachments_list:
-      name: "§eListe des Attachements"
-      lore:
-        - "§7Gérer les blocs attachés à l'arbre."
-        - ""
-        - "§e[Clic pour ouvrir]"
-    delete:
-      name: "§4Supprimer ce Biome"
-      lore:
-        - "§cSupprimer la configuration"
-        - "§cde ce biome."
-        - ""
-        - "§4[Clic pour supprimer]"
-
-  material_editor:
-    entry:
-      lore:
-        - "§e[Clic gauche] §7Retirer"
-    add_hand:
-      name: "§a+ Ajouter depuis la main"
-      lore:
-        - "§7Ajouter le matériau tenu en main."
-        - ""
-        - "§e[Clic pour ajouter]"
-    add_name:
-      name: "§a+ Ajouter par nom"
-      lore:
-        - "§7Saisir le nom du matériau"
-        - "§7dans le chat."
-        - ""
-        - "§e[Clic pour ajouter]"
-
-  language_select:
-    active: "§a✔ Langue Actuelle"
-    select: "§e[Clic gauche pour choisir]"
-    entry:
-      lore:
-        - "§7Code : §f{code}"
-        - "{state}"
+  "tree_engaged": "&aArbre engagé ! &7(&e{health} PV&7) — &fClic droit avec une hache pour abattre !"
+  "tree_falling": "&cL'arbre s'effondre !"
+  "tree_protected": "&cCette zone est protégée."
+  "tree_too_large": "&cCet arbre est trop grand pour être abattu."
+  "not_an_tree": "&7Ce bloc n'appartient pas à un arbre reconnu."
+  "no_permission": "&cVous n'avez pas la permission d'utiliser WildTimber."
+  "hint_right_click": "&eClic droit avec une hache&7 sur cette bûche pour verrouiller l'arbre !"
+  "hint_already_engaged": "&7Cet arbre est déjà engagé. &eClic droit&7 sur la bûche pour infliger des dégâts !"
+  "tree_regen": "&7L'arbre régénère ses PV..."
+  "tree_fully_healed": "&aL'arbre est totalement régénéré."
+  "reload_success": "&aLa configuration a été rechargée avec succès."
+  "debug_mode_toggle": "&eMode debug : {state}"
+  "blacklist_toggle": "&eProtection des constructions : {state}"
+  "bossbar_title": "&2{type} &7— &a{current}&7/&a{max} PV &7(&e{percent}%&7)"
+  "toggle_on": "&aWildTimber est activé. Vos abattages fonctionneront à nouveau."
+  "toggle_off": "&cWildTimber est désactivé. Vous pouvez couper/écorcer normalement."
+  "godmode_on": "&aMode Dieu activé. Les arbres tomberont en un coup !"
+  "godmode_off": "&cMode Dieu désactivé. Abattage normal restauré."
+  "has_blacklist": "&cImpossible d'abattre : l'arbre touche des constructions (planches, dalles...)."
+  "not_rooted": "&cImpossible d'abattre : le tronc ne touche pas le sol."
+  "min_limits_not_met": "&7Arbre incomplet (pas assez de bûches ou feuilles)."
+  "biome_disabled": "&cWildTimber est désactivé dans ce biome."
+  "undo_success": "&aDernier abattage annulé avec succès ! {blocks} blocs restaurés."
+  "undo_nothing": "&cAucune action à annuler."
+  "anticheat_warning": "&c[Anti-Cheat] Veuillez ralentir vos clics ou viser l'arbre."
+  "staged_cut_started": "&eArbre trop grand pour un abattage instantané, coupe progressive démarrée..."
+  "tree_too_fused": "&cCet arbre est trop fusionné avec ses voisins pour être coupé proprement."
+  "fallback_used": "&7Mode de secours cylindrique utilisé."
+  "cut_queued": "&7Coupe mise en file d'attente... (position {position})"
+  "cut_already_running": "&7Une coupe est déjà en cours, patience..."
+  "cut_partial_fail": "&cCoupe partiellement échouée ({processed}/{planned} blocs)"
+  "tree_felled_summary": "{godmode}&a✔ Arbre abattu : &f{logs} bûches &7+ &f{leaves} feuilles
+&7(&e{biome}&7 | &b{duration}s&7)"
+  "only_players": "&cCette commande ne peut être exécutée que par un joueur."
+  "specify_player": "&cVeuillez spécifier un joueur."
+  "player_not_found": "&cJoueur non trouvé."
+  "unknown_command": "&cCommande inconnue. Tapez &6/wt help &cpour voir la liste."
+  "godmode_target_on": "&eMode Dieu &aactivé&e pour le joueur &6{player}"
+  "godmode_target_off": "&eMode Dieu &cdésactivé&e pour le joueur &6{player}"
+  "undo_target_success": "&aAbattage de &6{player}&a annulé ({blocks} blocs restaurés)."
+  "toggle_target_on": "&eWildTimber &aactivé&e pour le joueur &6{player}"
+  "toggle_target_off": "&eWildTimber &cdésactivé&e pour le joueur &6{player}"
+  "treecontact_toggle": "&eExigence du sol : {state}"
+  "analysis_in_progress": "&7Analyse de l'arbre en cours..."
+  "gui_prompt": "&e[WildTimber] Entrez la nouvelle valeur pour &6{name} &edans le chat (ou &ccancel&e) :"
+  "gui_cancelled": "&cModification annulée."
+  "gui_unknown_material": "&cMatériau inconnu : {material}. Modification annulée."
+  "gui_material_added": "&aMatériau {material} ajouté à la liste."
+  "gui_material_already_present": "&cCe matériau est déjà dans la liste."
+  "gui_material_removed": "&aMatériau retiré de la liste."
+  "gui_must_hold_block": "&cVous devez tenir un bloc en main."
+  "gui_invalid_number": "&cFormat de nombre invalide. Modification annulée."
+  "gui_value_updated": "&aOption {name} mise à jour : &f{value}"
+  "gui_biome_already_exists": "&cCe biome est déjà configuré !"
+  "gui_biome_created": "&aBiome {name} créé avec succès."
+  "gui_biome_deleted": "&aBiome {name} supprimé."
+  "language_changed": "&aLangue changée avec succès pour : &6{lang}"
+  "update_available": "&e[WildTimber] Nouvelle version (&6{version}&e) disponible sur SpigotMC !"
+  "state_enabled": "&aActivé"
+  "state_disabled": "&cDésactivé"
+  "state_on": "&aON"
+  "state_off": "&cOFF"
+  "tree_type.oak": "Chêne"
+  "tree_type.spruce": "Sapin"
+  "tree_type.birch": "Bouleau"
+  "tree_type.jungle": "Acajou"
+  "tree_type.acacia": "Acacia"
+  "tree_type.dark_oak": "Chêne Noir"
+  "tree_type.mangrove": "Palétuvier"
+  "tree_type.cherry": "Cerisier"
+  "tree_type.unknown": "Arbre Inconnu"
+  "cmd_help_header": "&6=== &aWildTimber Help &6==="
+  "cmd_help_toggle": "&e/wt toggle [joueur] &7- Active/désactive le plugin"
+  "cmd_help_godmode": "&e/wt godmode [joueur] &7- Coupe instantanée en un clic"
+  "cmd_help_reload": "&e/wt reload &7- Recharge la configuration"
+  "cmd_help_debug": "&e/wt debug &7- Active/désactive le mode debug"
+  "cmd_help_blacklist": "&e/wt blacklist &7- Active/désactive la protection constructions"
+  "cmd_help_treecontact": "&e/wt treecontact &7- Exige que le tronc touche le sol"
+  "cmd_help_undo": "&e/wt undo [joueur] &7- Annule le dernier abattage"
+  "cmd_help_language": "&e/wt setlang <code border> &7- Change la langue du plugin"
+  "cmd_help_gui": "&e/wt gui &7- Ouvre l'interface de configuration GUI"
+  "cmd_help_info": "&e/wt info &7- Affiche les informations et le statut"
+  "cmd_help_footer": "&6========================="
+  "cmd_info_header": "&6=== &aWildTimber Information &6==="
+  "cmd_info_version": "&eVersion : &f{version}"
+  "cmd_info_author": "&eAuteur : &f{author}"
+  "cmd_info_language": "&eLangue : &f{lang}"
+  "cmd_info_active_trees": "&eArbres actifs : &f{count}"
+  "cmd_info_papi": "&ePlaceholderAPI : {status}"
+  "cmd_info_status": "&eStatut du Plugin : {status}"
+  "cmd_info_papi_yes": "&aDétecté & Disponible"
+  "cmd_info_papi_no": "&cNon installé"
+  "cmd_info_status_active": "&aACTIF"
+  "cmd_info_status_inactive": "&cDESACTIVE"
+  "cmd_default_usage": "&cUsage : /wt help"
+  "cmd_language_usage": "&cUsage : /wt setlang <fr|en|de|es|pt_BR|nl|pl|ru|zh_CN|it>"
+  "gui.title.main_menu": "§8WildTimber - Menu Principal"
+  "gui.title.language_select": "§8Sélection de la Langue"
+  "gui.title.global_config": "§8WildTimber - Configuration Globale"
+  "gui.title.quick_toggles": "§8Bascules Rapides"
+  "gui.main_menu.global_config.name": "§a§lConfiguration Globale"
+  "gui.main_menu.biomes.name": "§e§lConfiguration des Biomes"
+  "gui.main_menu.quick_toggles.name": "§b§lBascules Rapides"
+  "gui.main_menu.language.name": "§d§lChanger la Langue"
+  "gui.main_menu.close.name": "§c§lFermer"
+  "gui.button.back": "§c◀ Retour"
+  "gui.language_select.active": "§a§l{name} §7(Actif)"
+  "gui.language_select.select": "§e§l{name} §7[Cliquer pour choisir]"
+  "gui.toggles.enabled.name": "§aStatut du Plugin"
+  "gui.toggles.debug.name": "§eMode Debug"
+  "gui.toggles.blacklist.name": "§bProtection Constructions"
+  "gui.toggles.contact.name": "§dExigence Sol (Contact)"
+  "gui.global_config.general.name": "§a§lGénéral & Outils"
+  "gui.global_config.limits.name": "§e§lLimites de Scan"
+  "gui.global_config.decay.name": "§b§lDecay & Canopée"
+  "gui.global_config.roots.name": "§d§lRacines & Rebouchage"
+  "gui.global_config.fallback.name": "§e§lSecours Cylindrique"
+  "gui.title.config_general": "§8Configuration - Général & Outils"
+  "gui.title.config_limits": "§8Configuration - Limites de Scan"
+  "gui.title.config_decay": "§8Configuration - Decay & Canopée"
+  "gui.title.config_roots": "§8Configuration - Racines & Rebouchage"
+  "gui.title.config_fallback": "§8Configuration - Secours Cylindrique"
+  "gui.title.biome_list": "§8WildTimber - Liste des Biomes"
+  "gui.biome_list.prev_page": "§a◀ Page Précédente"
+  "gui.biome_list.next_page": "§aPage Suivante ▶"
+  "gui.biome_list.create_from_current.name": "§a§l[+] Créer depuis le biome actuel"
+  "gui.title.biome_editor": "§8Biome: {biome}"
+  "gui.biome_editor.enabled.name": "§eActiver ce biome"
+  "gui.biome_editor.root_rep_enabled.name": "§eroot-replacement-enabled"
+  "gui.biome_editor.root_rep_material.name": "§eroot-replacement-material"
+  "gui.biome_editor.logs_list.name": "§6§lListe des Bûches"
+  "gui.biome_editor.leaves_list.name": "§a§lListe des Feuilles"
+  "gui.biome_editor.attachments_list.name": "§b§lListe des Attachments"
+  "gui.biome_editor.delete.name": "§c§lSupprimer le Biome"
+  "gui.biome_editor.inherited": "Hérité"
+  "gui.title.material_editor": "§8Éditeur: {biome} - {type}"
+  "gui.material_editor.add_hand.name": "§a§l[+] Ajouter l'objet en main"
+  "gui.material_editor.add_name.name": "§b§l[+] Ajouter par nom"
+  "gui.main_menu.global_config.lore":
+    - "§7Configurer les options générales,"
+    - "§7limites, découpe et racines."
+  "gui.main_menu.biomes.lore":
+    - "§7Gérer les paramètres spécifiques"
+    - "§7à chaque biome."
+  "gui.main_menu.quick_toggles.lore":
+    - "§7Activer/Désactiver rapidement"
+    - "§7les fonctionnalités du plugin."
+  "gui.main_menu.language.lore":
+    - "§7Changer la langue du plugin."
+  "gui.toggles.enabled.lore":
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.toggles.debug.lore":
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.toggles.blacklist.lore":
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.toggles.contact.lore":
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.global_config.general.lore":
+    - "§7Délais de clics, messages"
+    - "§7et usure d'outils."
+  "gui.global_config.limits.lore":
+    - "§7Limites maximales de bûches,"
+    - "§7rayons et hauteurs."
+  "gui.global_config.decay.lore":
+    - "§7Rayons de feuilles et nettoyage"
+    - "§7de la canopée."
+  "gui.global_config.roots.lore":
+    - "§7Paramètres de rebouchage des"
+    - "§7racines sous terre."
+  "gui.global_config.fallback.lore":
+    - "§7Rayon et densité du scan"
+    - "§7cylindrique de secours."
+  "gui.general.click_cooldown.lore":
+    - "§7Délai minimum entre clics."
+    - "§7Valeur: §f{value} ms"
+    - "§e[Clic gauche pour modifier]"
+  "gui.general.hint_cooldown.lore":
+    - "§7Délai des messages d'aide."
+    - "§7Valeur: §f{value} s"
+    - "§e[Clic gauche pour modifier]"
+  "gui.general.send_hint.lore":
+    - "§7Envoyer message d'aide."
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.general.extra_loss_enabled.lore":
+    - "§7Perte durabilité extra."
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.general.extra_loss_points.lore":
+    - "§7Points perdus en plus."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.limits.max_logs.lore":
+    - "§7Nombre max de bûches/arbre."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.limits.max_blocks.lore":
+    - "§7Total max (bûches+feuilles)."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.limits.max_radius.lore":
+    - "§7Rayon XZ maximum."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.limits.max_height.lore":
+    - "§7Hauteur Y maximale."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.limits.sixway_max_logs.lore":
+    - "§7Budget max scan 6-way."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.decay.decay_range_xz.lore":
+    - "§7Rayon XZ decay feuilles."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.decay.decay_range_y.lore":
+    - "§7Rayon Y decay feuilles."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.decay.allow_diagonal.lore":
+    - "§7Feuilles en diagonale."
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.decay.canopy_cleanup.lore":
+    - "§7Nettoyage post-abattage."
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.decay.canopy_padding.lore":
+    - "§7Marge scan canopée."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.decay.leaves_batch.lore":
+    - "§7Feuilles par tick."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.roots.fill_padding.lore":
+    - "§7Marge XZ de rebouchage."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.roots.depth_padding.lore":
+    - "§7Profondeur sous bûche bas."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.roots.root_rep_enabled.lore":
+    - "§7Remplacer racines."
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.roots.root_rep_material.lore":
+    - "§7Matériau de remplacement."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche modifier dans le chat]"
+    - "§6[Shift + Clic avec objet en main]"
+  "gui.fallback.enabled.lore":
+    - "§7Activer scan secours."
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.fallback.max_blocks.lore":
+    - "§7Blocs max en secours."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.fallback.trunk_core_radius.lore":
+    - "§7Rayon cœur du tronc."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.fallback.trunk_min_height.lore":
+    - "§7Hauteur min du tronc."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.fallback.max_radius.lore":
+    - "§7Rayon max cylindre."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.fallback.min_density.lore":
+    - "§7Densité min requise."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.biome_list.entry.lore":
+    - "§7Statut: {state}"
+    - "§7Bûches: §f{logs} types"
+    - "§7Feuilles: §f{leaves} types"
+    - ""
+    - "§6[Clic gauche pour configurer]"
+    - "§c[Shift + Clic droit pour supprimer]"
+  "gui.biome_list.create_from_current.lore":
+    - "§7Créer une configuration pour :"
+    - "§b{biome}"
+    - ""
+    - "§e[Clic gauche pour créer]"
+  "gui.biome_editor.enabled.lore":
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.biome_editor.min_logs.lore":
+    - "§7Min bûches pour un arbre."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.biome_editor.min_leaves.lore":
+    - "§7Min feuilles pour un arbre."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.biome_editor.max_logs.lore":
+    - "§7Max bûches (optionnel)."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+    - "§6[Clic droit pour réinitialiser]"
+  "gui.biome_editor.max_blocks.lore":
+    - "§7Max blocs (optionnel)."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+    - "§6[Clic droit pour réinitialiser]"
+  "gui.biome_editor.max_radius_xz.lore":
+    - "§7Max rayon XZ (optionnel)."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+    - "§6[Clic droit pour réinitialiser]"
+  "gui.biome_editor.max_height_y.lore":
+    - "§7Max hauteur Y (optionnel)."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+    - "§6[Clic droit pour réinitialiser]"
+  "gui.biome_editor.belt_radius.lore":
+    - "§7Rayon ceinture de protection."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.biome_editor.canopy_padding.lore":
+    - "§7Marge scan canopée."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche pour modifier]"
+  "gui.biome_editor.root_rep_enabled.lore":
+    - "§7Remplacer les racines."
+    - "§7Statut: {state}"
+    - "§e[Clic gauche pour basculer]"
+  "gui.biome_editor.root_rep_material.lore":
+    - "§7Matériau de remplacement."
+    - "§7Valeur: §f{value}"
+    - "§e[Clic gauche modifier dans le chat]"
+    - "§6[Shift + Clic avec objet en main]"
+  "gui.biome_editor.logs_list.lore":
+    - "§7Gérer les types de bûches."
+    - "§e[Clic gauche pour éditer]"
+  "gui.biome_editor.leaves_list.lore":
+    - "§7Gérer les types de feuilles."
+    - "§e[Clic gauche pour éditer]"
+  "gui.biome_editor.attachments_list.lore":
+    - "§7Gérer les types d'attachments."
+    - "§e[Clic gauche pour éditer]"
+  "gui.biome_editor.delete.lore":
+    - "§7Supprimer définitivement la config."
+    - ""
+    - "§c[Shift + Clic gauche pour confirmer]"
+  "gui.material_editor.entry.lore":
+    - "§7Matériau enregistré."
+    - ""
+    - "§c[Cliquer pour retirer]"
+  "gui.material_editor.add_hand.lore":
+    - "§7Ajouter le type de bloc"
+    - "§7tenu en main principale."
+    - ""
+    - "§e[Clic gauche pour ajouter]"
+  "gui.material_editor.add_name.lore":
+    - "§7Saisir dans le chat le nom"
+    - "§7du matériau à ajouter."
+    - ""
+    - "§e[Clic gauche pour ajouter]"

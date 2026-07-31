@@ -337,20 +337,10 @@ public class BlockListener implements Listener {
             return;
         }
 
-        // Click cooldown configurable ou dynamique (vérifié en premier pour filtrer l'auto-click)
+        // Click cooldown configurable (même vitesse pour clic droit et clic gauche)
         if (!player.hasPermission("wildtimber.bypass.cooldown")) {
             long now = System.currentTimeMillis();
-            long cooldown;
-            if (isRightClick) {
-                float breakSpeed = block.getBreakSpeed(player);
-                if (breakSpeed <= 0.0f) {
-                    cooldown = 10000L;
-                } else {
-                    cooldown = (long) (Math.ceil(1.0f / breakSpeed) * 50L);
-                }
-            } else {
-                cooldown = configManager.getClickCooldownMs();
-            }
+            long cooldown = configManager.getClickCooldownMs();
             Long last = lastClickTime.get(player.getUniqueId());
             if (last != null && (now - last) < cooldown) {
                 return; // ignorer silencieusement

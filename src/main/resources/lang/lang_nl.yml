@@ -1,492 +1,371 @@
-prefix: "&6[WildTimber]&r "
+prefix: "&2[&aWildTimber&2] &r"
 
 messages:
-  no_permission: "&cJe hebt geen toestemming voor dit commando."
-  plugin_disabled_world: "&cWildTimber is uitgeschakeld in deze wereld."
-  tree_felled_summary: "&aBoom gekapt! &7(Stammen: &e{logs}&7, Bladeren: &e{leaves}&7, Bioom: &e{biome}&7, Duur: &e{duration}ms&7)"
-  godmode_active: "&aDirect kappen (Godmode) ingeschakeld."
-  godmode_inactive: "&cDirect kappen (Godmode) uitgeschakeld."
-  language_changed: "&aTaal gewijzigd naar: &6{lang}"
-  reload_success: "&aWildTimber configuratie herladen!"
-  undo_success: "&aLaatste kap ongedaan gemaakt ({count} blokken hersteld)."
-  undo_no_snapshot: "&cGeen recente kap om ongedaan te maken."
-  toggle_enabled: "&aWildTimber ingeschakeld voor jou."
-  toggle_disabled: "&cWildTimber uitgeschakeld voor jou."
-  click_cooldown: "&cWacht voordat je deze boom opnieuw slaat."
-  cut_queued: "&7Kap in wachtrij... (positie {position})"
-  cut_already_running: "&7Er loopt al een kap, even geduld..."
-  cut_partial_fail: "&cKap gedeeltelijk mislukt ({processed}/{planned} blokken)"
-  state_enabled: "&aIngeschakeld"
-  state_disabled: "&cUitgeschakeld"
-  state_on: "&aJa"
-  state_off: "&cNee"
-
-gui:
-  title:
-    main_menu: "§8WildTimber - Hoofdmenu"
-    quick_toggles: "§8WildTimber - Snelschakelaars"
-    global_config: "§8WildTimber - Globale Configuratie"
-    config_general: "§8WildTimber - Algemeen"
-    config_limits: "§8WildTimber - Limieten"
-    config_decay: "§8WildTimber - Bladeren & Verval"
-    config_roots: "§8WildTimber - Wortels"
-    config_fallback: "§8WildTimber - Fallback Detectie"
-    biome_list: "§8WildTimber - Biomenlijst"
-    biome_editor: "§8WildTimber - Editor: {biome}"
-    material_editor: "§8WildTimber - Materialen: {biome} / {type}"
-    language_select: "§8WildTimber - Selecteer Taal"
-
-  button:
-    back: "§cTerug"
-    close: "§cSluiten"
-
-  main_menu:
-    global_config:
-      name: "§6Globale Configuratie"
-      lore:
-        - "§7Snelheid, cooldowns en"
-        - "§7regeneratie-opties wijzigen."
-        - ""
-        - "§e[Klik om te openen]"
-    biome_config:
-      name: "§aBiomen & Materialen"
-      lore:
-        - "§7Stammen, bladeren en bioomregels."
-        - ""
-        - "§e[Klik om te openen]"
-    quick_toggles:
-      name: "§bSnelschakelaars"
-      lore:
-        - "§7Debug, godmode etc. snel wisselen."
-        - ""
-        - "§e[Klik om te openen]"
-    language:
-      name: "§dTaal Wijzigen"
-      lore:
-        - "§7Weergavetaal wijzigen."
-        - ""
-        - "§7Huidige taal: §f{lang}"
-        - ""
-        - "§e[Linksklik om te openen]"
-    reload:
-      name: "§eConfiguratie herladen"
-      lore:
-        - "§7Alle configuratiebestanden herladen."
-        - ""
-        - "§c[Klik om te herladen]"
-    close:
-      name: "§cSluiten"
-
-  quick_toggles:
-    debug:
-      name: "§eDebug Mode"
-      lore:
-        - "§7Enable debug messages."
-        - ""
-        - "§7State: {state}"
-        - ""
-        - "§e[Click to toggle]"
-    blacklist:
-      name: "§eBlacklist"
-      lore:
-        - "§7Enable blacklist filtering."
-        - ""
-        - "§7State: {state}"
-        - ""
-        - "§e[Click to toggle]"
-    treecontact:
-      name: "§eTree Contact"
-      lore:
-        - "§7Player must touch the tree"
-        - "§7to trigger felling."
-        - ""
-        - "§7State: {state}"
-        - ""
-        - "§e[Click to toggle]"
-    godmode:
-      name: "§6Godmode"
-      lore:
-        - "§7Instant one-click felling."
-        - ""
-        - "§7State: {state}"
-        - ""
-        - "§e[Click to toggle]"
-    cooldown_bypass:
-      name: "§eCooldown Bypass"
-      lore:
-        - "§7Ignore cooldown between hits."
-        - ""
-        - "§7State: {state}"
-
-  global_config:
-    general:
-      name: "§eGeneral"
-      lore:
-        - "§7Cooldowns, hints, durability loss."
-        - ""
-        - "§e[Click]"
-    limits:
-      name: "§eLimits"
-      lore:
-        - "§7Max blocks, height, radius."
-        - ""
-        - "§e[Click]"
-    decay:
-      name: "§eLeaves & Decay"
-      lore:
-        - "§7Decay range and cleanup."
-        - ""
-        - "§e[Click]"
-    roots:
-      name: "§eRoots"
-      lore:
-        - "§7Root replacement settings."
-        - ""
-        - "§e[Click]"
-    fallback:
-      name: "§eFallback Detection"
-      lore:
-        - "§7Alternative tree detection."
-        - ""
-        - "§e[Click]"
-
-  general:
-    click_cooldown:
-      lore:
-        - "§7Minimum delay between hits (ms)."
-        - ""
-        - "§7Current value: §e{value}ms"
-        - ""
-        - "§e[Click to edit]"
-    hint_cooldown:
-      lore:
-        - "§7Delay between hint messages (s)."
-        - ""
-        - "§7Current value: §e{value}s"
-        - ""
-        - "§e[Click to edit]"
-    send_hint:
-      lore:
-        - "§7Send a hint message to the player."
-        - ""
-        - "§7State: §e{state}"
-        - ""
-        - "§e[Click to toggle]"
-    extra_loss_enabled:
-      lore:
-        - "§7Enable extra durability loss."
-        - ""
-        - "§7State: §e{state}"
-        - ""
-        - "§e[Click to toggle]"
-    extra_loss_points:
-      lore:
-        - "§7Durability points lost per felling."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-
-  limits:
-    max_logs:
-      lore:
-        - "§7Maximum number of logs per tree."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    max_blocks:
-      lore:
-        - "§7Maximum number of blocks per tree."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    max_radius:
-      lore:
-        - "§7Maximum horizontal radius (XZ)."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    max_height:
-      lore:
-        - "§7Maximum tree height (Y)."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    sixway_max_logs:
-      lore:
-        - "§7Max logs in 6-way mode."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-
-  decay:
-    decay_range_xz:
-      lore:
-        - "§7Horizontal leaf decay range."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    decay_range_y:
-      lore:
-        - "§7Vertical leaf decay range."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    allow_diagonal:
-      lore:
-        - "§7Allow diagonal leaves."
-        - ""
-        - "§7State: §e{state}"
-        - ""
-        - "§e[Click to toggle]"
-    canopy_cleanup:
-      lore:
-        - "§7Enable canopy cleanup."
-        - ""
-        - "§7State: §e{state}"
-        - ""
-        - "§e[Click to toggle]"
-    canopy_padding:
-      lore:
-        - "§7Canopy cleanup padding."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    leaves_batch:
-      lore:
-        - "§7Leaves persistence batch size."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-
-  roots:
-    fill_padding:
-      lore:
-        - "§7Root fill padding."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    depth_padding:
-      lore:
-        - "§7Root depth padding."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    root_rep_enabled:
-      lore:
-        - "§7Enable root replacement."
-        - ""
-        - "§7State: §e{state}"
-        - ""
-        - "§e[Click to toggle]"
-    root_rep_material:
-      lore:
-        - "§7Root replacement material."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-
-  fallback:
-    enabled:
-      lore:
-        - "§7Enable fallback detection."
-        - ""
-        - "§7State: §e{state}"
-        - ""
-        - "§e[Click to toggle]"
-    max_blocks:
-      lore:
-        - "§7Max blocks in fallback mode."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    trunk_core_radius:
-      lore:
-        - "§7Trunk core radius."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    trunk_min_height:
-      lore:
-        - "§7Minimum trunk height."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    max_radius:
-      lore:
-        - "§7Maximum fallback radius."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    min_density:
-      lore:
-        - "§7Minimum density to detect a tree."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-
-  biome_list:
-    entry:
-      lore:
-        - "§7State: {state}"
-        - "§7Logs: §e{logs}"
-        - "§7Leaves: §e{leaves}"
-        - ""
-        - "§e[Click to edit]"
-    prev_page: "§7◀ Vorige pagina"
-    next_page: "§7Volgende pagina ▶"
-    create_from_current:
-      name: "§a+ Aanmaken van huidig bioom"
-      lore:
-        - "§7Huidig bioom: §e{biome}"
-        - ""
-        - "§e[Klik om aan te maken]"
-
-  biome_editor:
-    inherited: "§7(overgeërfd)"
-    enabled:
-      name: "§aBioom Ingeschakeld"
-      lore:
-        - "§7WildTimber inschakelen in dit bioom."
-        - ""
-        - "§7Status: {state}"
-        - ""
-        - "§e[Klik om te schakelen]"
-    min_logs:
-      lore:
-        - "§7Minimum logs to detect a tree."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    min_leaves:
-      lore:
-        - "§7Minimum leaves to detect a tree."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    max_logs:
-      lore:
-        - "§7Log limit for this biome."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    max_blocks:
-      lore:
-        - "§7Block limit for this biome."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    max_radius_xz:
-      lore:
-        - "§7Max horizontal radius for this biome."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    max_height_y:
-      lore:
-        - "§7Max height for this biome."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    belt_radius:
-      lore:
-        - "§7Protection belt radius."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    canopy_padding:
-      lore:
-        - "§7Canopy cleanup padding."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    root_rep_enabled:
-      name: "§eWortelvervanging"
-      lore:
-        - "§7Enable root replacement."
-        - ""
-        - "§7State: {state}"
-        - ""
-        - "§e[Click to toggle]"
-    root_rep_material:
-      name: "§eWortelmateriaal"
-      lore:
-        - "§7Replacement material."
-        - ""
-        - "§7Current value: §e{value}"
-        - ""
-        - "§e[Click to edit]"
-    logs_list:
-      name: "§eStammenlijst"
-      lore:
-        - "§7Materialen als stammen beheren."
-        - ""
-        - "§e[Klik om te openen]"
-    leaves_list:
-      name: "§eBladerenlijst"
-      lore:
-        - "§7Materialen als bladeren beheren."
-        - ""
-        - "§e[Klik om te openen]"
-    attachments_list:
-      name: "§eBijlagenlijst"
-      lore:
-        - "§7Aan de boom bevestigde blokken beheren."
-        - ""
-        - "§e[Klik om te openen]"
-    delete:
-      name: "§4Bioom verwijderen"
-      lore:
-        - "§cDeze bioomconfiguratie verwijderen."
-        - ""
-        - "§4[Klik om te verwijderen]"
-
-  material_editor:
-    entry:
-      lore:
-        - "§e[Linksklik] §7Verwijderen"
-    add_hand:
-      name: "§a+ Uit hand toevoegen"
-      lore:
-        - "§7In hand gehouden materiaal toevoegen."
-        - ""
-        - "§e[Klik om toe te voegen]"
-    add_name:
-      name: "§a+ Op naam toevoegen"
-      lore:
-        - "§7Naam in chat typen."
-        - ""
-        - "§e[Klik om toe te voegen]"
-
-  language_select:
-    active: "§a✔ Huidige Taal"
-    select: "§e[Linksklik om te selecteren]"
-    entry:
-      lore:
-        - "§7Code: §f{code}"
-        - "{state}"
+  "tree_engaged": "&aBoom geselecteerd! &7(&e{health} HP&7) — &fRechtsklik met een bijl om te kappen!"
+  "tree_falling": "&cDe boom valt!"
+  "tree_protected": "&cThis area is protected."
+  "tree_too_large": "&cThis tree is too large to be felled."
+  "not_an_tree": "&7This block does not belong to a recognized tree."
+  "no_permission": "&cYou do not have permission to use WildTimber."
+  "hint_right_click": "&eRechtsklik&7 op dit blok met een bijl om de boom te selecteren!"
+  "hint_already_engaged": "&7This tree is already engaged. &eRight-click&7 the log to deal damage!"
+  "tree_regen": "&7The tree is regenerating its HP..."
+  "tree_fully_healed": "&aThe tree is fully regenerated."
+  "reload_success": "&aConfiguration successfully reloaded."
+  "debug_mode_toggle": "&eDebug mode: {state}"
+  "blacklist_toggle": "&eConstruction protection: {state}"
+  "bossbar_title": "&2{type} &7— &a{current}&7/&a{max} HP &7(&e{percent}%&7)"
+  "toggle_on": "&aWildTimber enabled. Your tree felling will work again."
+  "toggle_off": "&cWildTimber disabled. You can cut/strip logs normally."
+  "godmode_on": "&aGodmode enabled. Trees will fall in one hit!"
+  "godmode_off": "&cGodmode disabled. Normal felling restored."
+  "has_blacklist": "&cCannot fell: tree touches constructions (planks, slabs...)."
+  "not_rooted": "&cCannot fell: trunk does not touch the ground."
+  "min_limits_not_met": "&7Incomplete tree (not enough logs or leaves)."
+  "biome_disabled": "&cWildTimber is disabled in this biome."
+  "undo_success": "&aLast felling successfully undone! {blocks} blocks restored."
+  "undo_nothing": "&cNo action to undo."
+  "anticheat_warning": "&c[Anti-Cheat] Please slow down clicks or aim at the tree."
+  "staged_cut_started": "&eTree too large for instant felling, progressive cut started..."
+  "tree_too_fused": "&cThis tree is too fused with adjacent trees to cut cleanly."
+  "fallback_used": "&7Cylindrical fallback mode used."
+  "cut_queued": "&7Cut queued... (position {position})"
+  "cut_already_running": "&7A cut is already in progress, please wait..."
+  "cut_partial_fail": "&cCut partially failed ({processed}/{planned} blocks)"
+  "tree_felled_summary": "{godmode}&a✔ Tree felled: &f{logs} logs &7+ &f{leaves} leaves
+&7(&e{biome}&7 | &b{duration}s&7)"
+  "only_players": "&cThis command can only be executed by a player."
+  "specify_player": "&cPlease specify a player."
+  "player_not_found": "&cPlayer not found."
+  "unknown_command": "&cUnknown command. Type &6/wt help &cfor a list of commands."
+  "godmode_target_on": "&eGodmode &aenabled&e for player &6{player}"
+  "godmode_target_off": "&eGodmode &cdisabled&e for player &6{player}"
+  "undo_target_success": "&aUndone felling for &6{player}&a ({blocks} blocks restored)."
+  "toggle_target_on": "&eWildTimber &aenabled&e for player &6{player}"
+  "toggle_target_off": "&eWildTimber &cdisabled&e for player &6{player}"
+  "treecontact_toggle": "&eGround requirement: {state}"
+  "analysis_in_progress": "&7Tree analysis in progress..."
+  "gui_prompt": "&e[WildTimber] Enter new value for &6{name} &ein chat (or &ccancel&e):"
+  "gui_cancelled": "&cModification cancelled."
+  "gui_unknown_material": "&cUnknown material: {material}. Modification cancelled."
+  "gui_material_added": "&aMaterial {material} added to list."
+  "gui_material_already_present": "&cThis material is already in the list."
+  "gui_material_removed": "&aMaterial removed from list."
+  "gui_must_hold_block": "&cYou must hold a block in your hand."
+  "gui_invalid_number": "&cInvalid number format. Modification cancelled."
+  "gui_value_updated": "&aSetting {name} updated to: &f{value}"
+  "gui_biome_already_exists": "&cThis biome is already configured!"
+  "gui_biome_created": "&aBiome {name} successfully created."
+  "gui_biome_deleted": "&aBiome {name} deleted."
+  "language_changed": "&aLanguage successfully changed to: &6{lang}"
+  "update_available": "&e[WildTimber] New version (&6{version}&e) available on SpigotMC!"
+  "state_enabled": "&aIngeschakeld"
+  "state_disabled": "&cUitgeschakeld"
+  "state_on": "&aON"
+  "state_off": "&cOFF"
+  "tree_type.oak": "Oak"
+  "tree_type.spruce": "Spruce"
+  "tree_type.birch": "Birch"
+  "tree_type.jungle": "Jungle"
+  "tree_type.acacia": "Acacia"
+  "tree_type.dark_oak": "Dark Oak"
+  "tree_type.mangrove": "Mangrove"
+  "tree_type.cherry": "Cherry"
+  "tree_type.unknown": "Unknown Tree"
+  "cmd_help_header": "&6=== &aWildTimber Help &6==="
+  "cmd_help_toggle": "&e/wt toggle [player] &7- Toggle plugin on/off"
+  "cmd_help_godmode": "&e/wt godmode [player] &7- One-hit instant tree felling"
+  "cmd_help_reload": "&e/wt reload &7- Reload configuration"
+  "cmd_help_debug": "&e/wt debug &7- Toggle debug mode"
+  "cmd_help_blacklist": "&e/wt blacklist &7- Toggle construction protection"
+  "cmd_help_treecontact": "&e/wt treecontact &7- Require trunk to touch ground"
+  "cmd_help_undo": "&e/wt undo [player] &7- Undo last tree felling"
+  "cmd_help_language": "&e/wt setlang <code border> &7- Change plugin language"
+  "cmd_help_gui": "&e/wt gui &7- Open GUI configuration menu"
+  "cmd_help_info": "&e/wt info &7- Display plugin info and status"
+  "cmd_help_footer": "&6========================="
+  "cmd_info_header": "&6=== &aWildTimber Information &6==="
+  "cmd_info_version": "&eVersion: &f{version}"
+  "cmd_info_author": "&eAuthor: &f{author}"
+  "cmd_info_language": "&eLanguage: &f{lang}"
+  "cmd_info_active_trees": "&eActive Trees: &f{count}"
+  "cmd_info_papi": "&ePlaceholderAPI: {status}"
+  "cmd_info_status": "&ePlugin Status: {status}"
+  "cmd_info_papi_yes": "&aDetected & Available"
+  "cmd_info_papi_no": "&cNot installed"
+  "cmd_info_status_active": "&aACTIVE"
+  "cmd_info_status_inactive": "&cDISABLED"
+  "cmd_default_usage": "&cUsage: /wt help"
+  "cmd_language_usage": "&cUsage: /wt setlang <fr|en|de|es|pt_BR|nl|pl|ru|zh_CN|it>"
+  "gui.title.main_menu": "§8WildTimber - Main Menu"
+  "gui.title.language_select": "§8Language Selection"
+  "gui.title.global_config": "§8WildTimber - Global Configuration"
+  "gui.title.quick_toggles": "§8Quick Toggles"
+  "gui.main_menu.global_config.name": "§a§lGlobal Configuration"
+  "gui.main_menu.biomes.name": "§e§lBiome Configuration"
+  "gui.main_menu.quick_toggles.name": "§b§lQuick Toggles"
+  "gui.main_menu.language.name": "§d§lChange Language"
+  "gui.main_menu.close.name": "§c§lClose"
+  "gui.button.back": "§c◀ Back"
+  "gui.language_select.active": "§a§l{name} §7(Active)"
+  "gui.language_select.select": "§e§l{name} §7[Click to select]"
+  "gui.toggles.enabled.name": "§aPlugin Status"
+  "gui.toggles.debug.name": "§eDebug Mode"
+  "gui.toggles.blacklist.name": "§bConstruction Protection"
+  "gui.toggles.contact.name": "§dGround Requirement"
+  "gui.global_config.general.name": "§a§lGeneral & Tools"
+  "gui.global_config.limits.name": "§e§lScan Limits"
+  "gui.global_config.decay.name": "§b§lDecay & Canopy"
+  "gui.global_config.roots.name": "§d§lRoots & Backfill"
+  "gui.global_config.fallback.name": "§e§lCylindrical Fallback"
+  "gui.title.config_general": "§8Config - General & Tools"
+  "gui.title.config_limits": "§8Config - Scan Limits"
+  "gui.title.config_decay": "§8Config - Decay & Canopy"
+  "gui.title.config_roots": "§8Config - Roots & Backfill"
+  "gui.title.config_fallback": "§8Config - Cylindrical Fallback"
+  "gui.title.biome_list": "§8WildTimber - Biome List"
+  "gui.biome_list.prev_page": "§a◀ Previous Page"
+  "gui.biome_list.next_page": "§aNext Page ▶"
+  "gui.biome_list.create_from_current.name": "§a§l[+] Create from current biome"
+  "gui.title.biome_editor": "§8Biome: {biome}"
+  "gui.biome_editor.enabled.name": "§eEnable this biome"
+  "gui.biome_editor.root_rep_enabled.name": "§eroot-replacement-enabled"
+  "gui.biome_editor.root_rep_material.name": "§eroot-replacement-material"
+  "gui.biome_editor.logs_list.name": "§6§lLogs List"
+  "gui.biome_editor.leaves_list.name": "§a§lLeaves List"
+  "gui.biome_editor.attachments_list.name": "§b§lAttachments List"
+  "gui.biome_editor.delete.name": "§c§lDelete Biome"
+  "gui.biome_editor.inherited": "Inherited"
+  "gui.title.material_editor": "§8Editor: {biome} - {type}"
+  "gui.material_editor.add_hand.name": "§a§l[+] Add held item"
+  "gui.material_editor.add_name.name": "§b§l[+] Add by name"
+  "gui.main_menu.global_config.lore":
+    - "§7Configure general options,"
+    - "§7limits, decay and roots."
+  "gui.main_menu.biomes.lore":
+    - "§7Manage settings specific"
+    - "§7to each biome."
+  "gui.main_menu.quick_toggles.lore":
+    - "§7Quickly enable/disable"
+    - "§7plugin features."
+  "gui.main_menu.language.lore":
+    - "§7Change plugin language."
+  "gui.toggles.enabled.lore":
+    - "§7Status: {state}"
+    - "§e[Left click to toggle]"
+  "gui.toggles.debug.lore":
+    - "§7Status: {state}"
+    - "§e[Left click to toggle]"
+  "gui.toggles.blacklist.lore":
+    - "§7Status: {state}"
+    - "§e[Left click to toggle]"
+  "gui.toggles.contact.lore":
+    - "§7Status: {state}"
+    - "§e[Left click to toggle]"
+  "gui.global_config.general.lore":
+    - "§7Click cooldowns, messages"
+    - "§7and tool wear."
+  "gui.global_config.limits.lore":
+    - "§7Max log limits,"
+    - "§7radii and heights."
+  "gui.global_config.decay.lore":
+    - "§7Leaf decay radii and"
+    - "§7canopy cleanup."
+  "gui.global_config.roots.lore":
+    - "§7Underground root backfill"
+    - "§7settings."
+  "gui.global_config.fallback.lore":
+    - "§7Fallback scan radius"
+    - "§7and density."
+  "gui.general.click_cooldown.lore":
+    - "§7Min delay between clicks."
+    - "§7Value: §f{value} ms"
+    - "§e[Left click to edit]"
+  "gui.general.hint_cooldown.lore":
+    - "§7Hint message cooldown."
+    - "§7Value: §f{value} s"
+    - "§e[Left click to edit]"
+  "gui.general.send_hint.lore":
+    - "§7Send hint message."
+    - "§7Status: {state}"
+    - "§e[Left click to toggle]"
+  "gui.general.extra_loss_enabled.lore":
+    - "§7Extra durability loss."
+    - "§7Status: {state}"
+    - "§e[Left click to toggle]"
+  "gui.general.extra_loss_points.lore":
+    - "§7Extra durability points."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.limits.max_logs.lore":
+    - "§7Max logs per tree."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.limits.max_blocks.lore":
+    - "§7Max total blocks."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.limits.max_radius.lore":
+    - "§7Max XZ radius."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.limits.max_height.lore":
+    - "§7Max Y height."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.limits.sixway_max_logs.lore":
+    - "§76-way max budget."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.decay.decay_range_xz.lore":
+    - "§7Leaf XZ decay radius."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.decay.decay_range_y.lore":
+    - "§7Leaf Y decay radius."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.decay.allow_diagonal.lore":
+    - "§7Diagonal leaves."
+    - "§7Status: {state}"
+    - "§e[Left click to toggle]"
+  "gui.decay.canopy_cleanup.lore":
+    - "§7Canopy cleanup."
+    - "§7Status: {state}"
+    - "§e[Left click to toggle]"
+  "gui.decay.canopy_padding.lore":
+    - "§7Canopy padding."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.decay.leaves_batch.lore":
+    - "§7Leaves per tick."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.roots.fill_padding.lore":
+    - "§7XZ fill padding."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.roots.depth_padding.lore":
+    - "§7Extra depth padding."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.roots.root_rep_enabled.lore":
+    - "§7Replace roots."
+    - "§7Status: {state}"
+    - "§e[Left click to toggle]"
+  "gui.roots.root_rep_material.lore":
+    - "§7Replacement material."
+    - "§7Value: §f{value}"
+    - "§e[Left click edit in chat]"
+    - "§6[Shift + Click holding item]"
+  "gui.fallback.enabled.lore":
+    - "§7Enable fallback scan."
+    - "§7Status: {state}"
+    - "§e[Left click to toggle]"
+  "gui.fallback.max_blocks.lore":
+    - "§7Max blocks in fallback."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.fallback.trunk_core_radius.lore":
+    - "§7Trunk core radius."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.fallback.trunk_min_height.lore":
+    - "§7Min trunk height."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.fallback.max_radius.lore":
+    - "§7Max cylinder radius."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.fallback.min_density.lore":
+    - "§7Min required density."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.biome_list.entry.lore":
+    - "§7Status: {state}"
+    - "§7Logs: §f{logs} types"
+    - "§7Leaves: §f{leaves} types"
+    - ""
+    - "§6[Left click to configure]"
+    - "§c[Shift + Right click to delete]"
+  "gui.biome_list.create_from_current.lore":
+    - "§7Create configuration for:"
+    - "§b{biome}"
+    - ""
+    - "§e[Left click to create]"
+  "gui.biome_editor.enabled.lore":
+    - "§7Status: {state}"
+    - "§e[Left click to toggle]"
+  "gui.biome_editor.min_logs.lore":
+    - "§7Min logs for a tree."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.biome_editor.min_leaves.lore":
+    - "§7Min leaves for a tree."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.biome_editor.max_logs.lore":
+    - "§7Max logs (optional)."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+    - "§6[Right click to reset]"
+  "gui.biome_editor.max_blocks.lore":
+    - "§7Max blocks (optional)."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+    - "§6[Right click to reset]"
+  "gui.biome_editor.max_radius_xz.lore":
+    - "§7Max XZ radius (optional)."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+    - "§6[Right click to reset]"
+  "gui.biome_editor.max_height_y.lore":
+    - "§7Max Y height (optional)."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+    - "§6[Right click to reset]"
+  "gui.biome_editor.belt_radius.lore":
+    - "§7Protection belt radius."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.biome_editor.canopy_padding.lore":
+    - "§7Canopy padding."
+    - "§7Value: §f{value}"
+    - "§e[Left click to edit]"
+  "gui.biome_editor.root_rep_enabled.lore":
+    - "§7Replace roots."
+    - "§7Status: {state}"
+    - "§e[Left click to toggle]"
+  "gui.biome_editor.root_rep_material.lore":
+    - "§7Replacement material."
+    - "§7Value: §f{value}"
+    - "§e[Left click edit in chat]"
+    - "§6[Shift + Click holding item]"
+  "gui.biome_editor.logs_list.lore":
+    - "§7Manage log types."
+    - "§e[Left click to edit]"
+  "gui.biome_editor.leaves_list.lore":
+    - "§7Manage leaf types."
+    - "§e[Left click to edit]"
+  "gui.biome_editor.attachments_list.lore":
+    - "§7Manage attachment types."
+    - "§e[Left click to edit]"
+  "gui.biome_editor.delete.lore":
+    - "§7Permanently delete config."
+    - ""
+    - "§c[Shift + Left click to confirm]"
+  "gui.material_editor.entry.lore":
+    - "§7Registered material."
+    - ""
+    - "§c[Click to remove]"
+  "gui.material_editor.add_hand.lore":
+    - "§7Add held block type"
+    - "§7to the list."
+    - ""
+    - "§e[Left click to add]"
+  "gui.material_editor.add_name.lore":
+    - "§7Type in chat the name"
+    - "§7of material to add."
+    - ""
+    - "§e[Left click to add]"
