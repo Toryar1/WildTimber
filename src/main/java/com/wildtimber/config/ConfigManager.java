@@ -598,33 +598,24 @@ public class ConfigManager {
             }
 
             int protectionBeltRadius = sec.getInt("protection-belt-radius", 4);
-            Integer maxLogs = sec.contains("max-logs") ? sec.getInt("max-logs") : null;
-            Integer maxBlocks = sec.contains("max-blocks") ? sec.getInt("max-blocks") : null;
-            Integer maxRadiusXZ = sec.contains("max-radius-xz") ? sec.getInt("max-radius-xz") : null;
-            Integer maxHeightY = sec.contains("max-height-y") ? sec.getInt("max-height-y") : null;
+            Integer maxLogs = getOptionalInt(sec, "max-logs");
+            Integer maxBlocks = getOptionalInt(sec, "max-blocks");
+            Integer maxRadiusXZ = getOptionalInt(sec, "max-radius-xz");
+            Integer maxHeightY = getOptionalInt(sec, "max-height-y");
 
             // Leaf-decay XZ/Y avec fallback vers l'ancien leaf-decay-range et decay-xz/y
-            Integer leafDecayRangeXZ = null;
-            Integer leafDecayRangeY = null;
-            if (sec.contains("leaf-decay-range-xz")) {
-                leafDecayRangeXZ = sec.getInt("leaf-decay-range-xz");
-            } else if (sec.contains("decay-xz")) {
-                leafDecayRangeXZ = sec.getInt("decay-xz");
-            } else if (sec.contains("leaf-decay-range")) {
-                leafDecayRangeXZ = sec.getInt("leaf-decay-range");
-            }
-            if (sec.contains("leaf-decay-range-y")) {
-                leafDecayRangeY = sec.getInt("leaf-decay-range-y");
-            } else if (sec.contains("decay-y")) {
-                leafDecayRangeY = sec.getInt("decay-y");
-            } else if (sec.contains("leaf-decay-range")) {
-                leafDecayRangeY = sec.getInt("leaf-decay-range");
-            }
+            Integer leafDecayRangeXZ = getOptionalInt(sec, "leaf-decay-range-xz");
+            if (leafDecayRangeXZ == null) leafDecayRangeXZ = getOptionalInt(sec, "decay-xz");
+            if (leafDecayRangeXZ == null) leafDecayRangeXZ = getOptionalInt(sec, "leaf-decay-range");
 
-            Boolean isolatedLogsRule = sec.contains("isolated-logs-rule") ? sec.getBoolean("isolated-logs-rule") : null;
-            Boolean orphanLeavesCleanup = sec.contains("orphan-leaves-cleanup") ? sec.getBoolean("orphan-leaves-cleanup") : null;
-            Integer orphanLeavesRadius = sec.contains("orphan-leaves-radius") ? sec.getInt("orphan-leaves-radius") : null;
-            Boolean rootReplacementEnabled = sec.contains("root-replacement-enabled") ? sec.getBoolean("root-replacement-enabled") : null;
+            Integer leafDecayRangeY = getOptionalInt(sec, "leaf-decay-range-y");
+            if (leafDecayRangeY == null) leafDecayRangeY = getOptionalInt(sec, "decay-y");
+            if (leafDecayRangeY == null) leafDecayRangeY = getOptionalInt(sec, "leaf-decay-range");
+
+            Boolean isolatedLogsRule = getOptionalBoolean(sec, "isolated-logs-rule");
+            Boolean orphanLeavesCleanup = getOptionalBoolean(sec, "orphan-leaves-cleanup");
+            Integer orphanLeavesRadius = getOptionalInt(sec, "orphan-leaves-radius");
+            Boolean rootReplacementEnabled = getOptionalBoolean(sec, "root-replacement-enabled");
             
             Material rootReplacementMaterial = null;
             if (sec.contains("root-replacement-material")) {
@@ -634,30 +625,35 @@ public class ConfigManager {
                 }
             }
 
-            Boolean fallbackEnabled = sec.contains("fallback.enabled") ? sec.getBoolean("fallback.enabled") : (sec.contains("fallback-allowed") ? sec.getBoolean("fallback-allowed") : null);
-            Integer fallbackMaxBlocks = sec.contains("fallback.max-blocks") ? sec.getInt("fallback.max-blocks") : null;
-            Integer fallbackTrunkCoreRadius = sec.contains("fallback.trunk-core-radius") ? sec.getInt("fallback.trunk-core-radius") : null;
-            Integer fallbackTrunkMinHeight = sec.contains("fallback.trunk-min-height") ? sec.getInt("fallback.trunk-min-height") : null;
-            Integer fallbackMaxRadius = sec.contains("fallback.max-radius") ? sec.getInt("fallback.max-radius") : null;
-            Double fallbackMinDensity = sec.contains("fallback.min-density") ? sec.getDouble("fallback.min-density") : null;
-            Integer fallbackRingStep = sec.contains("fallback.ring-step") ? sec.getInt("fallback.ring-step") : null;
+            Boolean fallbackEnabled = getOptionalBoolean(sec, "fallback.enabled");
+            if (fallbackEnabled == null) fallbackEnabled = getOptionalBoolean(sec, "fallback-allowed");
 
-            Integer isolatedLogsRadius = sec.contains("isolated-logs-radius") ? sec.getInt("isolated-logs-radius") : null;
-            Integer isolatedLogMax = sec.contains("isolated-log-max") ? sec.getInt("isolated-log-max") : null;
-            Boolean allowNonRootedStart = sec.contains("allow-non-rooted-start") ? sec.getBoolean("allow-non-rooted-start") : null;
-            Integer maxRootSearchDepth = sec.contains("max-root-search-depth") ? sec.getInt("max-root-search-depth") : (sec.contains("fill-depth") ? sec.getInt("fill-depth") : null);
-            Integer sixWayMaxLogs = sec.contains("6way-max-logs") ? sec.getInt("6way-max-logs") : null;
-            Boolean canopyCleanupEnabled = sec.contains("canopy-cleanup-enabled") ? sec.getBoolean("canopy-cleanup-enabled") : null;
-            Integer canopyCleanupPadding = sec.contains("canopy-cleanup-padding") ? sec.getInt("canopy-cleanup-padding") : null;
+            Integer fallbackMaxBlocks = getOptionalInt(sec, "fallback.max-blocks");
+            Integer fallbackTrunkCoreRadius = getOptionalInt(sec, "fallback.trunk-core-radius");
+            Integer fallbackTrunkMinHeight = getOptionalInt(sec, "fallback.trunk-min-height");
+            Integer fallbackMaxRadius = getOptionalInt(sec, "fallback.max-radius");
+            Double fallbackMinDensity = getOptionalDouble(sec, "fallback.min-density");
+            Integer fallbackRingStep = getOptionalInt(sec, "fallback.ring-step");
+
+            Integer isolatedLogsRadius = getOptionalInt(sec, "isolated-logs-radius");
+            Integer isolatedLogMax = getOptionalInt(sec, "isolated-log-max");
+            Boolean allowNonRootedStart = getOptionalBoolean(sec, "allow-non-rooted-start");
+            
+            Integer maxRootSearchDepth = getOptionalInt(sec, "max-root-search-depth");
+            if (maxRootSearchDepth == null) maxRootSearchDepth = getOptionalInt(sec, "fill-depth");
+
+            Integer sixWayMaxLogs = getOptionalInt(sec, "6way-max-logs");
+            Boolean canopyCleanupEnabled = getOptionalBoolean(sec, "canopy-cleanup-enabled");
+            Integer canopyCleanupPadding = getOptionalInt(sec, "canopy-cleanup-padding");
             String fillMode = sec.contains("fill-mode") ? sec.getString("fill-mode") : null;
-            Integer fillRadiusExtra = sec.contains("fill-radius-extra") ? sec.getInt("fill-radius-extra") : null;
-            Double elephantFactor = sec.contains("elephant-factor") ? sec.getDouble("elephant-factor") : null;
+            Integer fillRadiusExtra = getOptionalInt(sec, "fill-radius-extra");
+            Double elephantFactor = getOptionalDouble(sec, "elephant-factor");
 
-            Integer leafDecayScalingLogs = sec.contains("leaf-decay-scaling-logs") ? sec.getInt("leaf-decay-scaling-logs") : null;
-            Integer leafDecayScalingXzBonus = sec.contains("leaf-decay-scaling-xz-bonus") ? sec.getInt("leaf-decay-scaling-xz-bonus") : null;
-            Integer leafDecayScalingYBonus = sec.contains("leaf-decay-scaling-y-bonus") ? sec.getInt("leaf-decay-scaling-y-bonus") : null;
-            Boolean allowDiagonalLogs = sec.contains("allow-diagonal-logs") ? sec.getBoolean("allow-diagonal-logs") : null;
-            Boolean allowDiagonalLeaves = sec.contains("allow-diagonal-leaves") ? sec.getBoolean("allow-diagonal-leaves") : null;
+            Integer leafDecayScalingLogs = getOptionalInt(sec, "leaf-decay-scaling-logs");
+            Integer leafDecayScalingXzBonus = getOptionalInt(sec, "leaf-decay-scaling-xz-bonus");
+            Integer leafDecayScalingYBonus = getOptionalInt(sec, "leaf-decay-scaling-y-bonus");
+            Boolean allowDiagonalLogs = getOptionalBoolean(sec, "allow-diagonal-logs");
+            Boolean allowDiagonalLeaves = getOptionalBoolean(sec, "allow-diagonal-leaves");
 
             BiomeConfig biomeConfig = new BiomeConfig(
                 enabled, minLogs, minLeafLike, logBlocks, leafBlocks, attachments, 
@@ -1154,5 +1150,17 @@ public class ConfigManager {
                 }
             }
         }
+    }
+
+    private static Boolean getOptionalBoolean(ConfigurationSection sec, String path) {
+        return sec.contains(path) ? Boolean.valueOf(sec.getBoolean(path)) : null;
+    }
+
+    private static Integer getOptionalInt(ConfigurationSection sec, String path) {
+        return sec.contains(path) ? Integer.valueOf(sec.getInt(path)) : null;
+    }
+
+    private static Double getOptionalDouble(ConfigurationSection sec, String path) {
+        return sec.contains(path) ? Double.valueOf(sec.getDouble(path)) : null;
     }
 }
